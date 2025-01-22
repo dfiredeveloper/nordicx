@@ -20,6 +20,7 @@ import { Switch } from "@/components/ui/switch"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 
 export default function Header() {
+    const [switchMode, setSwitchMode] = useState(false)
     const [triggerInputDrop, setTriggerForInputDrpDown] = useState(false)
     const navLinks = [
         {
@@ -89,6 +90,8 @@ export default function Header() {
 
     useEffect(() => {
         themeMode().default()
+        
+        setSwitchMode(themeMode().getFromStore() == "dark")
     }, [])
     return (
         <div className="">
@@ -263,7 +266,7 @@ export default function Header() {
                                         <div className="text-xs">Language</div>
                                         <div className="">
                                             <Select>
-                                                <SelectTrigger className="w-[70px] text-xs bg-[#dbdee6] p-0 py-0 h-[25px] rounded-md border-none">
+                                                <SelectTrigger className="w-[70px] text-xs bg-[#dbdee6] dark:bg-[#393c43] p-1 py-0 h-[25px] rounded-md border-none">
                                                     <SelectValue placeholder="English" />
                                                 </SelectTrigger>
                                                 <SelectContent className='bg-accent-3'>
@@ -287,7 +290,11 @@ export default function Header() {
                                         <div className="text-xs">Dark Mode</div>
                                         <div className="">
                                             <Switch
-                                                onCheckedChange={() => { }}
+                                                defaultChecked={switchMode}
+                                                onCheckedChange={() => { 
+                                                    themeMode().switch()
+                                                    setSwitchMode(themeMode().getFromStore() == "dark")
+                                                }}
                                             />
                                         </div>
                                     </div>
