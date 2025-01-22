@@ -17,11 +17,10 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 import { Switch } from "@/components/ui/switch"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 
 export default function Header() {
     const [triggerInputDrop, setTriggerForInputDrpDown] = useState(false)
-    const [triggerInputDropMobile, setTriggerForInputDrpDownmMobile] = useState(true)
     const navLinks = [
         {
             link: "/new-pair/183934934-948494-29223?chain=eth",
@@ -193,7 +192,7 @@ export default function Header() {
                                             <div className="absolute z-[2]  top-0 h-[40px] left-[4px] flex items-center justify-center text-[#292633]">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="1.25rem" height="1.25rem" fill="#AEB2BD" viewBox="0 0 20 20"><path d="M9.213 1.988a7.14 7.14 0 017.135 7.234c-.035 3.922-3.28 7.111-7.203 7.082-3.985-.03-7.181-3.276-7.14-7.25.042-3.933 3.253-7.081 7.208-7.066zm-.058 12.61a5.473 5.473 0 005.508-5.412c.04-3.025-2.465-5.536-5.51-5.524-3.007.012-5.45 2.467-5.45 5.476a5.455 5.455 0 005.452 5.46z"></path><path d="M16.666 17.795l-1.24-1.24a.75.75 0 010-1.056l.055-.055a.749.749 0 011.056 0l1.24 1.24a.75.75 0 010 1.057l-.054.054a.75.75 0 01-1.057 0z"></path></svg>
                                             </div>
-                                            <input type="text" onFocus={() => setTriggerForInputDrpDownmMobile(true)} onBlur={() => setTriggerForInputDrpDownmMobile(false)} className='w-full h-full pl-8 placeholder:opacity-50 outline-none text-xs' placeholder='Search token/contract/wallet' />
+                                            <input type="text"  className='w-full h-full pl-8 placeholder:opacity-50 outline-none text-xs' placeholder='Search token/contract/wallet' />
                                             <div className="h-[40px] flex justify-center items-center text-[#292C33] absolute right-0 top-0 z-[2]">
                                                 <div className="flex h-[1.25rem] bg-[#E4E4E4] rounded-[4px] justify-center items-center px-1 text-[#AEB2BD] text-[12px] whitespace-nowrap">Ctrl alt K</div>
                                             </div>
