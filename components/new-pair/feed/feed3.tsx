@@ -84,7 +84,7 @@ export default function Feed3() {
                     isLoading ?
                         <div className="px-4 mt-5 space-y-2">
                             {
-                                [...Array({ length: 10 })].map((_,index) => (
+                                Array(10).fill(0).map((_, index) => (
                                     <Skeleton className='w-full h-[80px]' key={index} />
                                 ))
                             }

@@ -90,14 +90,14 @@ export default function Header() {
         <div className='px-[1.3rem] h-[56px] flex items-center justify-between w-full'>
             <div className="flex items-center gap-5">
                 <div className="">
-                    <Image src="/logo_light.png" width={120} height={120} alt='logo light' className='dark:hidden md:w-[120px] w-[100px]' />
-                    <Image src="/logo_dark.png" width={120} height={120} alt='logo dark' className='dark:block hidden md:w-[120px] w-[100px]' />
+                    <Image src="/logo_light.png" width={120} height={120} alt='logo light' className='dark:hidden md:min-w-[120px] min-w-[100px]' />
+                    <Image src="/logo_dark.png" width={120} height={120} alt='logo dark' className='dark:block hidden md:min-w-[120px] min-w-[100px]' />
                 </div>
                 <ul className='flex gap-3 '>
                     {
                         navLinks.map((_, i) => (
-                            <li key={i} className='font-[500] text-[#6E727D] text-[14px]'>
-                                <a href={_.link} className='h-full w-full'>{_.linkText}</a>
+                            <li key={i} className='font-[500] text-[#6E727D] text-[14px] whitespace-nowrap'>
+                                <a href={_.link} className='h-full w-full '>{_.linkText}</a>
                             </li>
                         ))
                     }

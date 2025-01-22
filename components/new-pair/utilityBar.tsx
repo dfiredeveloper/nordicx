@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/dialog"
 
 
-export default function UtilityBar() {
+export default function UtilityBar({ setSwitch, switchTabs }) {
     const [activeTimeFrame, setTimeFrame] = useState("1m")
     const interval = [
         { interval: "1m" },
@@ -32,11 +32,11 @@ export default function UtilityBar() {
             <div className="flex items-center gap-5">
                 {/* tabs */}
                 <div className="flex items-center gap-2">
-                    <button className='font-[700] text-[15px]'>Dashboard</button>
-                    <button className='font-[700] text-[15px] text-[#111111]/40'>New pair</button>
+                    <button className={`font-[700] text-[15px] ${switchTabs == '1' ? "text-[#111111]" : 'text-[#111111]/40'}`} onClick={() => setSwitch('1')}>Dashboard</button>
+                    <button className={`font-[700] text-[15px] ${switchTabs == '2' ? "text-[#111111]" : 'text-[#111111]/40'}`} onClick={() => setSwitch('2')}>New pair</button>
                 </div>
                 {/* request interval */}
-                <div className="border flex items-center divide-x rounded-xl">
+                <div className="border flex items-center divide-x rounded-xl overflow-hidden">
                     {
                         interval.map(({ interval }, i) => (
                             <button key={i} onClick={() => setTimeFrame(interval)} className={`h-[28px] w-[28px] min-w-[48px] flex items-center justify-center text-[13px] ${activeTimeFrame == interval ? "text-[#111111] bg-[#E4E4E4]" : "text-[#AEB2BD]"}`}>{interval}</button>
