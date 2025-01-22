@@ -28,7 +28,7 @@ export default function UtilityBar({ setSwitch, switchTabs }) {
         { interval: "24h" },
     ]
     return (
-        <div className='px-[1.3rem] py-[1rem] flex flex-col md:flex-row justify-between items-center'>
+        <div className='md:px-[1.3rem] px-[.5rem] py-[1rem] flex flex-col md:flex-row justify-between items-center'>
             <div className="border md:hidden flex items-center divide-x rounded-xl overflow-hidden w-full ">
                 {
                     interval.map(({ interval }, i) => (
@@ -53,13 +53,13 @@ export default function UtilityBar({ setSwitch, switchTabs }) {
             </div>
 
             {/* utility */}
-            <div className="flex gap-3 md:justify-normal justify-between md:w-auto w-full md:space-y-0 space-y-2">
+            <div className="flex gap-3 md:justify-normal justify-between items-center md:w-auto w-full md:space-y-0 space-y-2">
                 <div className="flex items-center gap-2">
                     <DropdownMenu>
                         <DropdownMenuTrigger>
                             <div className="flex items-center gap-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14px" height="14px" fill="#292C33" viewBox="0 0 16 16"><g clipPath="url(#clip0_10037_38)"><path d="M8 15A7 7 0 118 1a7 7 0 010 14zm0 1A8 8 0 108 0a8 8 0 000 16z"></path><path d="M2.997 8c0 .425.345.76.76.76h8.486a.75.75 0 00.75-.76.752.752 0 00-.76-.76H3.757a.758.758 0 00-.76.76z"></path></g><defs><clipPath id="clip0_10037_38"><rect width="16" height="16"></rect></clipPath></defs></svg>
-                                <p className='text-[12px]'>Filter Token</p>
+                                <svg xmlns="http://www.w3.org/2000/svg" className='min-w-[14px]' width="14px" height="14px" fill="#292C33" viewBox="0 0 16 16"><g clipPath="url(#clip0_10037_38)"><path d="M8 15A7 7 0 118 1a7 7 0 010 14zm0 1A8 8 0 108 0a8 8 0 000 16z"></path><path d="M2.997 8c0 .425.345.76.76.76h8.486a.75.75 0 00.75-.76.752.752 0 00-.76-.76H3.757a.758.758 0 00-.76.76z"></path></g><defs><clipPath id="clip0_10037_38"><rect width="16" height="16"></rect></clipPath></defs></svg>
+                                <p className='text-[12px] leading-[1] text-left'>Filter Token</p>
                             </div>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className='w-[200px] space-y-1 p-2'>
@@ -90,7 +90,7 @@ export default function UtilityBar({ setSwitch, switchTabs }) {
                     </DropdownMenu>
                     <div className="flex items-center gap-2">
                         <Checkbox id='honeypot' />
-                        <label htmlFor='honeypot' className='text-[12px] cursor-pointer'>Filter Honeypot</label>
+                        <label htmlFor='honeypot' className='text-[12px] cursor-pointer leading-[1] text-left'>Filter Honeypot</label>
                     </div>
                 </div>
                 <div className="flex items-center gap-1">
@@ -98,7 +98,7 @@ export default function UtilityBar({ setSwitch, switchTabs }) {
                         <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" fill="currentColor" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#595000"></circle><path d="M8.327 12.602l3.39-5.086a.435.435 0 00-.36-.676H8.69V3.638a.435.435 0 00-.797-.241l-3.39 5.086a.435.435 0 00.362.676H7.53v3.202a.435.435 0 00.796.241z" fill="#FFEC42"></path></svg>
                         <div className="text-[12px] md:block hidden">Linked Buy</div>
                     </div>
-                    <div className="border w-[80px] flex items-center rounded-sm">
+                    <div className="border md:w-[80px] w-[60px] flex items-center rounded-sm">
                         <div className="">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14px" height="14px" fill="currentColor" viewBox="0 0 14 15"><path d="M7.297 0l-.094.32v9.256l.094.094 4.297-2.54L7.297 0z" fill="#fff"></path><path d="M7.297 0L3 7.13l4.297 2.54V0z" fill="#E1E1E1"></path><path d="M7.297 10.483l-.053.065v3.297l.053.155 4.3-6.055-4.3 2.538z" fill="#fff"></path><path d="M7.297 14v-3.517L3 7.945 7.297 14z" fill="#8C8C8C"></path><path d="M7.297 9.67l4.297-2.54-4.297-1.953V9.67z" fill="#D3D3D3"></path><path d="M3 7.13l4.297 2.54V5.177L3 7.13z" fill="#969696"></path></svg>
                         </div>

@@ -2,7 +2,7 @@ import React from 'react'
 
 export default function Footer() {
     return (
-        <div className='bg-[#e4e4e4] w-full h-10 fixed z-10 bottom-0 flex items-center justify-between px-[1.3rem] text-[#6e727D]'>
+        <div className='bg-[#e4e4e4] w-full h-10 fixed z-10 bottom-0 md:flex hidden items-center justify-between px-[1.3rem] text-[#6e727D]'>
             <div className="">
                 <div className="flex items-center text-[13px] font-[600]">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M17.89 13.667a8.002 8.002 0 01-15.78 0c-.072.434-.11-.12-.11.335a8 8 0 0016 0c0-.454-.038.099-.11-.335z"></path><path d="M2 12.334h.889v1.668H2v-1.668z"></path><path d="M17.111 12.334H18v1.668h-.889v-1.668z"></path><path fillRule="evenodd" clipRule="evenodd" d="M10 20.334a8 8 0 100-16 8 8 0 000 16zm0-.889a7.111 7.111 0 100-14.222 7.111 7.111 0 000 14.222z"></path><path d="M16.222 12.334a6.222 6.222 0 11-12.444 0 6.222 6.222 0 0112.444 0z"></path><path d="M20 2l.232.863a2.7 2.7 0 001.905 1.905L23 5l-.863.232a2.7 2.7 0 00-1.905 1.905L20 8l-.232-.863a2.7 2.7 0 00-1.905-1.905L17 5l.863-.232a2.7 2.7 0 001.905-1.905L20 2z"></path></svg>

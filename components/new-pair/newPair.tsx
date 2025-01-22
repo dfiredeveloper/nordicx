@@ -12,15 +12,17 @@ export default function NewPage() {
         if (window.innerWidth < 768) {
             setSwitch("2")
         }
-        
+
         const resize = () => {
             if (window.innerWidth < 768) {
                 setSwitch("2")
+            } else if (window.innerWidth > 768) {
+                setSwitch("1")
             }
         }
         window.addEventListener("resize", resize)
 
-        return() => {
+        return () => {
             window.removeEventListener('resize', resize)
         }
     }, [])
