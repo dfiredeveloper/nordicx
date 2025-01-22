@@ -85,14 +85,14 @@ export default function Feed1() {
                     isLoading ?
                         <div className="px-4 mt-5 space-y-2">
                             {
-                                Array(10).fill(null).map(({}, i) => (
-                                    <Skeleton className='w-full h-[80px]' key={i} />
+                                [...Array({ length: 10 })].map((_, index) => (
+                                    <Skeleton className='w-full h-[80px]' key={index} />
                                 ))
                             }
                         </div>
                         :
                         memeData.map((data, i) => (
-                            <SingleFeed memeData={data} key={i}/>
+                            <SingleFeed memeData={data} key={i} />
                         ))
                 }
             </div>
