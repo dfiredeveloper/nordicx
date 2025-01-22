@@ -121,8 +121,8 @@ export default function Header() {
 
                     <div className="mt-3 space-y-4 ">
                         {
-                            Array(10).fill(1).map(() => (
-                                <a href='/eth/token/18765' role='button' className="flex items-center justify-between p-2 hover:bg-[#E4E4E4] rounded-lg">
+                            Array(10).fill(1).map((_, i) => (
+                                <a key={i} href='/eth/token/18765' role='button' className="flex items-center justify-between p-2 hover:bg-[#E4E4E4] rounded-lg">
                                     <div className="flex gap-2">
                                         <button>
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" fill="#AEB2BD" viewBox="0 0 16 16"><g clipPath="url(#clip0_6939_489)"><path fillRule="evenodd" clipRule="evenodd" d="M6.421.99a1.754 1.754 0 013.158 0l1.587 3.127 3.352.603c1.414.254 1.976 2.051.975 3.121l-2.37 2.536.484 3.5c.204 1.477-1.267 2.587-2.554 1.93L8 14.245l-3.053 1.56c-1.287.658-2.758-.452-2.554-1.929l.484-3.5L.507 7.84c-1-1.07-.439-2.867.975-3.121l3.352-.603L6.421.99z"></path></g><defs><clipPath id="clip0_6939_489"><rect width="16" height="16"></rect></clipPath></defs></svg>
@@ -163,7 +163,7 @@ export default function Header() {
                                 selectNetwork.map(({ img, ntwk }, i) => (
                                     <SelectItem value={ntwk} key={i}>
                                         <div className="flex items-center gap-1">
-                                            <img src={img} alt={ntwk} className='w-[18px] h-[18px]' width={10} height={10} />
+                                            <Image src={img} alt={ntwk} className='w-[18px] h-[18px]' width={10} height={10} />
                                             {ntwk}
                                         </div>
                                     </SelectItem>

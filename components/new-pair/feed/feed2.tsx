@@ -6,16 +6,17 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover"
 import { fetchMemeCoinData } from '@/lib/utils'
-import { memeCoins } from '@/lib/faker-data'
+import { memeCoins, memeCoinsInterface } from '@/lib/faker-data'
 import SingleFeed from './singleFeed'
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function Feed2() {
     const [isLoading, setLoading] = useState(true)
-    const [memeData, setMemeData] = useState([])
+    const [memeData, setMemeData] = useState<memeCoinsInterface[]>([])
 
     useEffect(() => {
-        fetchMemeCoinData(memeCoins).then((data: any) => {
+        fetchMemeCoinData(memeCoins).then((data: memeCoinsInterface[]) => {
+
             setLoading(false)
             setMemeData(data)
         })
@@ -85,14 +86,14 @@ export default function Feed2() {
                     isLoading ?
                         <div className="px-4 mt-5 space-y-2">
                             {
-                                Array(10).fill(null).map((_, i) => (
-                                    <Skeleton className='w-full h-[80px]' />
+                                Array(10).fill(null).map(({ }, i) => (
+                                    <Skeleton className='w-full h-[80px]' key={i} />
                                 ))
                             }
                         </div>
                         :
-                        memeData.map((data) => (
-                            <SingleFeed memeData={data} />
+                        memeData.map((data, i) => (
+                            <SingleFeed memeData={data} key={i} />
                         ))
                 }
             </div>

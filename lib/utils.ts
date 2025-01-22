@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { memeCoinsInterface } from "./faker-data";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -13,14 +14,12 @@ export function truncAddress(str:string) {
 
 export function copyToClipboard(text:string) {
   navigator.clipboard.writeText(text).then(() => {
-    console.log();
-    ('Copied to clipboard!');
   }).catch(err => {
     console.error('Failed to copy: ', err);
   });
 }
 
-export async function fetchMemeCoinData(data: Object[]) {
+export async function fetchMemeCoinData(data: memeCoinsInterface[]):Promise<memeCoinsInterface[]> {
   const delay = Math.floor(Math.random() * 3000) + 1000; // Random delay between 1-4 seconds
   return new Promise((resolve) => {
     setTimeout(() => {
