@@ -1,17 +1,39 @@
 "use client";
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import UtilityBar from "./utilityBar"
 import Feed from "./feed"
 import Footer from "../common/footer"
+import Table from "./table/table1";
 
 export default function NewPage() {
     const [switchTabs, setSwitch] = useState('1')
+
+    useEffect(() => {
+        if (window.innerWidth < 768) {
+            setSwitch("2")
+        }
+        
+        const resize = () => {
+            if (window.innerWidth < 768) {
+                setSwitch("2")
+            }
+        }
+        window.addEventListener("resize", resize)
+
+        return() => {
+            window.removeEventListener('resize', resize)
+        }
+    }, [])
     return (
-      <div className='h-[90vh] overflow-hidden'>
-        <UtilityBar  setSwitch={setSwitch} switchTabs={switchTabs}/>
-        <Feed switchTabs={switchTabs}/>
-        <Footer />
-      </div>
+        <div className='h-[90vh] overflow-hidden'>
+            <UtilityBar setSwitch={setSwitch} switchTabs={switchTabs} />
+            {
+                switchTabs == '1' ?
+                    <Feed /> :
+                    <Table />
+
+            }
+            <Footer />
+        </div>
     )
-  }
-  
+}
