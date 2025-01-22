@@ -9,6 +9,7 @@
 }
 
 
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -36,6 +37,16 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
+
+    --accent-1: #6E727D;
+    --accent-2: #fff;
+    --search-accent: #292633;
+    --accent-4: #292C33;
+    --accent-3: #E4E4E4;
+    --aux-1: #AEB2BD;
+    
+
+
   }
   .dark {
     --background: 240 10% 3.9%;
@@ -62,6 +73,15 @@
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+
+
+    /* this is the application design */
+    --accent-1: #6E727D;
+    --accent-2: #17181b;
+    --search-accent: #17181b;
+    --accent-4: #f4f4f4;
+    --accent-3: #26282c;
+    --aux-1: #5C6068;
   }
 }
 
@@ -104,5 +124,6 @@
 body {
   /* background: var(--background); */
   font-family: var(--font-poppins), sans-serif;
+  border: 5px solid var(--border)
   /* color: var(--foreground); */
 }

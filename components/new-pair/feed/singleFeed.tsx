@@ -17,7 +17,7 @@ export default function SingleFeed({ memeData }: { memeData: memeCoinsInterface 
             <a href={`/eth/token/${memeData.id}`} className='w-full flex items-center gap-3 mt-5 border-b px-4 py-2'>
                 <div className="min-w-[40px]  min-h-[40px]  text-[rgb(219,222,230)] rounded-[54px] relative flex justify-center item-center">
                     <div className="">
-                        <a className='absolute hover:opacity-65 duration-200 bg-[#fff] text-[#111] opacity-0 inset h-full w-full flex justify-center items-center z-1 text-[10px]' target='_parent' href="https://lens.google.com/uploadbyurl?url=https://dd.dexscreener.com/ds-data/tokens/ethereum/0x20c861450ca31429f9504397fddbe2d4be3615f1.png">
+                        <a className='absolute hover:opacity-65 duration-200 bg-accent-2 text-[#111] opacity-0 inset h-full w-full flex justify-center items-center z-1 text-[10px]' target='_parent' href="https://lens.google.com/uploadbyurl?url=https://dd.dexscreener.com/ds-data/tokens/ethereum/0x20c861450ca31429f9504397fddbe2d4be3615f1.png">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" fill="currentColor" viewBox="0 0 16 16"><path fillRule="evenodd" clipRule="evenodd" d="M7.5 2.8a4.7 4.7 0 100 9.4 4.7 4.7 0 000-9.4zM1.2 7.5a6.3 6.3 0 1112.6 0 6.3 6.3 0 01-12.6 0z"></path><path fillRule="evenodd" clipRule="evenodd" d="M10.934 10.934a.8.8 0 011.132 0l3 3a.8.8 0 11-1.132 1.132l-3-3a.8.8 0 010-1.132z"></path></svg>
                         </a>
                         <Image src={memeData.image} className='w-full h-full' width={40} height={40} alt="" />
@@ -37,7 +37,7 @@ export default function SingleFeed({ memeData }: { memeData: memeCoinsInterface 
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="12px" height="12px" fill="#AEB2BD" viewBox="0 0 12 12"><g clipPath="url(#clip0_9095_133)"><path d="M5.406 0a5.355 5.355 0 015.351 5.425c-.026 2.942-2.46 5.334-5.402 5.312A5.385 5.385 0 010 5.299C.031 2.349 2.44-.011 5.406 0zm-.043 9.457a4.105 4.105 0 004.13-4.059c.03-2.269-1.848-4.151-4.133-4.143a4.112 4.112 0 00-4.087 4.107 4.091 4.091 0 004.09 4.095z"></path><path d="M10.843 11.676l-.93-.93a.562.562 0 010-.792l.041-.04a.562.562 0 01.792 0l.93.93a.562.562 0 010 .792l-.04.04a.562.562 0 01-.793 0z"></path></g><defs><clipPath id="clip0_9095_133"><rect width="12" height="12"></rect></clipPath></defs></svg>
                                             </a>
                                         </TooltipTrigger>
-                                        <TooltipContent className='bg-[#e4e4e4] text-[#111111] text-[12px] font-[400]'>
+                                        <TooltipContent className='bg-accent-3 text-[#111111] text-[12px] font-[400]'>
                                             <p>Search on twitter</p>
                                         </TooltipContent>
                                     </Tooltip>
@@ -192,7 +192,7 @@ export default function SingleFeed({ memeData }: { memeData: memeCoinsInterface 
                                     <TooltipTrigger>
                                         <div className="flex gap-1 items-center text-[#AEB2BD] font-[300]">
                                             <div className="">Liq</div>
-                                            <div className="font-[400] text-[#6E727D]">${formatNumber(memeData.metrics.liquidity)}</div>
+                                            <div className="font-[400] text-accent-1">${formatNumber(memeData.metrics.liquidity)}</div>
                                         </div>
                                     </TooltipTrigger>
                                     <TooltipContent side={'bottom'} className='bg-[#f7f5f5] text-[#111111] text-[12px] font-[400]'>
@@ -207,7 +207,7 @@ export default function SingleFeed({ memeData }: { memeData: memeCoinsInterface 
                                     <TooltipTrigger>
                                         <div className="flex items-center gap-1 text-[#AEB2BD] font-[300]">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="12px" height="12px" fill="#AEB2BD" viewBox="0 0 12 12"><path d="M4 5a2 2 0 100-4 2 2 0 000 4z"></path><path d="M4 6c-1.657 0-3 .5-3 3a2 2 0 002 2h2a2 2 0 002-2c0-2.5-1.343-3-3-3z"></path><path d="M7.195 10.831c.22.097.418.169.605.169h1.6A1.6 1.6 0 0011 9.4C11 7.5 9.925 7 8.6 7c-.54 0-.947.149-1.194.36.402.535.506 1.144.506 1.864 0 .577-.32 1.272-.717 1.607z"></path><path d="M7 4.6a1.6 1.6 0 103.2 0 1.6 1.6 0 00-3.2 0z"></path></svg>
-                                            <div className="font-[400] text-[#6E727D]">{memeData?.metrics?.holders}</div>
+                                            <div className="font-[400] text-accent-1">{memeData?.metrics?.holders}</div>
                                         </div>
                                     </TooltipTrigger>
                                     <TooltipContent side={'bottom'} className='bg-[#f7f5f5] text-[#111111] text-[12px] font-[400]'>
@@ -221,7 +221,7 @@ export default function SingleFeed({ memeData }: { memeData: memeCoinsInterface 
                                 <Tooltip>
                                     <TooltipTrigger>
                                         <div className="flex items-center gap-1 text-[#AEB2BD] font-[300]">
-                                            V <div className="font-[400] text-[#6E727D]">${formatNumber(memeData.metrics.volume)}</div>
+                                            V <div className="font-[400] text-accent-1">${formatNumber(memeData.metrics.volume)}</div>
                                         </div>
                                     </TooltipTrigger>
                                     <TooltipContent side={'bottom'} className='bg-[#f7f5f5] text-[#111111] text-[12px] font-[400]'>
@@ -235,7 +235,7 @@ export default function SingleFeed({ memeData }: { memeData: memeCoinsInterface 
                                 <Tooltip>
                                     <TooltipTrigger>
                                         <div className="flex items-center gap-1 text-[#AEB2BD] font-[300]">
-                                            MC <div className="font-[400] text-[#6E727D]">${formatNumber(memeData.metrics.volume)}</div>
+                                            MC <div className="font-[400] text-accent-1">${formatNumber(memeData.metrics.volume)}</div>
                                         </div>
                                     </TooltipTrigger>
                                     <TooltipContent side={'bottom'} className='bg-[#f7f5f5] text-[#111111] text-[12px] font-[3=400]'>

@@ -22,7 +22,7 @@ export default function Feed1() {
     }, [])
 
     return (
-        <div className='w-full max-h-[787px] bg-white rounded-lg pt-2'>
+        <div className='w-full max-h-[787px] bg-accent-2  pb-5 rounded-lg pt-2'>
             <div className="flex items-center p-4 w-full justify-between">
                 <div className="text-[14px] font-[600]">🌱 New Pool</div>
 

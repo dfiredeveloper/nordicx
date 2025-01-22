@@ -22,7 +22,7 @@ export default function Feed2() {
         })
     }, [])
     return (
-        <div className='w-full max-h-[787px] bg-white pt-2 rounded-lg'>
+        <div className='w-full max-h-[787px] bg-accent-2  pb-5 pt-2 rounded-lg'>
             <div className="flex items-center w-full  p-4 justify-between">
                 <div className="text-[14px] font-[600]">🔥 Locked</div>
 
