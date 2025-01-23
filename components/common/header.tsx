@@ -97,12 +97,9 @@ export default function Header() {
         <div className="">
             <div className='md:px-[1.3rem] px-[.5rem] h-[56px] flex items-center gap-5 justify-between w-full'>
                 <div className="flex items-center gap-5">
-                    <div className="hidden md:block">
+                    <div className="">
                         <Image src="/logo_light.png" width={120} height={120} alt='logo light' className='dark:hidden md:min-w-[120px] min-w-[100px]' />
                         <Image src="/logo_black.png" width={120} height={120} alt='logo dark' className='dark:block hidden md:min-w-[120px] min-w-[100px]' />
-                    </div>
-                    <div className="md:hidden bloxk">
-                        <Image src="/logo_small2.svg" width={30} height={30} alt='logo small' className='min-w-[30px] min-h-[30px]' />
                     </div>
                     <ul className='md:flex gap-3 hidden'>
                         {
