@@ -54,14 +54,17 @@ export function themeMode() {
     // switch the theme 0 - dark,  theme 1 - light
     switch() {
       const gtTheme = this.getFromStore();
+      console.log(gtTheme)
       if (gtTheme == "0") {
         // from dark to light
         this.effect("light");
-        return this.setToStore("theme", 1);
+         this.setToStore("theme", "1");
+         return true
       }
       // dark
       this.effect("dark");
-      this.setToStore("theme", 0);
+      this.setToStore("theme", "0");
+      return false
     },
 
     default() {
@@ -70,12 +73,18 @@ export function themeMode() {
         "(prefers-color-scheme: dark)"
       );
 
+      const gtTheme = this.getFromStore("theme");
+
+      if(gtTheme) {
+        return this.switch()
+      }
+
       if (prefersDefaultScheme.matches) {
         this.effect("dark");
-        return this.setToStore("theme", "dark");
+        return this.setToStore("theme", "0");
       }
       this.effect("light");
-      this.setToStore("theme", "dark");
+      this.setToStore("theme", "1");
     },
   };
 }

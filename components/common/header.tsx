@@ -24,11 +24,11 @@ export default function Header() {
     const [triggerInputDrop, setTriggerForInputDrpDown] = useState(false)
     const navLinks = [
         {
-            link: "/new-pair/183934934-948494-29223?chain=eth",
+            link: "/new-pair",
             linkText: "New pair"
         },
         {
-            link: "/trend/183934934-948494-29223?chain=eth",
+            link: "/trend",
             linkText: "Trending"
         },
         {
@@ -98,8 +98,8 @@ export default function Header() {
             <div className='md:px-[1.3rem] px-[.5rem] h-[56px] flex items-center gap-5 justify-between w-full'>
                 <div className="flex items-center gap-5">
                     <div className="">
-                        <Image src="/logo_light.png" width={120} height={120} alt='logo light' className='dark:hidden md:min-w-[120px] min-w-[100px]' />
-                        <Image src="/logo_black.png" width={120} height={120} alt='logo dark' className='dark:block hidden md:min-w-[120px] min-w-[100px]' />
+                        <Image src="/logo_light.svg" width={120} height={120} alt='logo light' className='dark:hidden md:min-w-[170px] min-w-[100px]' />
+                        <Image src="/logo_black.png" width={120} height={120} alt='logo dark' className='dark:block hidden md:min-w-[170px] min-w-[100px]' />
                     </div>
                     <ul className='md:flex gap-3 hidden'>
                         {
@@ -289,8 +289,8 @@ export default function Header() {
                                             <Switch
                                                 defaultChecked={switchMode}
                                                 onCheckedChange={() => { 
-                                                    themeMode().switch()
-                                                    setSwitchMode(themeMode().getFromStore() == "dark")
+                                                    const s = themeMode().switch()
+                                                    setSwitchMode(s)
                                                 }}
                                             />
                                         </div>
