@@ -1,4 +1,4 @@
-import NewPage from '@/components/new-pair/newPair';
+import NewPage from '@/components/chain/newPair';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {

@@ -54,17 +54,16 @@ export function themeMode() {
     // switch the theme 0 - dark,  theme 1 - light
     switch() {
       const gtTheme = this.getFromStore();
-      console.log(gtTheme)
       if (gtTheme == "0") {
         // from dark to light
         this.effect("light");
-         this.setToStore("theme", "1");
-         return true
+        this.setToStore("theme", "1");
+        return true;
       }
       // dark
       this.effect("dark");
       this.setToStore("theme", "0");
-      return false
+      return false;
     },
 
     default() {
@@ -75,8 +74,16 @@ export function themeMode() {
 
       const gtTheme = this.getFromStore("theme");
 
-      if(gtTheme) {
-        return this.switch()
+      if (gtTheme) {
+        if (gtTheme == "0") {
+          // from dark to light
+          this.effect("dark");
+          this.setToStore("theme", "0");
+          return true;
+        }
+        // dark
+        this.effect("light");
+        this.setToStore("theme", "1");
       }
 
       if (prefersDefaultScheme.matches) {
@@ -87,4 +94,16 @@ export function themeMode() {
       this.setToStore("theme", "1");
     },
   };
+}
+
+export function updateUrlParams(params: Record<string, string>) {
+  const url = new URL(window.location.href);
+
+  Object.entries(params).forEach(([key, value]) => {
+    // Always replace the entire value
+    url.searchParams.set(key, value);
+    window.localStorage.setItem("network", value);
+  });
+
+  window.history.pushState({}, "", url);
 }

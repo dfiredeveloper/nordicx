@@ -1,5 +1,5 @@
 import { copyToClipboard, formatNumber, truncAddress } from '@/lib/utils'
-import React from 'react'
+import React, { useCallback } from 'react'
 import {
     Tooltip,
     TooltipContent,
@@ -8,10 +8,12 @@ import {
 } from "@/components/ui/tooltip"
 import { memeCoinsInterface } from '@/lib/faker-data'
 import Image from 'next/image'
+import { useSearchParams } from 'next/navigation'
 
 
 export default function SingleFeed({ memeData }: { memeData: memeCoinsInterface }) {
-
+    const chain = useSearchParams()
+    const getChain = useCallback(() => chain.get("chain"), [chain]);
     return (
         <>
             <a href={`/eth/token/${memeData.id}`} className='w-full flex items-center gap-3 mt-5 border-b px-4 py-2'>
@@ -55,8 +57,13 @@ export default function SingleFeed({ memeData }: { memeData: memeCoinsInterface 
                         </div>
 
                         {/* buy button */}
-                        <button className="flex items-center gap-1 hover:bg-[rgb(238,239,242)] hover:text-[rgb(41,44,51)]">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="12px" height="12px" fill="currentColor" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#595000"></circle><path d="M8.327 12.602l3.39-5.086a.435.435 0 00-.36-.676H8.69V3.638a.435.435 0 00-.797-.241l-3.39 5.086a.435.435 0 00.362.676H7.53v3.202a.435.435 0 00.796.241z" fill="#FFEC42"></path></svg>
+                        <button className="sticky right-0 flex items-center gap-1 hover:bg-[rgb(238,239,242)] hover:text-[rgb(41,44,51)] dark:hover:bg-[rgb(82,86,93)] dark:hover:text-[rgb(245,245,245)] p-1 rounded-lg">
+                            {
+                                getChain() == "sol" ?
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" fill="#88D693" viewBox="0 0 16 16"><g clipPath="url(#clip0_9339_171)"><path d="M3.229 9.046L9.756 0 8.452 6.637h3.757a.2.2 0 01.162.317L5.844 16 7.03 9.363H3.39a.2.2 0 01-.161-.317z"></path><path fillRule="evenodd" clipRule="evenodd" d="M1.5 8a6.5 6.5 0 017.933-6.341L9.63.678A7.5 7.5 0 004.9 14.832l.187-1.02A6.5 6.5 0 011.5 8zm4.663 6.237l-.174.99a7.5 7.5 0 004.781-14.2l-.231.987a6.502 6.502 0 01-4.376 12.223z"></path><path fillRule="evenodd" clipRule="evenodd" d="M6.711 1.63c.508-.133 1.013.827.681 1.602-.335.78.978-.978 1.497-1.866L7.023.813l-.312.818zm1.575 10.985c-.345.54-.673 1.897.343 1.85 1.052-.049-.925.19-2.074.124 0 0 2.075-2.513 1.73-1.974z"></path></g><defs><clipPath id="clip0_9339_171"><rect width="16" height="16"></rect></clipPath></defs></svg>
+                                    :
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="md:w-[12px] w-[20px]" fill="currentColor" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#595000"></circle><path d="M8.327 12.602l3.39-5.086a.435.435 0 00-.36-.676H8.69V3.638a.435.435 0 00-.797-.241l-3.39 5.086a.435.435 0 00.362.676H7.53v3.202a.435.435 0 00.796.241z" fill="#FFEC42"></path></svg>
+                            }
                             <div className="text-[12px]">Buy</div>
                         </button>
                     </div>
@@ -67,7 +74,7 @@ export default function SingleFeed({ memeData }: { memeData: memeCoinsInterface 
                         <TooltipProvider delayDuration={500}>
                             <Tooltip>
                                 <TooltipTrigger>
-                                    <div className={`text-[#00AB4A]`}>1h</div>
+                                    <div className={`text-accent-green`}>1h</div>
                                 </TooltipTrigger>
                                 <TooltipContent side={'bottom'} className='bg-[#f7f5f5] text-[#111111] text-[12px] font-[400]'>
                                     <p>{memeData?.timestamp}</p>
@@ -88,17 +95,17 @@ export default function SingleFeed({ memeData }: { memeData: memeCoinsInterface 
                                     <div className="flex gap-1 items-center">
                                         {/* question mark */}
                                         {memeData?.hotpot?.status && <p className='text-[#AEB2DB]'>{memeData.hotpot.status}</p>}
-                                        {memeData?.hotpot?.verified && <p className={`${memeData.hotpot.verified ? 'text-[#00AB4A]' : 'text-[#FF494A]'}`}>
+                                        {memeData?.hotpot?.verified && <p className={`${memeData.hotpot.verified ? 'text-accent-green' : 'text-accent-red'}`}>
                                             <svg xmlns="http://www.w3.org/2000/svg" width="12px" height="12px" fill="currentColor" viewBox="0 0 16 16"><path d="M14.78 3.47a.75.75 0 010 1.06l-8 8a.75.75 0 01-1.06 0l-4.5-4.5a.75.75 0 011.06-1.06l3.97 3.97 7.47-7.47a.75.75 0 011.06 0z"></path></svg>
                                         </p>}
-                                        {memeData?.hotpot?.renounced && <p className={`${memeData.hotpot.renounced ? 'text-[#00AB4A]' : 'text-[#FF494A]'}`}>
+                                        {memeData?.hotpot?.renounced && <p className={`${memeData.hotpot.renounced ? 'text-accent-green' : 'text-accent-red'}`}>
                                             <svg xmlns="http://www.w3.org/2000/svg" width="12px" height="12px" fill="currentColor" viewBox="0 0 16 16"><path fillRule="evenodd" clipRule="evenodd" d="M12.47 2.47a.75.75 0 111.06 1.06L9.06 8l4.47 4.47a.75.75 0 11-1.06 1.06L8 9.06l-4.47 4.47a.75.75 0 01-1.06-1.06L6.94 8 2.47 3.53a.75.75 0 011.06-1.06L8 6.94l4.47-4.47z"></path></svg>
                                         </p>}
-                                        {memeData?.hotpot?.locked && <p className={`${memeData.hotpot.locked ? 'text-[#00AB4A]' : 'text-[#FF494A]'}`}>
+                                        {memeData?.hotpot?.locked && <p className={`${memeData.hotpot.locked ? 'text-accent-green' : 'text-accent-red'}`}>
                                             <svg xmlns="http://www.w3.org/2000/svg" width="12px" height="12px" fill="currentColor" viewBox="0 0 16 16"><path fillRule="evenodd" clipRule="evenodd" d="M12.47 2.47a.75.75 0 111.06 1.06L9.06 8l4.47 4.47a.75.75 0 11-1.06 1.06L8 9.06l-4.47 4.47a.75.75 0 01-1.06-1.06L6.94 8 2.47 3.53a.75.75 0 011.06-1.06L8 6.94l4.47-4.47z"></path></svg>
                                         </p>}
                                         {
-                                            memeData?.hotpot?.top10Percentage && <p className={`${memeData.hotpot.top10Percentage <= 30 ? 'text-[#00AB4A]' : 'text-[#FF494A]'} flex items-center gap-1`}>
+                                            memeData?.hotpot?.top10Percentage && <p className={`${memeData.hotpot.top10Percentage <= 30 ? 'text-accent-green' : 'text-accent-red'} flex items-center gap-1`}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="12px" height="12px" fill="currentColor" viewBox="0 0 20 20"><path d="M3 14.579a4.117 4.117 0 014.117-4.118c.095 0 .184.048.237.127l2.288 3.432a.57.57 0 00.947 0l2.288-3.432a.284.284 0 01.236-.127 4.117 4.117 0 014.118 4.118v4.048a.373.373 0 01-.374.373H3.373A.373.373 0 013 18.627v-4.048z"></path><circle cx="10.116" cy="4.769" r="4.269"></circle></svg>
                                                 <span className='text-[13px]'>{memeData.hotpot.top10Percentage}%</span>
                                             </p>
@@ -107,10 +114,10 @@ export default function SingleFeed({ memeData }: { memeData: memeCoinsInterface 
                                 </TooltipTrigger>
                                 <TooltipContent side={'bottom'} className='bg-[#f7f5f5] text-[#111111] text-[12px] font-[400]'>
                                     <div className="">Honey Pot <span className='text-[#AEB2DB]'>{memeData.hotpot.status}</span></div>
-                                    <div className="">Verified  <span className={`${memeData?.hotpot?.verified ? 'text-[#00AB4A]' : 'text-[#FF494A]'}`}>{memeData?.hotpot?.verified ? "No" : "yes"}</span></div>
-                                    <div className="">Renounced  <span className={`${memeData?.hotpot?.renounced ? 'text-[#00AB4A]' : 'text-[#FF494A]'}`}>{memeData?.hotpot?.renounced ? "No" : "yes"}</span></div>
-                                    <div className="">Locked  <span className={`${memeData?.hotpot?.locked ? 'text-[#00AB4A]' : 'text-[#FF494A]'}`}>{memeData?.hotpot?.verified ? "No" : "yes"}</span></div>
-                                    <div className="">Top 10 <span className={`${memeData?.hotpot?.top10Percentage ? 'text-[#00AB4A]' : 'text-[#FF494A]'}`}>{memeData?.hotpot?.top10Percentage ? "No" : "yes"}</span></div>
+                                    <div className="">Verified  <span className={`${memeData?.hotpot?.verified ? 'text-accent-green' : 'text-accent-red'}`}>{memeData?.hotpot?.verified ? "No" : "yes"}</span></div>
+                                    <div className="">Renounced  <span className={`${memeData?.hotpot?.renounced ? 'text-accent-green' : 'text-accent-red'}`}>{memeData?.hotpot?.renounced ? "No" : "yes"}</span></div>
+                                    <div className="">Locked  <span className={`${memeData?.hotpot?.locked ? 'text-accent-green' : 'text-accent-red'}`}>{memeData?.hotpot?.verified ? "No" : "yes"}</span></div>
+                                    <div className="">Top 10 <span className={`${memeData?.hotpot?.top10Percentage ? 'text-accent-green' : 'text-accent-red'}`}>{memeData?.hotpot?.top10Percentage ? "No" : "yes"}</span></div>
                                 </TooltipContent>
                             </Tooltip>
                         </TooltipProvider>
@@ -119,7 +126,7 @@ export default function SingleFeed({ memeData }: { memeData: memeCoinsInterface 
                         {memeData?.holdings?.dev && <TooltipProvider delayDuration={500}>
                             <Tooltip>
                                 <TooltipTrigger>
-                                    <div className={`${memeData?.holdings?.dev < 5 ? 'text-[#00AB4A]' : 'text-[#FF494A]'} flex items-center gap-1`}>
+                                    <div className={`${memeData?.holdings?.dev < 5 ? 'text-accent-green' : 'text-accent-red'} flex items-center gap-1`}>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="12px" height="12px" fill="currentColor" viewBox="0 0 20 20"><path d="M15 6A5 5 0 115 6a5 5 0 0110 0z"></path><path d="M10 8.5a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z"></path><path d="M19 8.5a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z"></path><path d="M5 8a1 1 0 00-1 1v9a1 1 0 001 1h10a1 1 0 001-1V9a1 1 0 00-1-1H5zm1.7 8h6.6a.7.7 0 110 1.4H6.7a.7.7 0 110-1.4z"></path></svg>
                                         <span>{memeData?.holdings?.dev < 5 ? `${memeData?.holdings?.dev}%` : "Run"}</span>
                                     </div>
@@ -134,7 +141,7 @@ export default function SingleFeed({ memeData }: { memeData: memeCoinsInterface 
                         {memeData?.holdings?.insider && <TooltipProvider delayDuration={500}>
                             <Tooltip>
                                 <TooltipTrigger>
-                                    <div className={`${memeData?.holdings.insider < 5 ? 'text-[#00AB4A]' : 'text-[#FF494A]'} flex items-center gap-1`}>
+                                    <div className={`${memeData?.holdings.insider < 5 ? 'text-accent-green' : 'text-accent-red'} flex items-center gap-1`}>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="12px" height="12px" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" clipRule="evenodd" d="M15.5 8a3.5 3.5 0 10-3.463-2.988 2.953 2.953 0 00-.1-.012C7.844 5 6.274 7.972 6 9.457c.379.46 1.49 1.495 2.905 1.947-1.099 1.254-1.56 4.194-1.71 6.275-1.042-.093-2.369-.287-3.614-.653-.677-.2-1.047-.599-1.247-1.116-.211-.546-.242-1.248-.15-2.021.117-1.003.432-1.897.696-2.648.056-.158.11-.31.158-.456.08-.236.149-.44.198-.604.233-.779-.11-1.498-.532-1.914-.408-.404-1.243-.744-1.638-.744v.986c.268.086.65.274.914.537.253.25.356.51.262.823-.038.126-.096.298-.166.506-.073.215-.176.476-.291.768-.326.828-.752 1.905-.867 2.893-.1.843-.148 1.732.148 2.497.307.793 1.1 1.44 2.17 1.884 1.711.595 3.153.595 4.09.595h.011L7.349 19h9.64c.045-.268.026-6.977-1.804-11.014.104.01.209.014.315.014zM11 8a1 1 0 11-2 0 1 1 0 012 0z"></path><path d="M11 4c0 .039 0 .078-.002.116-2.138.334-3.601 1.338-4.553 2.45A3 3 0 1111 4z"></path></svg>
                                         <span>{memeData?.holdings?.insider}%</span>
                                     </div>
@@ -190,7 +197,7 @@ export default function SingleFeed({ memeData }: { memeData: memeCoinsInterface 
                             {memeData?.metrics?.liquidity && <TooltipProvider delayDuration={500}>
                                 <Tooltip>
                                     <TooltipTrigger>
-                                        <div className="flex gap-1 items-center text-[#AEB2BD] font-[300]">
+                                        <div className="flex gap-1 items-center text-accent-aux-1 font-[300]">
                                             <div className="">Liq</div>
                                             <div className="font-[400] text-accent-1">${formatNumber(memeData.metrics.liquidity)}</div>
                                         </div>
@@ -205,7 +212,7 @@ export default function SingleFeed({ memeData }: { memeData: memeCoinsInterface 
                             {memeData?.metrics?.holders && <TooltipProvider delayDuration={500}>
                                 <Tooltip>
                                     <TooltipTrigger>
-                                        <div className="flex items-center gap-1 text-[#AEB2BD] font-[300]">
+                                        <div className="flex items-center gap-1 text-accent-aux-1 font-[300]">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="12px" height="12px" fill="#AEB2BD" viewBox="0 0 12 12"><path d="M4 5a2 2 0 100-4 2 2 0 000 4z"></path><path d="M4 6c-1.657 0-3 .5-3 3a2 2 0 002 2h2a2 2 0 002-2c0-2.5-1.343-3-3-3z"></path><path d="M7.195 10.831c.22.097.418.169.605.169h1.6A1.6 1.6 0 0011 9.4C11 7.5 9.925 7 8.6 7c-.54 0-.947.149-1.194.36.402.535.506 1.144.506 1.864 0 .577-.32 1.272-.717 1.607z"></path><path d="M7 4.6a1.6 1.6 0 103.2 0 1.6 1.6 0 00-3.2 0z"></path></svg>
                                             <div className="font-[400] text-accent-1">{memeData?.metrics?.holders}</div>
                                         </div>
@@ -220,7 +227,7 @@ export default function SingleFeed({ memeData }: { memeData: memeCoinsInterface 
                             {memeData?.metrics?.volume && <TooltipProvider delayDuration={500}>
                                 <Tooltip>
                                     <TooltipTrigger>
-                                        <div className="flex items-center gap-1 text-[#AEB2BD] font-[300]">
+                                        <div className="flex items-center gap-1 text-accent-aux-1 font-[300]">
                                             V <div className="font-[400] text-accent-1">${formatNumber(memeData.metrics.volume)}</div>
                                         </div>
                                     </TooltipTrigger>
@@ -234,7 +241,7 @@ export default function SingleFeed({ memeData }: { memeData: memeCoinsInterface 
                             {memeData?.metrics?.volume && <TooltipProvider delayDuration={500}>
                                 <Tooltip>
                                     <TooltipTrigger>
-                                        <div className="flex items-center gap-1 text-[#AEB2BD] font-[300]">
+                                        <div className="flex items-center gap-1 text-accent-aux-1 font-[300]">
                                             MC <div className="font-[400] text-accent-1">${formatNumber(memeData.metrics.volume)}</div>
                                         </div>
                                     </TooltipTrigger>
