@@ -33,14 +33,6 @@ export default function UtilityBar({ setSwitch, switchTabs }) {
     const pathname = usePathname()
     const chain = useSearchParams()
     const [activeTimeFrame, setTimeFrame] = useState("1m")
-    const interval = [
-        { interval: "1m" },
-        { interval: "5m" },
-        { interval: "1h" },
-        { interval: "6h" },
-        { interval: "24h" },
-    ]
-
     const getChain = useCallback(() => chain.get("chain"), [chain]);
 
     const tabNamesBasedOnRoute = useCallback((tab) => {
@@ -61,21 +53,23 @@ export default function UtilityBar({ setSwitch, switchTabs }) {
 
     return (
         <div className='md:px-[1.3rem] px-[.5rem] py-[1rem] flex gap-2 flex-col md:flex-row justify-between items-center'>
-            <div className="border md:hidden flex items-center divide-x rounded-xl overflow-hidden w-full ">
-                {
-                    interval.map(({ interval }, i) => (
-                        <button key={i} onClick={() => setTimeFrame(interval)} className={`h-[28px] w-[28px] min-w-[48px] flex flex-1 items-center justify-center text-[13px] ${activeTimeFrame == interval ? "text-[#111111] bg-accent-3" : "text-[#AEB2BD]"}`}>{interval}</button>
-                    ))
-                }
+            <div className="md:hidden flex  gap-2 items-center divide-x rounded-xl overflow-hidden w-full ">
+                <div className="grid md:hidden items-center divide-x rounded-xl overflow-hidden grid-cols-5 w-full">
+                    <button onClick={() => setTimeFrame("1m")} className={`flex items-center border-t border-b border-l justify-center text-[13px] ${activeTimeFrame == "1m" ? "dark:text-white bg-accent-1" : "text-accent-aux-1"}`}>{"1m"}</button>
+                    <button onClick={() => setTimeFrame("5m")} className={`flex items-center border-t border-b justify-center text-[13px] ${activeTimeFrame == "5m" ? "dark:text-white bg-accent-1" : "text-accent-aux-1"}`}>{"5m"}</button>
+                    <button onClick={() => setTimeFrame("1h")} className={`flex items-center border-t border-b justify-center text-[13px] ${activeTimeFrame == "1h" ? "dark:text-white bg-accent-1" : "text-accent-aux-1"}`}>{"1h"}</button>
+                    <button onClick={() => setTimeFrame("6h")} className={`flex items-center border-t border-b justify-center text-[13px] ${activeTimeFrame == "6h" ? "dark:text-white bg-accent-1" : "text-accent-aux-1"}`}>{"6h"}</button>
+                    <button onClick={() => setTimeFrame("24h")} className={`flex items-center border-t border-b border-r justify-center text-[13px] ${activeTimeFrame == "24h" ? "dark:text-white bg-accent-1" : "text-accent-aux-1"}`}>{"24h"}</button>
+                </div>
             </div>
-            <div className="md:flex items-center gap-5 hidden">
+            <div className="w-full flex items-center gap-5">
                 {/* tabs */}
-                <div className="flex items-center gap-2 ">
-                    <button className={`font-[700] text-[15px] ${switchTabs == '1' ? "dark:text-[#f5f5f5] text-[#111111]" : 'dark:text-[#f5f5f5]/40 text-[#111111]/40'}`} onClick={() => {
+                <div className="md:flex hidden items-center gap-2 ">
+                    <button className={`font-[700] text-[15px] whitespace-nowrap ${switchTabs == '1' ? "dark:text-[#f5f5f5] text-[#111111]" : 'dark:text-[#f5f5f5]/40 text-[#111111]/40'}`} onClick={() => {
                         updateUrlParams({ tab: "1" })
                         setSwitch('1')
                     }}>{tabNamesBasedOnRoute("1")}</button>
-                    <button className={`font-[700] text-[15px] flex items-center gap-1 ${switchTabs == '2' ? "dark:text-[#f5f5f5] text-[#111111]" : 'dark:text-[#f5f5f5]/40 text-[#111111]/40'}`} onClick={() => {
+                    <button className={`font-[700] text-[15px] whitespace-nowrap flex items-center gap-1 ${switchTabs == '2' ? "dark:text-[#f5f5f5] text-[#111111]" : 'dark:text-[#f5f5f5]/40 text-[#111111]/40'}`} onClick={() => {
                         updateUrlParams({ tab: "2" })
                         setSwitch('2')
                     }}>
@@ -87,17 +81,18 @@ export default function UtilityBar({ setSwitch, switchTabs }) {
                         {tabNamesBasedOnRoute("2")}
                     </button>
                 </div>
-                <div className="flex flex-col md:flex-row gap-2">
-                {/* request interval */}
-                    <div className="border flex items-center divide-x rounded-xl overflow-hidden">
-                        {
-                            interval.map(({ interval }, i) => (
-                                <button key={i} onClick={() => setTimeFrame(interval)} className={`h-[28px] w-[28px] min-w-[48px] flex items-center justify-center text-[13px] ${activeTimeFrame == interval ? "text-[#111111] dark:text-white bg-accent-3" : "text-accent-aux-1"}`}>{interval}</button>
-                            ))
-                        }
+
+                <div className="w-full flex md:flex-nowrap flex-wrap gap-3">
+                    {/* request interval */}
+                    <div className="md:grid hidden items-center divide-x rounded-xl overflow-hidden grid-cols-5">
+                        <button onClick={() => setTimeFrame("1m")} className={`h-[28px] w-[28px] min-w-[48px] flex items-center border-t border-b border-l justify-center text-[13px] ${activeTimeFrame == "1m" ? "dark:text-white bg-accent-1" : "text-accent-aux-1"}`}>{"1m"}</button>
+                        <button onClick={() => setTimeFrame("5m")} className={`h-[28px] w-[28px] min-w-[48px] flex items-center border-t border-b justify-center text-[13px] ${activeTimeFrame == "5m" ? "dark:text-white bg-accent-1" : "text-accent-aux-1"}`}>{"5m"}</button>
+                        <button onClick={() => setTimeFrame("1h")} className={`h-[28px] w-[28px] min-w-[48px] flex items-center border-t border-b justify-center text-[13px] ${activeTimeFrame == "1h" ? "dark:text-white bg-accent-1" : "text-accent-aux-1"}`}>{"1h"}</button>
+                        <button onClick={() => setTimeFrame("6h")} className={`h-[28px] w-[28px] min-w-[48px] flex items-center border-t border-b justify-center text-[13px] ${activeTimeFrame == "6h" ? "dark:text-white bg-accent-1" : "text-accent-aux-1"}`}>{"6h"}</button>
+                        <button onClick={() => setTimeFrame("24h")} className={`h-[28px] w-[28px] min-w-[48px] flex items-center border-t border-b border-r justify-center text-[13px] ${activeTimeFrame == "24h" ? "dark:text-white bg-accent-1" : "text-accent-aux-1"}`}>{"24h"}</button>
                     </div>
 
-                    {getChain() == "sol" && <div className="flex  items-center gap-2">
+                    {getChain() == "sol" && <div className="grid lg:grid-cols-3 md:grid-cols-1 grid-cols-3 md:items-center gap-2 my-1">
                         <div className="flex items-center gap-1">
                             <Checkbox id='raydium' defaultChecked={true} />
                             <label htmlFor='raydium' className='text-[12px] cursor-pointer leading-[1] text-left'>Raydium</label>
@@ -116,8 +111,8 @@ export default function UtilityBar({ setSwitch, switchTabs }) {
             </div>
 
             {/* utility */}
-            <div className="md:flex overflow-x-scroll min-w-[200px] whitespace-nowrap gap-3 md:justify-normal justify-between items-center md:w-auto w-full md:space-y-0 space-y-2">
-                <div className="flex items-center gap-">
+            <div className="flex whitespace-nowrap gap-3 md:justify-normal justify-between items-center md:w-auto w-full md:space-y-0 space-y-2">
+                <div className="flex flex-wrap lg:flex-nowrap items-center gap-2">
                     <DropdownMenu>
                         <DropdownMenuTrigger>
                             <div className="flex items-center gap-1 text-accent-4">
@@ -132,16 +127,16 @@ export default function UtilityBar({ setSwitch, switchTabs }) {
                                     <input type="text" name='filter-1' className='outline-none border capitalize font-normal dark:bg-transparent text-[14px] px-1 py-1 rounded-md w-full focus:border-[#111111] hover:border-[#111111]' placeholder='filter 1' />
                                 </div>
                                 <div className="">
-                                    <input type="text" name='filter-2' className='outline-none border capitalize font-normal dark:bg-transparent text-[14px] px-1 py-1 rounded-md w-full focus:border-[#111111] hover:border-[#111111]' placeholder='filter 1' />
+                                    <input type="text" name='filter-2' className='outline-none border capitalize font-normal dark:bg-transparent text-[14px] px-1 py-1 rounded-md w-full focus:border-[#111111] hover:border-[#111111]' placeholder='filter 2' />
                                 </div>
                                 <div className="">
-                                    <input type="text" name='filter-3' className='outline-none border capitalize font-normal dark:bg-transparent text-[14px] px-1 py-1 rounded-md w-full focus:border-[#111111] hover:border-[#111111]' placeholder='filter 1' />
+                                    <input type="text" name='filter-3' className='outline-none border capitalize font-normal dark:bg-transparent text-[14px] px-1 py-1 rounded-md w-full focus:border-[#111111] hover:border-[#111111]' placeholder='filter 3' />
                                 </div>
                                 <div className="">
-                                    <input type="text" name='filter-4' className='outline-none border capitalize font-normal dark:bg-transparent text-[14px] px-1 py-1 rounded-md w-full focus:border-[#111111] hover:border-[#111111]' placeholder='filter 1' />
+                                    <input type="text" name='filter-4' className='outline-none border capitalize font-normal dark:bg-transparent text-[14px] px-1 py-1 rounded-md w-full focus:border-[#111111] hover:border-[#111111]' placeholder='filter 4' />
                                 </div>
                                 <div className="">
-                                    <input type="text" name='filter-5' className='outline-none border capitalize font-normal dark:bg-transparent text-[14px] px-1 py-1 rounded-md w-full focus:border-[#111111] hover:border-[#111111]' placeholder='filter 1' />
+                                    <input type="text" name='filter-5' className='outline-none border capitalize font-normal dark:bg-transparent text-[14px] px-1 py-1 rounded-md w-full focus:border-[#111111] hover:border-[#111111]' placeholder='filter 5' />
                                 </div>
                             </div>
                             <DropdownMenuSeparator />
@@ -151,7 +146,7 @@ export default function UtilityBar({ setSwitch, switchTabs }) {
                             </div>
                         </DropdownMenuContent>
                     </DropdownMenu>
-                    {getChain() == "sol" ? <div className="flex items-center gap-2">
+                    {getChain() == "sol" ? <div className="flex items-center flex-wrap lg:flex-nowrap w-full gap-2">
                         <div className="flex items-center gap-1">
                             <Checkbox id='filter risks' />
                             <label htmlFor='filter risks' className='text-[12px] cursor-pointer leading-[1] text-left'>Filter Risks</label>
@@ -166,13 +161,9 @@ export default function UtilityBar({ setSwitch, switchTabs }) {
                             <label htmlFor='honeypot' className='text-[12px] cursor-pointer leading-[1] text-left'>Filter Honeypot</label>
                         </div>}
                 </div>
-
                 {/*  */}
                 {getChain() == "sol" ?
-                    <div className="flex items-center gap-1 sticky right-0 bg-black">
-
-
-
+                    <div className="flex items-center gap-1 dark:bg-[#111111] bg-[#f5f5f5] dark:text-[#f5f5f5] text-[#111111]">
                         <Sheet>
                             <SheetTrigger className='flex items-center gap-1'>
                                 <div className="flex items-center gap-2">
@@ -230,7 +221,6 @@ export default function UtilityBar({ setSwitch, switchTabs }) {
                         </Dialog>
 
                     </div>}
-
             </div>
 
         </div >

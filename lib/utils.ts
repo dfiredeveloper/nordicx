@@ -107,3 +107,9 @@ export function updateUrlParams(params: Record<string, string>) {
 
   window.history.pushState({}, "", url);
 }
+
+
+export function localStore(key) {
+  if(typeof window == "undefined") return;
+  return window.localStorage.getItem(key)
+}

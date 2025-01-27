@@ -1,5 +1,5 @@
 "use client";
-import { themeMode, truncAddress, updateUrlParams } from '@/lib/utils'
+import { localStore, themeMode, truncAddress, updateUrlParams } from '@/lib/utils'
 import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
 import {
@@ -87,9 +87,7 @@ export default function Header() {
             lang: "한국어"
         },
     ]
-    function localStore(key) {
-        return window.localStorage.getItem(key)
-    }
+
 
 
     useEffect(() => {

@@ -1,5 +1,6 @@
 import NewPage from '@/components/chain/newPair';
 import { Metadata } from 'next';
+import { Suspense } from 'react'
 
 export const metadata: Metadata = {
   title: "New pair - GMGN.AI Fast Trade, Fast Copy Trade, Fast AFK Automation.",
@@ -8,6 +9,8 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
+    <Suspense>
       <NewPage />
+    </Suspense>
   )
 }
