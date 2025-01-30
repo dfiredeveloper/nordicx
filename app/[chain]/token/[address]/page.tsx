@@ -4,7 +4,7 @@ import Trade from '@/components/trading/mainSection/trade';
 import MobileTradingHeader from '@/components/trading/mobileTrading';
 import RightBar, { BuyTab, DegenAudit, PoolInfo, SellTab } from '@/components/trading/rightBar';
 import TradingHeader from '@/components/trading/trading';
-import { notFound } from 'next/navigation';
+// import { notFound } from 'next/navigation';
 import { useState } from 'react';
 
 // List of valid chains

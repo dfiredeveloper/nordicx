@@ -2,7 +2,7 @@
 import Image from 'next/image'
 import React, { useState } from 'react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
-import { copyToClipboard, formatNumber, truncAddress } from '@/lib/utils'
+import { copyToClipboard, truncAddress } from '@/lib/utils'
 import AuthLayout from '../common/authLayout';
 
 export default function MobileTradingHeader() {
