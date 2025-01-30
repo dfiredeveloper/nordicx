@@ -76,7 +76,7 @@ export default function SingleFeed({ memeData }: { memeData: memeCoinsInterface 
                                 <TooltipTrigger>
                                     <div className={`text-accent-green`}>1h</div>
                                 </TooltipTrigger>
-                                <TooltipContent side={'bottom'} className='bg-[#f7f5f5] text-[#111111] text-[12px] font-[400]'>
+                                <TooltipContent side={'bottom'} className='bg-[#f7f5f5] dark:bg-[#000] text-[#111111] text-[12px] font-[400]'>
                                     <p>{memeData?.timestamp}</p>
                                 </TooltipContent>
                             </Tooltip>
@@ -112,7 +112,7 @@ export default function SingleFeed({ memeData }: { memeData: memeCoinsInterface 
                                         }
                                     </div>
                                 </TooltipTrigger>
-                                <TooltipContent side={'bottom'} className='bg-[#f7f5f5] text-[#111111] text-[12px] font-[400]'>
+                                <TooltipContent side={'bottom'} className='bg-[#f7f5f5] dark:bg-[#000] text-[#111111] text-[12px] font-[400]'>
                                     <div className="">Honey Pot <span className='text-[#AEB2DB]'>{memeData.hotpot.status}</span></div>
                                     <div className="">Verified  <span className={`${memeData?.hotpot?.verified ? 'text-accent-green' : 'text-accent-red'}`}>{memeData?.hotpot?.verified ? "No" : "yes"}</span></div>
                                     <div className="">Renounced  <span className={`${memeData?.hotpot?.renounced ? 'text-accent-green' : 'text-accent-red'}`}>{memeData?.hotpot?.renounced ? "No" : "yes"}</span></div>
@@ -131,7 +131,7 @@ export default function SingleFeed({ memeData }: { memeData: memeCoinsInterface 
                                         <span>{memeData?.holdings?.dev < 5 ? `${memeData?.holdings?.dev}%` : "Run"}</span>
                                     </div>
                                 </TooltipTrigger>
-                                <TooltipContent side={'bottom'} className='bg-[#f7f5f5] text-[#111111] text-[12px] font-[400]'>
+                                <TooltipContent side={'bottom'} className='bg-[#f7f5f5] dark:bg-[#000] text-[#111111] text-[12px] font-[400]'>
                                     <p>{memeData?.holdings?.dev < 5 ? `Dev holds ${memeData?.holdings?.dev}%` : "Dev Sell All"}</p>
                                 </TooltipContent>
                             </Tooltip>
@@ -146,7 +146,7 @@ export default function SingleFeed({ memeData }: { memeData: memeCoinsInterface 
                                         <span>{memeData?.holdings?.insider}%</span>
                                     </div>
                                 </TooltipTrigger>
-                                <TooltipContent side={'bottom'} className='bg-[#f7f5f5] text-[#111111] text-[12px] font-[400]'>
+                                <TooltipContent side={'bottom'} className='bg-[#f7f5f5] dark:bg-[#000] text-[#111111] text-[12px] font-[400]'>
                                     <p>Insiders&apos; holding quantity is {memeData?.holdings.insider}% of the total</p>
                                 </TooltipContent>
                             </Tooltip>
@@ -202,7 +202,7 @@ export default function SingleFeed({ memeData }: { memeData: memeCoinsInterface 
                                             <div className="font-[400] text-accent-1">${formatNumber(memeData.metrics.liquidity)}</div>
                                         </div>
                                     </TooltipTrigger>
-                                    <TooltipContent side={'bottom'} className='bg-[#f7f5f5] text-[#111111] text-[12px] font-[400]'>
+                                    <TooltipContent side={'bottom'} className='bg-[#f7f5f5] dark:bg-[#000] text-[#111111] text-[12px] font-[400]'>
                                         <p>Liq</p>
                                     </TooltipContent>
                                 </Tooltip>
@@ -217,7 +217,7 @@ export default function SingleFeed({ memeData }: { memeData: memeCoinsInterface 
                                             <div className="font-[400] text-accent-1">{memeData?.metrics?.holders}</div>
                                         </div>
                                     </TooltipTrigger>
-                                    <TooltipContent side={'bottom'} className='bg-[#f7f5f5] text-[#111111] text-[12px] font-[400]'>
+                                    <TooltipContent side={'bottom'} className='bg-[#f7f5f5] dark:bg-[#000] text-[#111111] text-[12px] font-[400]'>
                                         <p>Total Holders</p>
                                     </TooltipContent>
                                 </Tooltip>
@@ -231,7 +231,7 @@ export default function SingleFeed({ memeData }: { memeData: memeCoinsInterface 
                                             V <div className="font-[400] text-accent-1">${formatNumber(memeData.metrics.volume)}</div>
                                         </div>
                                     </TooltipTrigger>
-                                    <TooltipContent side={'bottom'} className='bg-[#f7f5f5] text-[#111111] text-[12px] font-[400]'>
+                                    <TooltipContent side={'bottom'} className='bg-[#f7f5f5] dark:bg-[#000] text-[#111111] text-[12px] font-[400]'>
                                         <p>1m Volume</p>
                                     </TooltipContent>
                                 </Tooltip>
@@ -245,7 +245,7 @@ export default function SingleFeed({ memeData }: { memeData: memeCoinsInterface 
                                             MC <div className="font-[400] text-accent-1">${formatNumber(memeData.metrics.volume)}</div>
                                         </div>
                                     </TooltipTrigger>
-                                    <TooltipContent side={'bottom'} className='bg-[#f7f5f5] text-[#111111] text-[12px] font-[3=400]'>
+                                    <TooltipContent side={'bottom'} className='bg-[#f7f5f5] dark:bg-[#000] text-[#111111] text-[12px] font-[3=400]'>
                                         <p>MKT Cap</p>
                                     </TooltipContent>
                                 </Tooltip>

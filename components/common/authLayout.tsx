@@ -1,8 +1,9 @@
 'use client';
 import React, { useState } from 'react'
 
-export default function AuthLayout() {
-    const [isModal, setModal] = useState(true)
+export default function AuthLayout({setAuthModal, showAuth = true}: {setAuthModal, showAuth?: boolean }) {
+    const [isModal, setAuthModalOpt] = useState(showAuth)
+    setAuthModal = typeof setAuthModal == "undefined" ? setAuthModalOpt : setAuthModal
     return (
         <div className={`font-system  ${isModal ? "flex" : "hidden"} fixed text-[rgb(41,44,51)] dark:text-[#f4f4f5] bg-[#f4f4f5]/95 dark:bg-[#111111]/95  w-screen z-[1500] inset-0 h-screen  items-center justify-center`}>
             <div className="min-h-[250px] w-[650px] flex flex-col justify-center items-center px-3">
@@ -37,7 +38,7 @@ export default function AuthLayout() {
                 </div>
             </div>
 
-            <button className="absolute right-[24px] top-[24px] cursor-pointer" onClick={() => setModal(false)}>
+            <button className="absolute right-[24px] top-[24px] cursor-pointer" onClick={() => setAuthModal(false)}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 40 40"><path fillRule="evenodd" clipRule="evenodd" d="M20 38.919c10.449 0 18.919-8.47 18.919-18.919S30.449 1.081 20 1.081 1.081 9.551 1.081 20 9.551 38.919 20 38.919zM20 40c11.046 0 20-8.954 20-20S31.046 0 20 0 0 8.954 0 20s8.954 20 20 20z"></path><path fillRule="evenodd" clipRule="evenodd" d="M20 38.919c10.449 0 18.919-8.47 18.919-18.919S30.449 1.081 20 1.081 1.081 9.551 1.081 20 9.551 38.919 20 38.919zM20 40c11.046 0 20-8.954 20-20S31.046 0 20 0 0 8.954 0 20s8.954 20 20 20z"></path><path d="M21.146 19.973l6.723-6.694a.811.811 0 10-1.144-1.15l-6.724 6.694-6.666-6.692a.811.811 0 10-1.149 1.147l6.665 6.69-6.72 6.689a.811.811 0 001.144 1.15l6.721-6.69 6.727 6.752a.806.806 0 001.146.002.812.812 0 00.002-1.147l-6.725-6.751z"></path><path d="M21.146 19.973l6.723-6.694a.811.811 0 10-1.144-1.15l-6.724 6.694-6.666-6.692a.811.811 0 10-1.149 1.147l6.665 6.69-6.72 6.689a.811.811 0 001.144 1.15l6.721-6.69 6.727 6.752a.806.806 0 001.146.002.812.812 0 00.002-1.147l-6.725-6.751z"></path></svg>
             </button>
         </div>

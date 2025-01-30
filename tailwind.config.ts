@@ -10,6 +10,12 @@ export default {
   theme: {
     extend: {
       colors: {
+        gGreen: "#00AB4A",
+        prettyGreen: "rgb(136,214,147)",
+        prettyRed: "#f04866",
+        gRed: "#DF484C",
+        riskWarn: "#FFD03933",
+        risk: "#FFD039",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
@@ -41,8 +47,8 @@ export default {
           "3": "var(--accent-3)",
           "4": "var(--accent-4)",
           "aux-1": "var(--aux-1)",
-          "red": "var(--accent-red)",
-          "green": "var(--accent-green)",
+          red: "var(--accent-red)",
+          green: "var(--accent-green)",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",

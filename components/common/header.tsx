@@ -107,7 +107,7 @@ export default function Header() {
                         <Image src="/logo_light.svg" width={120} height={120} alt='logo light' className='dark:hidden md:min-w-[170px] min-w-[100px]' />
                         <Image src="/logo_black.png" width={120} height={120} alt='logo dark' className='dark:block hidden md:min-w-[170px] min-w-[100px]' />
                     </div>
-                    <ul className='md:flex gap-3 hidden'>
+                    <ul className='md:flex gap-3 hidden overflow-hidden'>
                         {
                             navLinks.map((_, i) => (
                                 <li key={i} className='font-[500] text-accent-1 text-[14px] whitespace-nowrap'>
@@ -167,7 +167,7 @@ export default function Header() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                    <div className="flex gap-2 md:w-[250px] items-center">
+                    <div className="flex gap-2 md:pr-[100px] items-center">
                         <Select defaultValue={localStore("network") || selectNetwork[1].ntwk} onValueChange={(v) => updateUrlParams({ chain: v.toLowerCase() })}>
                             <SelectTrigger className="md:w-[130px] w-[80px] p-0 md:bg-accent-2 rounded-xl border-none outline-none focus:ring-0">
                                 <SelectValue placeholder="" />
