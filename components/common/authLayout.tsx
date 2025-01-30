@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 import React, { useState } from 'react'
 
 export default function AuthLayout({setAuthModal, showAuth = true}: {setAuthModal, showAuth?: boolean }) {
@@ -33,8 +34,8 @@ export default function AuthLayout({setAuthModal, showAuth = true}: {setAuthModa
                 </div>
 
                 <div className="flex text-[#AEB2BD] dark:text-[#5C6068] gap-[4px] justify-center items-center absolute bottom-[20%] text-[12px]">
-                    <a href="/privacy-policy">Term of Service </a> |
-                    <a href="/privacy-policy">Privacy Policy</a>
+                    <Link href="/privacy-policy">Term of Service </Link> |
+                    <Link href="/privacy-policy">Privacy Policy</Link>
                 </div>
             </div>
 
