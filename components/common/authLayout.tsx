@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import React, { useState } from 'react'
 
-export default function AuthLayout({setAuthModal, showAuth = true}: {setAuthModal, showAuth?: boolean }) {
+export default function AuthLayout({setAuthModal, showAuth = true}: {setAuthModal?, showAuth?: boolean }) {
     const [isModal, setAuthModalOpt] = useState(showAuth)
     setAuthModal = typeof setAuthModal == "undefined" ? setAuthModalOpt : setAuthModal
     return (
