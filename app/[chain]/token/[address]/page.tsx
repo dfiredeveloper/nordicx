@@ -46,7 +46,7 @@ export default function Page() {
         <Trade />
       </div>
 
-      <div className="flex w-full fixed bottom-[0px] z-[40] dark:bg-[#17181b]">
+      <div className="flex w-full fixed bottom-[0px] z-[40] dark:bg-[#17181b] md:hidden">
         <div className="flex w-full justify-around dark:bg-[#17181b] h-[56px]">
           <div
             onClick={() => setIsOpen((prev) => ({ ...prev, buy: true }))}

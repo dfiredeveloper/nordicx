@@ -10,7 +10,7 @@ export default function MobileTradingHeader() {
 
     return (
         <>
-            <div className="flex w-full justify-between items-start px-[5px] py-1 bg-[#111111]">
+            <div className="flex w-full justify-between items-start px-[10px] py-1 bg-[#111111]">
                 <div className="flex flex-col">
                     <div className="flex items-center flex-grow flex-shrink">
                         <div className="flex" onClick={() => setShowAuth(true)}>

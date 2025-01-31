@@ -15,7 +15,7 @@ export default function Trade() {
     const [toggleLeftPane, setLeftPaneToggle] = useState(false)
     return (
         <div className="md:w-[calc(100vw-300px)] md:h-[calc(100vh-160px)] w-full h-full flex p-[6px]">
-            <div className={`${toggleLeftPane ? 'w-[300px]' : 'w-[0px] hidden'} overflow-hidden px-2 space-y-2 md:block hidden`}>
+            <div className={`${toggleLeftPane ? 'md:block' : 'hidden'} w-[300px] overflow-hidden px-2 space-y-2`}>
                 <div className="flex justify-between text-[13px] w-full gap-2">
                     <div className="flex gap-2">
                         <div className="">Trending</div>
@@ -27,7 +27,12 @@ export default function Trade() {
                     </button>
                 </div>
 
-                <div className="flex justify-center">
+                <div onClick={() => setLeftPaneToggle(false)} className="flex justify-center relative">
+                    <div className="absolute dark:bg-accent-aux-1 right-0 p-[2px] cursor-pointer rounded-tl-[8px] rounded-bl-[8px]">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12px" height="12px" fill="#9AA0AA" viewBox="0 0 20 20">
+                            <path d="M12.322 9.582l4.705 4.706-1.607 1.606-6.312-6.312 6.313-6.312 1.606 1.606-4.705 4.706zm-6.887 0l4.706 4.706-1.607 1.606-6.312-6.312L8.419 3.27l1.722 1.606-4.706 4.706z"></path>
+                        </svg>
+                    </div>
                     <div className="bg-transparent border rounded-[8px] flex items-center flex-wrap gap-[8px] w-fit ">
                         <div className="px-[8px] py-[4px] flex bg-transparent border-r text-accent-aux-1 cursor-pointer text-[12px] rounded-tl-[8px] rounded-bl-[8px] mr-[-1px] justify-center">1m</div>
                         <div className="px-[8px] py-[4px] flex bg-transparent border-r text-accent-aux-1 cursor-pointer text-[12px] rounded-tl-[8px] rounded-bl-[8px] mr-[-1px] justify-center">5m</div>
@@ -89,7 +94,6 @@ export default function Trade() {
                             </div>
                         </div>
                     </div>
-
                 </div>
 
                 {/* BODY AREA */}

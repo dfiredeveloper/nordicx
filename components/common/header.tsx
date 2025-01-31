@@ -95,18 +95,19 @@ export default function Header() {
         themeMode().default()
         setSwitchMode(themeMode().getFromStore() == "dark")
 
-        updateUrlParams({chain: localStore("network") || "eth"})
+        updateUrlParams({ chain: localStore("network") || "eth" })
     }, [])
 
-  
+
 
     return (
         <div className="">
             <div className='md:px-[1.3rem] px-[.5rem] h-[56px] flex items-center gap-5 justify-between w-full'>
                 <div className="flex items-center gap-5">
                     <div className="">
-                        <Image src="/logo_light.svg" width={120} height={120} alt='logo light' className='dark:hidden md:min-w-[170px] min-w-[100px]' />
-                        <Image src="/logo_black.png" width={120} height={120} alt='logo dark' className='dark:block hidden md:min-w-[170px] min-w-[100px]' />
+                        <Image src="/logo_light.svg" width={120} height={120} alt='logo light' className=' dark:hidden md:block hidden md:min-w-[170px] min-w-[100px]' />
+                        <Image src="/logo_black.png" width={120} height={120} alt='logo dark' className=' md:dark:block md:block hidden md:min-w-[170px] min-w-[100px]' />
+                        <Image src="/logo_black.png" width={120} height={120} alt='logo dark' className='md:hidden  min-w-[100px] translate-x-[-10px]' />
                     </div>
                     <ul className='md:flex gap-3 hidden overflow-hidden'>
                         {
