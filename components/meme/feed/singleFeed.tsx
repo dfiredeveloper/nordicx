@@ -1,5 +1,5 @@
 import { copyToClipboard, formatNumber, truncAddress } from '@/lib/utils'
-import React, { useCallback } from 'react'
+import React from 'react'
 import {
     Tooltip,
     TooltipContent,
@@ -8,10 +8,9 @@ import {
 } from "@/components/ui/tooltip"
 import { memeCoinsInterface } from '@/lib/faker-data'
 import Image from 'next/image'
-import { useSearchParams } from 'next/navigation'
 
 
-export default function SingleFeed({ memeData, switchTabs }: { memeData: memeCoinsInterface, switchTabs: String }) {
+export default function SingleFeed({ memeData, switchTabs }: { memeData: memeCoinsInterface, switchTabs: string }) {
     return (
         <a href={`/eth/token/${memeData.id}`}>
             <div className="w-full flex items-center gap-3 mt-5 border-b px-4 py-2">

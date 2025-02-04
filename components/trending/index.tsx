@@ -1,13 +1,11 @@
 "use client";
 import { useEffect, useState } from "react"
 import UtilityBar from "./utilityBar"
-import Feed from "./feed"
 import Footer from "../common/footer"
 import Table from "./table/table1";
 import { usePathname, useSearchParams } from "next/navigation";
 
 export default function Trending() {
-    const pathname = usePathname()
     const searchParams = useSearchParams()
     const [switchTabs, setSwitch] = useState(searchParams.get("tab") || '1')
     useEffect(() => {

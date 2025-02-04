@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react"
 import UtilityBar from "./utilityBar"
 import Footer from "../common/footer"
-import Table from "./table/completed/table1";
 import { useSearchParams } from "next/navigation";
 import Feed from "./feed";
 import NewCreation from "./table/new-creation/table1";

@@ -1,10 +1,9 @@
 import Meme from '@/components/meme';
-import UtilityBar from '@/components/reusable/utilityBar';
 import { Metadata } from 'next';
 import { Suspense } from 'react'
 
 export const metadata: Metadata = {
-  title: "Meme - GMGN.AI Fast Trade, Fast Copy Trade, Fast AFK Automation.",
+  title: "Pump Rank - GMGN.AI Fast Trade, Fast Copy Trade, Fast AFK Automation.",
   description: "GMGN.AI Fast Trade, Fast Copy Trade, Fast AFK Automation",
 };
 
@@ -15,4 +14,3 @@ export default function Page() {
     </Suspense>
   )
 }
-``
