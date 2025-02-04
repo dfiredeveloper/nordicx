@@ -2,6 +2,7 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import AuthLayout from "../components/common/authLayout";
 import Header from "../components/common/header";
+import { Suspense } from "react";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -21,9 +22,11 @@ export default function RootLayout({
         className={`${poppins.variable} antialiased dark:bg-[#111111] bg-[#f4f4f5] text-[#111111] dark:text-[#f4f4f5]`}
       >
         {/* here will have the auth modal */}
-        <AuthLayout />
-        <Header />
-        {children}
+        <Suspense>
+          <AuthLayout />
+          <Header />
+          {children}
+        </Suspense>
       </body>
     </html>
   );
