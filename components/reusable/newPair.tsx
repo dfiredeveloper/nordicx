@@ -6,7 +6,7 @@ import Footer from "../common/footer"
 import Table from "./table/table1";
 import { usePathname, useSearchParams } from "next/navigation";
 
-export default function NewPage() {
+export default function Meme() {
     const pathname = usePathname()
     const searchParams = useSearchParams()
     const [switchTabs, setSwitch] = useState(searchParams.get("tab") || '1')

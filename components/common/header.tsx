@@ -1,7 +1,7 @@
 "use client";
 import { localStore, themeMode, truncAddress, updateUrlParams } from '@/lib/utils'
 import Image from 'next/image'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import {
     Select,
     SelectContent,
@@ -19,11 +19,19 @@ import {
 import { Switch } from "@/components/ui/switch"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 import Link from 'next/link';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 export default function Header() {
+    const pathname = usePathname()
+    const params = useSearchParams()
+    const router = useRouter()
     const [switchMode, setSwitchMode] = useState(false)
     const [triggerInputDrop, setTriggerForInputDrpDown] = useState(false)
     const navLinks = [
+        {
+            link: "/meme",
+            linkText: "Meme"
+        },
         {
             link: "/new-pair",
             linkText: "New pair"
@@ -33,16 +41,8 @@ export default function Header() {
             linkText: "Trending"
         },
         {
-            link: "#",
-            linkText: "Discover"
-        },
-        {
-            link: "#",
+            link: "/holding",
             linkText: "Holding"
-        },
-        {
-            link: "#",
-            linkText: "Follow"
         },
     ]
 
@@ -94,10 +94,17 @@ export default function Header() {
     useEffect(() => {
         themeMode().default()
         setSwitchMode(themeMode().getFromStore() == "dark")
+        updateUrlParams({ chain: localStore("network") || "sol" })
 
-        updateUrlParams({ chain: localStore("network") || "eth" })
-    }, [])
 
+        if (pathname == "/meme" && params.get("chain") != "sol") {
+            router.push("/")
+        }
+    }, [pathname, params])
+
+    const getChain = useCallback(() => {
+        return params.get("chain")
+    }, [params])
 
 
     return (
@@ -109,14 +116,31 @@ export default function Header() {
                         <Image src="/logo_black.png" width={120} height={120} alt='logo dark' className=' md:dark:block md:block hidden md:min-w-[170px] min-w-[100px]' />
                         <Image src="/logo_black.png" width={120} height={120} alt='logo dark' className='md:hidden  min-w-[100px] translate-x-[-10px]' />
                     </div>
-                    <ul className='md:flex gap-3 hidden overflow-hidden'>
-                        {
-                            navLinks.map((_, i) => (
-                                <li key={i} className='font-[500] text-accent-1 text-[14px] whitespace-nowrap'>
-                                    <Link href={_.link} className='h-full w-full '>{_.linkText}</Link>
+                    <ul className="md:flex gap-3 hidden overflow-hidden">
+                        {navLinks.map((item, index) => {
+                            // Special case for Meme link on Solana chain
+                            if (item.link === '/meme' && getChain() !== 'sol') {
+                                return null;
+                            }
+
+                            const isActive = pathname === item.link;
+                            const linkClassName = `h-full w-full ${isActive ? 'dark:text-white text-black' : 'text-accent-1'
+                                }`;
+
+                            return (
+                                <li
+                                    key={index}
+                                    className="font-medium text-sm whitespace-nowrap"
+                                >
+                                    <Link
+                                        href={item.link === '/meme' ? `${item.link}?chain=sol&tab=home` : item.link}
+                                        className={linkClassName}
+                                    >
+                                        {item.linkText}
+                                    </Link>
                                 </li>
-                            ))
-                        }
+                            );
+                        })}
                     </ul>
                 </div>
 
@@ -170,7 +194,10 @@ export default function Header() {
 
                 <div className="flex items-center gap-3">
                     <div className="flex gap-2 md:pr-[100px] items-center">
-                        <Select defaultValue={localStore("network") || selectNetwork[1].ntwk} onValueChange={(v) => updateUrlParams({ chain: v.toLowerCase() })}>
+                        <Select defaultValue={localStore("network") || "sol"} onValueChange={(v) => {
+                            updateUrlParams({ chain: v.toLowerCase() })
+                            window.localStorage.setItem("network", v);
+                        }}>
                             <SelectTrigger className="md:w-[130px] w-[80px] p-0 md:bg-accent-2 rounded-xl border-none outline-none focus:ring-0">
                                 <SelectValue placeholder="" />
                             </SelectTrigger>
@@ -311,14 +338,31 @@ export default function Header() {
                 </div>
             </div>
             <div className="bg-accent-3 border-t w-full overflow-x-auto">
-                <ul className='md:hidden gap-3 flex py-2 px-5'>
-                    {
-                        navLinks.map((_, i) => (
-                            <li key={i} className='font-[500] text-accent-1 text-[14px] whitespace-nowrap'>
-                                <Link href={_.link} className='h-full w-full '>{_.linkText}</Link>
+                <ul className="md:hidden gap-3 flex py-2 px-5">
+                    {navLinks.map((item, index) => {
+                        // Special case for Meme link on Solana chain
+                        if (item.link === '/meme' && getChain() !== 'sol') {
+                            return null;
+                        }
+
+                        const isActive = pathname === item.link;
+                        const linkClassName = `h-full w-full ${isActive ? 'dark:text-white text-black' : 'text-accent-1'
+                            }`;
+
+                        return (
+                            <li
+                                key={index}
+                                className="font-medium text-sm whitespace-nowrap"
+                            >
+                                <Link
+                                    href={item.link === '/meme' ? `${item.link}?chain=sol&tab=new-creation` : item.link}
+                                    className={linkClassName}
+                                >
+                                    {item.linkText}
+                                </Link>
                             </li>
-                        ))
-                    }
+                        );
+                    })}
                 </ul>
             </div>
         </div>

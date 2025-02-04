@@ -28,7 +28,7 @@ export default function Page() {
       {/* warning issue */}
       <div className="">
         <div className="text-risk flex justify-center items-center h-[40px] gap-1 bg-riskWarn">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14px" height="14px" fill="#FFD039" viewBox="0 0 14 14"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.212 2.093a1.4 1.4 0 00-2.423 0L.517 11.198A1.4 1.4 0 001.73 13.3h10.544a1.4 1.4 0 001.211-2.101L8.212 2.093zM7.001 9.255a.7.7 0 01-.7-.7V5.6a.7.7 0 111.4 0v2.955a.7.7 0 01-.7.7zm.7 1.167a.7.7 0 11-1.4 0 .7.7 0 011.4 0z"></path></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="14px" height="14px" fill="#FFD039" viewBox="0 0 14 14"><path fillRule="evenodd" clipRule="evenodd" d="M8.212 2.093a1.4 1.4 0 00-2.423 0L.517 11.198A1.4 1.4 0 001.73 13.3h10.544a1.4 1.4 0 001.211-2.101L8.212 2.093zM7.001 9.255a.7.7 0 01-.7-.7V5.6a.7.7 0 111.4 0v2.955a.7.7 0 01-.7.7zm.7 1.167a.7.7 0 11-1.4 0 .7.7 0 011.4 0z"></path></svg>
           <p className='text-[12px] font-[500]'>This token has low liquidity. Trade carefully!</p>
         </div>
       </div>
@@ -61,7 +61,7 @@ export default function Page() {
           </Drawer>
 
           <div onClick={() => setIsOpen((prev) => ({ ...prev, sell: true }))} className="flex flex-col justify-center items-center gap-[4px]">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#9AA0AA" viewBox="0 0 16 16"><g clip-path="url(#clip0_8080_562)"><path fill-rule="evenodd" clip-rule="evenodd" d="M1.131 7.134a1.6 1.6 0 000 2.263l5.657 5.657a1.6 1.6 0 002.263 0l6.058-6.058c.3-.3.468-.707.468-1.131V2.208a1.6 1.6 0 00-1.6-1.6H8.32a1.6 1.6 0 00-1.131.469L1.131 7.134zm10.069-.73a1.6 1.6 0 100-3.2 1.6 1.6 0 000 3.2z"></path></g><defs><clipPath id="clip0_8080_562"><rect width="16" height="16"></rect></clipPath></defs></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#9AA0AA" viewBox="0 0 16 16"><g clip-path="url(#clip0_8080_562)"><path fillRule="evenodd" clipRule="evenodd" d="M1.131 7.134a1.6 1.6 0 000 2.263l5.657 5.657a1.6 1.6 0 002.263 0l6.058-6.058c.3-.3.468-.707.468-1.131V2.208a1.6 1.6 0 00-1.6-1.6H8.32a1.6 1.6 0 00-1.131.469L1.131 7.134zm10.069-.73a1.6 1.6 0 100-3.2 1.6 1.6 0 000 3.2z"></path></g><defs><clipPath id="clip0_8080_562"><rect width="16" height="16"></rect></clipPath></defs></svg>
             <p className="text-[rgb(154,160,170)] text-[10px]">Sell</p>
           </div>
           <Drawer isOpen={isOpen.sell} onClose={() => setIsOpen((prev) => ({ ...prev, sell: false }))}>

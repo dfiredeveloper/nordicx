@@ -47,6 +47,7 @@ export default {
           "3": "var(--accent-3)",
           "4": "var(--accent-4)",
           "aux-1": "var(--aux-1)",
+          "buttonBg": "var(--buttonBg)",
           red: "var(--accent-red)",
           green: "var(--accent-green)",
         },

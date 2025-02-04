@@ -478,7 +478,7 @@ export function BuyNow({ setTpSlCheck, tpSlCheck }) {
                             </div>
                         </div>
                         <button type="button" className="inline-flex min-w-[2.5rem] appearance-none items-center justify-center select-none relative border-[1px] border-accent-3 hover:border-accent-aux-1 mt-4 rounded-sm whitespace-nowrap leading-[1.2] font-[400] text-[12px] px-[.5rem] py-[.8rem] bg-transparent w-full gap-[4px]">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14px" height="14px" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" clip-rule="evenodd" d="M8 2a1 1 0 011 1v4h4a1 1 0 110 2H9v4a1 1 0 11-2 0V9H3a1 1 0 010-2h4V3a1 1 0 011-1z"></path></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14px" height="14px" fill="currentColor" viewBox="0 0 16 16"><path fillRule="evenodd" clipRule="evenodd" d="M8 2a1 1 0 011 1v4h4a1 1 0 110 2H9v4a1 1 0 11-2 0V9H3a1 1 0 010-2h4V3a1 1 0 011-1z"></path></svg>
                             Add
                         </button>
                     </div>

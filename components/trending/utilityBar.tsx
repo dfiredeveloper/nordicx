@@ -16,7 +16,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { usePathname, useSearchParams } from 'next/navigation';
+import {  useSearchParams } from 'next/navigation';
 import {
     Sheet,
     SheetContent,
@@ -30,26 +30,9 @@ import { updateUrlParams } from '@/lib/utils';
 
 
 export default function UtilityBar({ setSwitch, switchTabs }) {
-    const pathname = usePathname()
     const chain = useSearchParams()
     const [activeTimeFrame, setTimeFrame] = useState("1m")
     const getChain = useCallback(() => chain.get("chain"), [chain]);
-
-    const tabNamesBasedOnRoute = useCallback((tab) => {
-        if (tab == "1") {
-            if (pathname == "/" || pathname == "/trending") {
-                return "Trending"
-            } else if (pathname == "/new-pair") {
-                return "Dashboard"
-            }
-        } else {
-            if (pathname == "/" || pathname == "/trending") {
-                return "NextBC"
-            } else if (pathname == "/new-pair") {
-                return "New Pair"
-            }
-        }
-    }, [pathname])
 
     return (
         <div className='md:px-[1.3rem] px-[.5rem] py-[1rem] flex gap-2 flex-col md:flex-row justify-between items-center'>
@@ -68,17 +51,15 @@ export default function UtilityBar({ setSwitch, switchTabs }) {
                     <button className={`font-[700] text-[15px] whitespace-nowrap ${switchTabs == '1' ? "dark:text-[#f5f5f5] text-[#111111]" : 'dark:text-[#f5f5f5]/40 text-[#111111]/40'}`} onClick={() => {
                         updateUrlParams({ tab: "1" })
                         setSwitch('1')
-                    }}>{tabNamesBasedOnRoute("1")}</button>
+                    }}>Trending</button>
+
                     <button className={`font-[700] text-[15px] whitespace-nowrap flex items-center gap-1 ${switchTabs == '2' ? "dark:text-[#f5f5f5] text-[#111111]" : 'dark:text-[#f5f5f5]/40 text-[#111111]/40'}`} onClick={() => {
                         updateUrlParams({ tab: "2" })
                         setSwitch('2')
                     }}>
-                        {
-                            pathname == "/" && (
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 24 24"><path clipRule="evenodd" d="M16.102 9.215a8.041 8.041 0 00-8.365 0L5.966 5.998a11.44 11.44 0 015.954-1.67c2.168 0 4.201.608 5.953 1.67l-1.771 3.218z"></path><path d="M6.776 9.901C4.808 11.51 3.542 14.02 3.542 16.84c0 1.026-.793 1.858-1.771 1.858C.793 18.697 0 17.865 0 16.84c0-4.196 1.97-7.91 4.993-10.178l1.783 3.24z"></path><path d="M20.296 16.84c0-2.82-1.265-5.33-3.233-6.939l1.782-3.24c3.023 2.268 4.993 5.982 4.993 10.178 0 1.026-.793 1.858-1.77 1.858-.979 0-1.772-.832-1.772-1.858z"></path><path d="M12 10.87l1.587 5.597a1.65 1.65 0 11-3.174 0L12 10.87z"></path></svg>
-                            )
-                        }
-                        {tabNamesBasedOnRoute("2")}
+
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 24 24"><path clipRule="evenodd" d="M16.102 9.215a8.041 8.041 0 00-8.365 0L5.966 5.998a11.44 11.44 0 015.954-1.67c2.168 0 4.201.608 5.953 1.67l-1.771 3.218z"></path><path d="M6.776 9.901C4.808 11.51 3.542 14.02 3.542 16.84c0 1.026-.793 1.858-1.771 1.858C.793 18.697 0 17.865 0 16.84c0-4.196 1.97-7.91 4.993-10.178l1.783 3.24z"></path><path d="M20.296 16.84c0-2.82-1.265-5.33-3.233-6.939l1.782-3.24c3.023 2.268 4.993 5.982 4.993 10.178 0 1.026-.793 1.858-1.77 1.858-.979 0-1.772-.832-1.772-1.858z"></path><path d="M12 10.87l1.587 5.597a1.65 1.65 0 11-3.174 0L12 10.87z"></path></svg>
+                        NextBC
                     </button>
                 </div>
 
@@ -170,7 +151,7 @@ export default function UtilityBar({ setSwitch, switchTabs }) {
                                     <div className="">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" fill="#88D693" viewBox="0 0 16 16"><g clipPath="url(#clip0_9339_171)"><path d="M3.229 9.046L9.756 0 8.452 6.637h3.757a.2.2 0 01.162.317L5.844 16 7.03 9.363H3.39a.2.2 0 01-.161-.317z"></path><path fillRule="evenodd" clipRule="evenodd" d="M1.5 8a6.5 6.5 0 017.933-6.341L9.63.678A7.5 7.5 0 004.9 14.832l.187-1.02A6.5 6.5 0 011.5 8zm4.663 6.237l-.174.99a7.5 7.5 0 004.781-14.2l-.231.987a6.502 6.502 0 01-4.376 12.223z"></path><path fillRule="evenodd" clipRule="evenodd" d="M6.711 1.63c.508-.133 1.013.827.681 1.602-.335.78.978-.978 1.497-1.866L7.023.813l-.312.818zm1.575 10.985c-.345.54-.673 1.897.343 1.85 1.052-.049-.925.19-2.074.124 0 0 2.075-2.513 1.73-1.974z"></path></g><defs><clipPath id="clip0_9339_171"><rect width="16" height="16"></rect></clipPath></defs></svg>
                                     </div>
-                                    <svg width="100%" height="auto" style={{ width: '59.85px' }} viewBox="0 0 59.849998474121094 17"><defs><linearGradient id="gridientf956b6abff477fdd" x1="0" y1="0" x2="100%" y2="0"><stop offset="26.87%" stop-color="#88D693"></stop><stop offset="64.85%" stop-color="#1CC9FF"></stop></linearGradient></defs><text x="50%" y="50%" dy="0.3em" text-anchor="middle" fill="url(#gridientf956b6abff477fdd)" font-size="12" font-weight="500"><tspan className=''>Quick Buy</tspan></text></svg>
+                                    <svg width="100%" height="auto" style={{ width: '59.85px' }} viewBox="0 0 59.849998474121094 17"><defs><linearGradient id="gridientf956b6abff477fdd" x1="0" y1="0" x2="100%" y2="0"><stop offset="26.87%" stopColor="#88D693"></stop><stop offset="64.85%" stopColor="#1CC9FF"></stop></linearGradient></defs><text x="50%" y="50%" dy="0.3em" textAnchor="middle" fill="url(#gridientf956b6abff477fdd)" fontSize="12" fontWeight="500"><tspan className=''>Quick Buy</tspan></text></svg>
                                 </div>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="#F5F5F5" viewBox="0 0 20 20"><path fillRule="evenodd" clipRule="evenodd" d="M8.652 2.05a2.75 2.75 0 012.696 0l4.977 2.8a2.75 2.75 0 011.402 2.397v5.51a2.75 2.75 0 01-1.402 2.397l-4.977 2.8a2.75 2.75 0 01-2.696 0l-4.978-2.8a2.75 2.75 0 01-1.402-2.397v-5.51c0-.994.536-1.91 1.402-2.397l4.978-2.8zm1.96 1.308a1.25 1.25 0 00-1.225 0l-4.977 2.8a1.25 1.25 0 00-.638 1.089v5.51c0 .451.244.868.638 1.09l4.977 2.799c.38.214.845.214 1.226 0l4.977-2.8a1.25 1.25 0 00.637-1.09v-5.51a1.25 1.25 0 00-.637-1.089l-4.977-2.8z"></path><path fillRule="evenodd" clipRule="evenodd" d="M10 8.133a1.866 1.866 0 100 3.733 1.866 1.866 0 000-3.733zM6.634 9.999a3.366 3.366 0 116.733 0 3.366 3.366 0 01-6.733 0z"></path></svg>
                             </SheetTrigger>
@@ -201,6 +182,24 @@ export default function UtilityBar({ setSwitch, switchTabs }) {
                         </div>
 
                         <Dialog>
+                            <DialogTrigger>
+                                <div className='outline-none h-[35px] w-[35px] flex justify-center items-center rounded-md text-accent-4'>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" clipRule="evenodd" d="M8.652 2.05a2.75 2.75 0 012.696 0l4.977 2.8a2.75 2.75 0 011.402 2.397v5.51a2.75 2.75 0 01-1.402 2.397l-4.977 2.8a2.75 2.75 0 01-2.696 0l-4.978-2.8a2.75 2.75 0 01-1.402-2.397v-5.51c0-.994.536-1.91 1.402-2.397l4.978-2.8zm1.96 1.308a1.25 1.25 0 00-1.225 0l-4.977 2.8a1.25 1.25 0 00-.638 1.089v5.51c0 .451.244.868.638 1.09l4.977 2.799c.38.214.845.214 1.226 0l4.977-2.8a1.25 1.25 0 00.637-1.09v-5.51a1.25 1.25 0 00-.637-1.089l-4.977-2.8z"></path>
+                                        <path fillRule="evenodd" clipRule="evenodd" d="M10 8.133a1.866 1.866 0 100 3.733 1.866 1.866 0 000-3.733zM6.634 9.999a3.366 3.366 0 116.733 0 3.366 3.366 0 01-6.733 0z"></path>
+                                    </svg>
+                                </div>
+                            </DialogTrigger>
+                            <DialogContent>
+                                <DialogHeader>
+                                    <DialogTitle>Are you absolutely sure?</DialogTitle>
+                                    <DialogDescription>
+                                        This action cannot be undone. This will permanently delete your account
+                                        and remove your data from our servers.
+                                    </DialogDescription>
+                                </DialogHeader>
+                            </DialogContent>
+                        </Dialog>  <Dialog>
                             <DialogTrigger>
                                 <div className='outline-none h-[35px] w-[35px] flex justify-center items-center rounded-md text-accent-4'>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 20 20">

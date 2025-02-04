@@ -102,7 +102,6 @@ export function updateUrlParams(params: Record<string, string>) {
   Object.entries(params).forEach(([key, value]) => {
     // Always replace the entire value
     url.searchParams.set(key, value);
-    window.localStorage.setItem("network", value);
   });
 
   window.history.pushState({}, "", url);

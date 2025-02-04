@@ -78,7 +78,7 @@ export default function Trade() {
                         <div className="flex items-center gap-1">
                             <div className="text-[12px]">Price</div>
                             <div className="">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" clip-rule="evenodd" d="M9.37 1.846a.6.6 0 01.654.13l4 4a.6.6 0 01-.848.848L10.2 3.85V13.6a.6.6 0 11-1.2 0V2.4a.6.6 0 01.37-.554z"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M6.63 14.154a.6.6 0 01-.654-.13l-4-4a.6.6 0 01.848-.848L5.8 12.152V2.4a.6.6 0 011.2 0v11.2a.6.6 0 01-.37.554z"></path></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path fillRule="evenodd" clipRule="evenodd" d="M9.37 1.846a.6.6 0 01.654.13l4 4a.6.6 0 01-.848.848L10.2 3.85V13.6a.6.6 0 11-1.2 0V2.4a.6.6 0 01.37-.554z"></path><path fillRule="evenodd" clipRule="evenodd" d="M6.63 14.154a.6.6 0 01-.654-.13l-4-4a.6.6 0 01.848-.848L5.8 12.152V2.4a.6.6 0 011.2 0v11.2a.6.6 0 01-.37.554z"></path></svg>
                             </div>
                         </div>
                         <span className="text-[12px]">/</span>
