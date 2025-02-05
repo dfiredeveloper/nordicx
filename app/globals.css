@@ -48,6 +48,7 @@
     --accent-red: #DF484C;
 
   }
+
   .dark {
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
@@ -84,7 +85,7 @@
     --aux-1: #5C6068;
     --accent-green: #AFDFB6;
     --accent-red: #F094A4;
-    --buttonBg:  #393c43;
+    --buttonBg: #393c43;
   }
 }
 
@@ -92,6 +93,7 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -116,7 +118,7 @@
   background-color: rgba(156, 163, 175, 0.4);
   border-radius: 20px;
   border: 2px solid transparent;
-  background-clipRule: content-box;
+  background-clip: content-box;
 }
 
 *::-webkit-scrollbar-thumb:hover {
@@ -128,5 +130,18 @@ body {
   /* background: var(--background); */
   font-family: var(--font-poppins), sans-serif;
   border: 5px solid var(--border)
-  /* color: var(--foreground); */
+    /* color: var(--foreground); */
+}
+
+.animate-slide {
+  animation: slide 9s linear 5s infinite;
+}
+
+@keyframes slide {
+  0% {
+    transform: translateX(0px);
+  }
+  100% {
+    transform: translateX(-1310px)
+  }
 }

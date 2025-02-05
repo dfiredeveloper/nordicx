@@ -3,6 +3,7 @@ import "./globals.css";
 import AuthLayout from "../components/common/authLayout";
 import Header from "../components/common/header";
 import { Suspense } from "react";
+import MemeCoinsWidget from "@/components/common/widget";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -24,6 +25,7 @@ export default function RootLayout({
         {/* here will have the auth modal */}
         <Suspense>
           <AuthLayout />
+          <MemeCoinsWidget />
           <Header />
           {children}
         </Suspense>
