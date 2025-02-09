@@ -15,7 +15,7 @@ const MEME_COINS = [
 ];
 function MemeCoinsWidget() {
     return (
-        <div className="overflow-hidden w-full">
+        <div className="overflow-hidden w-full h-[35px]">
             <div
                 className="flex animate-slide gap-12 px-4"
             // animate={{

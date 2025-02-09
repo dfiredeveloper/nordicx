@@ -631,7 +631,7 @@ export function NotConnected() {
         <div className="dark:bg-[#111111] mt-2 z-[10] px-[12px] rounded-[8px] w-full pt-[32px] pb-[32px]">
             <div className="pb-[36px]">
                 <div className="flex justify-center gap-[28px]">
-                    <Image alt='logo_big' width={48} height={48} src="/static/logo_big.svg" className="h-[48px]" />
+                    <Image alt='logo_big' width={48} height={48} src="/static/logo_small.svg" className="h-[48px]" />
                     <div className="flex gap-[7px] items-center">
                         <div className="flex w-[10px] h-[10px] rounded-[10px] bg-accent-aux-1">
                         </div>
