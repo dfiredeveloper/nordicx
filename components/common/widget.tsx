@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 
 const MEME_COINS = [
     { id: 1, name: 'Dogecoin', logo: '🐶' },
