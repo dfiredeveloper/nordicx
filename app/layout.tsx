@@ -3,6 +3,7 @@ import "./globals.css";
 import AuthLayout from "../components/common/authLayout";
 import Header from "../components/common/header";
 import { Suspense } from "react";
+import { Metadata } from 'next'
 import MemeCoinsWidget from "@/components/common/widget";
 
 const poppins = Poppins({
@@ -10,6 +11,13 @@ const poppins = Poppins({
   weight: ["100", "200", "400", "500", "600", "700", "800", "900"],
   subsets: ["latin"],
 });
+
+
+export const metadata: Metadata = {
+  title: 'Nordic.AI - Instant Autonomous Trading',
+  description: 'Connect your Telegram to Trade Anywhere, Anytime.'
+}
+
 
 
 export default function RootLayout({
