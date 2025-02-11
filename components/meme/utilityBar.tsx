@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback} from "react";
+import React, { useCallback } from "react";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -22,7 +22,7 @@ import { updateUrlParams } from "@/lib/utils";
 export default function UtilityBar({ setSwitch, switchTabs }) {
     const paramSearch = useSearchParams();
     const getMemeTab = useCallback(() => paramSearch.get("tab"), [paramSearch]);
-    
+
     return (
         <div className="md:px-[1.3rem] px-[.5rem] py-[1rem] flex gap-2 flex-col md:flex-row justify-between items-center">
             <div className="w-full flex flex-col justify-center gap-5">
@@ -111,7 +111,7 @@ export default function UtilityBar({ setSwitch, switchTabs }) {
                                 onClick={() => {
                                     updateUrlParams({ tab: "home" });
                                 }}
-                                className={`px-[12px] md:flex hidden ${getMemeTab() == "home" || getMemeTab() == ""  ? "bg-accent-3 dark:text-[#f5f5f5]" : "bg-transparent  dark:text-accent-aux-1"} border cursor-pointer text-[12px] rounded-tl-[8px] rounded-bl-[8px] mr-[-1px] items-center h-[28px] whitespace-nowrap justify-center`}>
+                                className={`px-[12px] md:flex hidden ${getMemeTab() == "home" || getMemeTab() == "" ? "bg-accent-3 dark:text-[#f5f5f5]" : "bg-transparent  dark:text-accent-aux-1"} border cursor-pointer text-[12px] rounded-tl-[8px] rounded-bl-[8px] mr-[-1px] items-center h-[28px] whitespace-nowrap justify-center`}>
                                 Pump
                             </div>
                             <div
@@ -130,203 +130,203 @@ export default function UtilityBar({ setSwitch, switchTabs }) {
                             </div>
                             <div
                                 onClick={() => {
-                                    updateUrlParams({ tab: "soaring" });
-                                }}
-                                className={`px-[12px] flex ${getMemeTab() == "soaring" ? "bg-accent-3 dark:text-[#f5f5f5]" : "bg-transparent  dark:text-accent-aux-1"}  border cursor-pointer text-[12px]  mr-[-1px] items-center h-[28px] whitespace-nowrap justify-center`}>
-                                Soaring
-                            </div>
-                            <div
-                                onClick={() => {
                                     updateUrlParams({ tab: "completed" });
                                 }}
                                 className={`px-[12px] flex ${getMemeTab() == "completed" ? "bg-accent-3 dark:text-[#f5f5f5]" : "bg-transparent  dark:text-accent-aux-1"}  border cursor-pointer text-[12px]  mr-[-1px] items-center h-[28px] whitespace-nowrap justify-center rounded-br-[8px] rounded-tr-[8px]`}>
                                 Completed
                             </div>
-                        <a
-                            target="_blank"
-                            href="https://t.me/pump_sol_alert"
-                            className="flex md:ml-2 h-[28px] text-[12px] md:mt-0 mt-1 items-center gap-[4px] rounded-[8px] border font-[500] cursor-pointer max-w-[150px] md:px-[12px] px-[6px]"
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="14px"
-                                height="14px"
-                                fill="currentColor"
-                                viewBox="0 0 16 16"
+                            <div
+                                onClick={() => {
+                                    updateUrlParams({ tab: "soaring" });
+                                }}
+                                className={`px-[12px] flex ${getMemeTab() == "soaring" ? "bg-accent-3 dark:text-[#f5f5f5]" : "bg-transparent  dark:text-accent-aux-1"}  border cursor-pointer text-[12px]  mr-[-1px] items-center h-[28px] whitespace-nowrap justify-center`}>
+                                Soaring
+                            </div>
+                            <a
+                                target="_blank"
+                                href="https://t.me/pump_sol_alert"
+                                className="flex md:ml-2 h-[28px] text-[12px] md:mt-0 mt-1 items-center gap-[4px] rounded-[8px] border font-[500] cursor-pointer max-w-[150px] md:px-[12px] px-[6px]"
                             >
-                                <g clipPath="url(#clip0_8564_5508)">
-                                    <rect
-                                        x="1"
-                                        y="10"
-                                        width="3"
-                                        height="1"
-                                        transform="rotate(90 1 10)"
-                                        fill="#128B4B"
-                                    ></rect>
-                                    <rect
-                                        x="6"
-                                        y="16"
-                                        width="3"
-                                        height="1"
-                                        transform="rotate(-180 6 16)"
-                                        fill="#128B4B"
-                                    ></rect>
-                                    <rect
-                                        x="7"
-                                        y="6"
-                                        width="1"
-                                        height="1"
-                                        transform="rotate(90 7 6)"
-                                        fill="#128B4B"
-                                    ></rect>
-                                    <rect
-                                        x="8"
-                                        y="7"
-                                        width="1"
-                                        height="1"
-                                        transform="rotate(90 8 7)"
-                                        fill="#128B4B"
-                                    ></rect>
-                                    <rect
-                                        x="9"
-                                        y="8"
-                                        width="1"
-                                        height="1"
-                                        transform="rotate(90 9 8)"
-                                        fill="#128B4B"
-                                    ></rect>
-                                    <rect
-                                        x="4"
-                                        y="7"
-                                        width="1"
-                                        height="1"
-                                        transform="rotate(90 4 7)"
-                                        fill="#128B4B"
-                                    ></rect>
-                                    <path
-                                        d="M6 8V7H5v1H4v1H3v1H2v3h1v1h1v-1h1v-1h1v-1h1v-1h1V9H7V8H6z"
-                                        fill="#52D48F"
-                                    ></path>
-                                    <rect
-                                        x="9"
-                                        y="12"
-                                        width="1"
-                                        height="1"
-                                        transform="rotate(90 9 12)"
-                                        fill="#128B4B"
-                                    ></rect>
-                                    <rect
-                                        x="5"
-                                        y="6"
-                                        width="1"
-                                        height="1"
-                                        transform="rotate(90 5 6)"
-                                        fill="#128B4B"
-                                    ></rect>
-                                    <rect
-                                        x="10"
-                                        y="11"
-                                        width="1"
-                                        height="1"
-                                        transform="rotate(90 10 11)"
-                                        fill="#128B4B"
-                                    ></rect>
-                                    <path d="M13 1v1h-3V1h3z" fill="#E9E9E9"></path>
-                                    <path d="M9 3V2h1v1H9z" fill="#E9E9E9"></path>
-                                    <path d="M8 4V3h1v1H8z" fill="#E9E9E9"></path>
-                                    <path d="M7 5V4h1v1H7z" fill="#E9E9E9"></path>
-                                    <path d="M7 5v1H6V5h1z" fill="#E9E9E9"></path>
-                                    <path d="M14 3V2h-1v1h1z" fill="#E9E9E9"></path>
-                                    <path
-                                        d="M10 9v1h1V9h1V8h1V7h1V6h1V3h-1v1h-1v1h-1v1h-1v1h-1v1H9v1h1z"
-                                        fill="#E9E9E9"
-                                    ></path>
-                                    <rect
-                                        x="3"
-                                        y="8"
-                                        width="1"
-                                        height="1"
-                                        transform="rotate(90 3 8)"
-                                        fill="#128B4B"
-                                    ></rect>
-                                    <rect
-                                        x="2"
-                                        y="9"
-                                        width="1"
-                                        height="1"
-                                        transform="rotate(90 2 9)"
-                                        fill="#128B4B"
-                                    ></rect>
-                                    <rect
-                                        x="8"
-                                        y="13"
-                                        width="1"
-                                        height="1"
-                                        transform="rotate(90 8 13)"
-                                        fill="#128B4B"
-                                    ></rect>
-                                    <rect
-                                        x="7"
-                                        y="14"
-                                        width="1"
-                                        height="1"
-                                        transform="rotate(90 7 14)"
-                                        fill="#128B4B"
-                                    ></rect>
-                                    <rect
-                                        x="2"
-                                        y="13"
-                                        width="1"
-                                        height="1"
-                                        transform="rotate(90 2 13)"
-                                        fill="#128B4B"
-                                    ></rect>
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="14px"
+                                    height="14px"
+                                    fill="currentColor"
+                                    viewBox="0 0 16 16"
+                                >
+                                    <g clipPath="url(#clip0_8564_5508)">
+                                        <rect
+                                            x="1"
+                                            y="10"
+                                            width="3"
+                                            height="1"
+                                            transform="rotate(90 1 10)"
+                                            fill="#128B4B"
+                                        ></rect>
+                                        <rect
+                                            x="6"
+                                            y="16"
+                                            width="3"
+                                            height="1"
+                                            transform="rotate(-180 6 16)"
+                                            fill="#128B4B"
+                                        ></rect>
+                                        <rect
+                                            x="7"
+                                            y="6"
+                                            width="1"
+                                            height="1"
+                                            transform="rotate(90 7 6)"
+                                            fill="#128B4B"
+                                        ></rect>
+                                        <rect
+                                            x="8"
+                                            y="7"
+                                            width="1"
+                                            height="1"
+                                            transform="rotate(90 8 7)"
+                                            fill="#128B4B"
+                                        ></rect>
+                                        <rect
+                                            x="9"
+                                            y="8"
+                                            width="1"
+                                            height="1"
+                                            transform="rotate(90 9 8)"
+                                            fill="#128B4B"
+                                        ></rect>
+                                        <rect
+                                            x="4"
+                                            y="7"
+                                            width="1"
+                                            height="1"
+                                            transform="rotate(90 4 7)"
+                                            fill="#128B4B"
+                                        ></rect>
+                                        <path
+                                            d="M6 8V7H5v1H4v1H3v1H2v3h1v1h1v-1h1v-1h1v-1h1v-1h1V9H7V8H6z"
+                                            fill="#52D48F"
+                                        ></path>
+                                        <rect
+                                            x="9"
+                                            y="12"
+                                            width="1"
+                                            height="1"
+                                            transform="rotate(90 9 12)"
+                                            fill="#128B4B"
+                                        ></rect>
+                                        <rect
+                                            x="5"
+                                            y="6"
+                                            width="1"
+                                            height="1"
+                                            transform="rotate(90 5 6)"
+                                            fill="#128B4B"
+                                        ></rect>
+                                        <rect
+                                            x="10"
+                                            y="11"
+                                            width="1"
+                                            height="1"
+                                            transform="rotate(90 10 11)"
+                                            fill="#128B4B"
+                                        ></rect>
+                                        <path d="M13 1v1h-3V1h3z" fill="#E9E9E9"></path>
+                                        <path d="M9 3V2h1v1H9z" fill="#E9E9E9"></path>
+                                        <path d="M8 4V3h1v1H8z" fill="#E9E9E9"></path>
+                                        <path d="M7 5V4h1v1H7z" fill="#E9E9E9"></path>
+                                        <path d="M7 5v1H6V5h1z" fill="#E9E9E9"></path>
+                                        <path d="M14 3V2h-1v1h1z" fill="#E9E9E9"></path>
+                                        <path
+                                            d="M10 9v1h1V9h1V8h1V7h1V6h1V3h-1v1h-1v1h-1v1h-1v1h-1v1H9v1h1z"
+                                            fill="#E9E9E9"
+                                        ></path>
+                                        <rect
+                                            x="3"
+                                            y="8"
+                                            width="1"
+                                            height="1"
+                                            transform="rotate(90 3 8)"
+                                            fill="#128B4B"
+                                        ></rect>
+                                        <rect
+                                            x="2"
+                                            y="9"
+                                            width="1"
+                                            height="1"
+                                            transform="rotate(90 2 9)"
+                                            fill="#128B4B"
+                                        ></rect>
+                                        <rect
+                                            x="8"
+                                            y="13"
+                                            width="1"
+                                            height="1"
+                                            transform="rotate(90 8 13)"
+                                            fill="#128B4B"
+                                        ></rect>
+                                        <rect
+                                            x="7"
+                                            y="14"
+                                            width="1"
+                                            height="1"
+                                            transform="rotate(90 7 14)"
+                                            fill="#128B4B"
+                                        ></rect>
+                                        <rect
+                                            x="2"
+                                            y="13"
+                                            width="1"
+                                            height="1"
+                                            transform="rotate(90 2 13)"
+                                            fill="#128B4B"
+                                        ></rect>
+                                        <path
+                                            fillRule="evenodd"
+                                            clipRule="evenodd"
+                                            d="M6 7V6H5v1H4v1H3v1H2v1H1v3h1v1h1v1h3v-1h1v-1h1v-1h1v-1h1v-1H9V9H8V8H7V7H6zm0 0v1h1v1h1v1H7v1H6v1H5v1H4v1H3v-1H2v-3h1V9h1V8h1V7h1z"
+                                            fill="#31BD72"
+                                        ></path>
+                                        <rect
+                                            x="3"
+                                            y="14"
+                                            width="1"
+                                            height="1"
+                                            transform="rotate(90 3 14)"
+                                            fill="#128B4B"
+                                        ></rect>
+                                        <path
+                                            fillRule="evenodd"
+                                            clipRule="evenodd"
+                                            d="M10 0h3v1h-3V0zM9 2V1h1v1H9zM8 3V2h1v1H8zM7 4V3h1v1H7zM6 5V4h1v1H6zm0 0v1H5V5h1zm8-3h-1V1h1v1zm1 1h-1V2h1v1zm0 3V3h1v3h-1zm-1 1V6h1v1h-1zm-1 1V7h1v1h-1zm-1 1V8h1v1h-1zm-1 1V9h1v1h-1zm-1 0v1h1v-1h-1zm0 0H9V9h1v1z"
+                                            fill="#128B4B"
+                                        ></path>
+                                        <path
+                                            d="M13 2h-3v1H9v1H8v1H7v2h1v1h2V7h1V6h1V5h1V4h1V3h-1V2z"
+                                            fill="#fff"
+                                        ></path>
+                                    </g>
+                                    <defs>
+                                        <clipPath id="clip0_8564_5508">
+                                            <rect width="16" height="16" fill="#fff"></rect>
+                                        </clipPath>
+                                    </defs>
+                                </svg>{" "}
+                                Pump Alert{" "}
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="16px"
+                                    height="16px"
+                                    fill="currentColor"
+                                    viewBox="0 0 20 20"
+                                >
                                     <path
                                         fillRule="evenodd"
                                         clipRule="evenodd"
-                                        d="M6 7V6H5v1H4v1H3v1H2v1H1v3h1v1h1v1h3v-1h1v-1h1v-1h1v-1h1v-1H9V9H8V8H7V7H6zm0 0v1h1v1h1v1H7v1H6v1H5v1H4v1H3v-1H2v-3h1V9h1V8h1V7h1z"
-                                        fill="#31BD72"
+                                        d="M7.293 4.293a1 1 0 011.414 0l4.859 4.858a1.2 1.2 0 010 1.697l-4.859 4.86a1 1 0 01-1.414-1.415L11.586 10 7.293 5.707a1 1 0 010-1.414z"
                                     ></path>
-                                    <rect
-                                        x="3"
-                                        y="14"
-                                        width="1"
-                                        height="1"
-                                        transform="rotate(90 3 14)"
-                                        fill="#128B4B"
-                                    ></rect>
-                                    <path
-                                        fillRule="evenodd"
-                                        clipRule="evenodd"
-                                        d="M10 0h3v1h-3V0zM9 2V1h1v1H9zM8 3V2h1v1H8zM7 4V3h1v1H7zM6 5V4h1v1H6zm0 0v1H5V5h1zm8-3h-1V1h1v1zm1 1h-1V2h1v1zm0 3V3h1v3h-1zm-1 1V6h1v1h-1zm-1 1V7h1v1h-1zm-1 1V8h1v1h-1zm-1 1V9h1v1h-1zm-1 0v1h1v-1h-1zm0 0H9V9h1v1z"
-                                        fill="#128B4B"
-                                    ></path>
-                                    <path
-                                        d="M13 2h-3v1H9v1H8v1H7v2h1v1h2V7h1V6h1V5h1V4h1V3h-1V2z"
-                                        fill="#fff"
-                                    ></path>
-                                </g>
-                                <defs>
-                                    <clipPath id="clip0_8564_5508">
-                                        <rect width="16" height="16" fill="#fff"></rect>
-                                    </clipPath>
-                                </defs>
-                            </svg>{" "}
-                            Pump Alert{" "}
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="16px"
-                                height="16px"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                            >
-                                <path
-                                    fillRule="evenodd"
-                                    clipRule="evenodd"
-                                    d="M7.293 4.293a1 1 0 011.414 0l4.859 4.858a1.2 1.2 0 010 1.697l-4.859 4.86a1 1 0 01-1.414-1.415L11.586 10 7.293 5.707a1 1 0 010-1.414z"
-                                ></path>
-                            </svg>
-                        </a>
+                                </svg>
+                            </a>
                         </div>
                     </div>}
 

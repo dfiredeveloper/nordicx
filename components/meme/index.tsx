@@ -49,11 +49,11 @@ export default function Meme() {
             }
 
             {
-                searchParams.get("tab") == "soaring" && <Soaring />
+                searchParams.get("tab") == "completed" && <Completed />
             }
 
             {
-                searchParams.get("tab") == "completed" && <Completed />
+                searchParams.get("tab") == "soaring" && <Soaring />
             }
 
             <Footer />

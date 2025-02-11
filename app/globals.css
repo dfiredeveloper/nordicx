@@ -137,6 +137,10 @@ body {
   animation: slide 9s linear 5s infinite;
 }
 
+.animate-slide:hover {
+  animation-play-state: paused;
+}
+
 @keyframes slide {
   0% {
     transform: translateX(0px);

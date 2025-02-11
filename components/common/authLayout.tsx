@@ -1,24 +1,28 @@
 'use client';
+import Image from 'next/image';
 import Link from 'next/link';
 import React, { useState } from 'react'
 
-export default function AuthLayout({setAuthModal, showAuth = true}: {setAuthModal?, showAuth?: boolean }) {
+export default function AuthLayout({ setAuthModal, showAuth = true }: { setAuthModal?, showAuth?: boolean }) {
     const [isModal, setAuthModalOpt] = useState(showAuth)
     setAuthModal = typeof setAuthModal == "undefined" ? setAuthModalOpt : setAuthModal
     return (
         <div className={`font-system  ${isModal ? "flex" : "hidden"} fixed text-[rgb(41,44,51)] dark:text-[#f4f4f5] bg-[#f4f4f5]/95 dark:bg-[#111111]/95  w-screen z-[1500] inset-0 h-screen  items-center justify-center`}>
             <div className="min-h-[250px] w-[650px] flex flex-col justify-center items-center px-3">
                 <div>
-                    <div className="text-center font-[600] leading-relaxed" style={{ fontSize: 'min(40px, 7vw)' }}>
-                        Fast Trade, Fast Copy Trade
+                    <div className="text-center font-[600] leading-relaxed flex items-center gap-2" style={{ fontSize: 'min(40px, 7vw)' }}>
+                        <div className="">Instant</div>
+                        <Image src='/rocket.svg' width="10" height="10" alt="rocket" className='w-10 h-10' />
+                        <div className="">Autonomous Trading</div>
                     </div>
-                    <div className="text-center font-[600] leading-relaxed" style={{ fontSize: 'min(40px, 7vw)' }}>
+                    {/* <div className="text-center font-[600] leading-relaxed" style={{ fontSize: 'min(40px, 7vw)' }}>
                         Fast AFK Automation 🚀
-                    </div>
+                    </div> */}
                 </div>
 
-                <div className="text-[#6E727D] dark:text-[#9AA0AA]  mt-[36px] text-center w-full" style={{ fontSize: 'min(16px, 5vw)' }}>
-                    Discover faster, Trading in seconds 🚀 On-chain at the speed of light. Click to trade.
+                <div className="text-[#6E727D] dark:text-[#9AA0AA]  mt-[16px] text-center w-full" style={{ fontSize: 'min(16px, 5vw)' }}>
+                    {/* Discover faster, Trading in seconds 🚀 On-chain at the speed of light. Click to trade. */}
+                    <div className="">Connect your Telegram to Trade Anywhere, Anytime.</div>
                 </div>
 
                 <div className="flex flex-col justify-center items-center mt-[36px]">
