@@ -10,7 +10,7 @@ export default function AuthLayout({ setAuthModal, showAuth = true }: { setAuthM
         <div className={`font-system  ${isModal ? "flex" : "hidden"} fixed text-[rgb(41,44,51)] dark:text-[#f4f4f5] bg-[#f4f4f5]/95 dark:bg-[#111111]/95  w-screen z-[1500] inset-0 h-screen  items-center justify-center`}>
             <div className="min-h-[250px] w-[650px] flex flex-col justify-center items-center px-3">
                 <div>
-                    <div className="text-center font-[600]  flex items-center gap-2 md:text-[2rem] sm:text-[1.6rem] text-[1.4rem]">
+                    <div className="text-center font-[600]  flex items-center gap-2 md:text-[2rem] sm:text-[1.6rem] text-[1.2rem]">
                         <div className="">Instant</div>
                         <Image src='/rocket.svg' width="10" height="10" alt="rocket" className='w-10 h-10' />
                         <div className="">Autonomous Trading</div>
