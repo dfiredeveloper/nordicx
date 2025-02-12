@@ -26,7 +26,7 @@ export default function AuthLayout({ setAuthModal, showAuth = true }: { setAuthM
                 </div>
 
                 <div className="flex flex-col justify-center items-center mt-[36px]">
-                    <button className='max-w-[284px] w-full min-w-[2.5rem] inline-flex gap-[8px] bg-[#00AB4A] dark:bg-[#88D693] text-white dark:text-[#111111] rounded-[8px] justify-center items-center font-[600] px-[52px] h-[48px] whitespace-nowrap select-none'>
+                    <button className='button-brand max-w-[284px] w-full min-w-[2.5rem] inline-flex gap-[8px] rounded-[8px] justify-center items-center font-[600] px-[52px] h-[48px] whitespace-nowrap select-none'>
                         <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 12 12"><g clipPath="url(#clip0_7920_515)"><path d="M11.894 1.91l-1.8 8.487c-.134.6-.49.746-.992.465L6.36 8.842l-1.322 1.273c-.147.147-.27.27-.551.27l.196-2.793L9.764 3c.22-.196-.05-.307-.344-.11L3.138 6.844.43 6c-.588-.183-.6-.588.122-.869l10.582-4.078c.49-.183.918.11.76.857z"></path></g><defs><clipPath id="clip0_7920_515"><rect width="12" height="12"></rect></clipPath></defs></svg>
                         Connect Telegram
                     </button>

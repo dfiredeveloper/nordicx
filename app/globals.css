@@ -149,3 +149,13 @@ body {
     transform: translateX(-1310px)
   }
 }
+
+.button-brand {
+  color: #fff;
+  font-weight: 800;
+  /* background-image: linear-gradient(90deg, rgb(36, 238, 137), rgb(159, 232, 113));
+  box-shadow: rgba(35, 238, 136, 0.3) 0px 0px 12px, rgb(29, 202, 106) 0px -2px inset; */
+
+  background-image: linear-gradient(90deg, rgb(40, 43, 251), rgb(113, 151, 232));
+  box-shadow: rgba(35, 38, 238, 0.3) 0px 0px 12px, rgb(36, 25, 138) 0px -2px inset;
+}
