@@ -12,8 +12,8 @@ export default function AuthLayout({ setAuthModal, showAuth = true }: { setAuthM
                 <div>
                     <div className="text-center font-[600]  flex items-center gap-2 md:text-[2rem] sm:text-[1.6rem] text-[1.2rem]">
                         <div className="">Instant</div>
-                        <Image src='/rocket.svg' width="10" height="10" alt="rocket" className='w-10 h-10' />
                         <div className="">Autonomous Trading</div>
+                        <Image src='/rocket.svg' width="10" height="10" alt="rocket" className='w-10 h-10' />
                     </div>
                     {/* <div className="text-center font-[600] leading-relaxed" style={{ fontSize: 'min(40px, 7vw)' }}>
                         Fast AFK Automation 🚀
