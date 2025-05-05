@@ -29,8 +29,8 @@ export default function RootLayout({
       >
         {/* here will have the auth modal */}
         <Suspense>
-          {/* <AuthLayout /> */}
-          {/* <MemeCoinsWidget /> */}
+          <AuthLayout />
+          <MemeCoinsWidget />
           <Header />
           {children}
         </Suspense>
