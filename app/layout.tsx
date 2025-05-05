@@ -3,7 +3,7 @@ import "./globals.css";
 import AuthLayout from "../components/common/authLayout";
 import Header from "../components/common/header";
 import { Suspense } from "react";
-import { Metadata } from 'next'
+import { Metadata } from "next";
 import MemeCoinsWidget from "@/components/common/widget";
 
 const poppins = Poppins({
@@ -12,13 +12,10 @@ const poppins = Poppins({
   subsets: ["latin"],
 });
 
-
 export const metadata: Metadata = {
-  title: 'Nordic.AI - Instant Autonomous Trading',
-  description: 'Connect your Telegram to Trade Anywhere, Anytime.'
-}
-
-
+  title: "Nordic.AI - Instant Autonomous Trading",
+  description: "Connect your Telegram to Trade Anywhere, Anytime.",
+};
 
 export default function RootLayout({
   children,
@@ -32,8 +29,8 @@ export default function RootLayout({
       >
         {/* here will have the auth modal */}
         <Suspense>
-          <AuthLayout />
-          <MemeCoinsWidget />
+          {/* <AuthLayout /> */}
+          {/* <MemeCoinsWidget /> */}
           <Header />
           {children}
         </Suspense>
