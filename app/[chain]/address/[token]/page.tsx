@@ -22,14 +22,14 @@ export default function Page({ params }) {
     <div className="p-4">
       {/* header with avatar and address */}
       <div className="flex  justify-between items-center">
-        <div className="flex items-start gap-3">
+        <div className="flex items-center gap-3">
           <img
             src="/static/testprofile.png"
             className="w-14 h-14 rounded-full"
             alt="testprofile"
           />
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
+          <div className="sm:space-y-2">
+            <div className="flex items-center sm:gap-2">
               <div className="text-[14px] flex items-center gap-1 text-gray-300 font-semibold">
                 {truncAddress("0x8b237d096a9198e3c98d77c24a64756830602e7d")}
                 <button>
@@ -46,7 +46,7 @@ export default function Page({ params }) {
                 </button>
               </div>
 
-              <button className="flex items-center text-[12px] button-gradient">
+              <button className="sm:flex items-center text-[12px] button-gradient hidden">
                 <svg
                   width="16px"
                   height="16px"
@@ -71,8 +71,11 @@ export default function Page({ params }) {
             </div>
 
             <div className="text-text-300 text-[12px] flex items-center gap-1">
-              <span className="text-white">
+              <span className="text-white sm:block hidden">
                 0x8b237d096a9198e3c98d77c24a64756830602e7d
+              </span>
+              <span className="text-[#8d8f8f] sm:hidden block">
+                {truncAddress("0x8b237d096a9198e3c98d77c24a64756830602e7d")}
               </span>
               <svg
                 width="14px"
@@ -85,11 +88,47 @@ export default function Page({ params }) {
                 <path d="M10.9513 2.85078C10.9513 1.75312 10.0615 0.863281 8.96384 0.863281H3.76884C3.4996 0.863281 3.28134 1.08154 3.28134 1.35078C3.28134 1.62002 3.4996 1.83828 3.76884 1.83828H8.96384C9.52303 1.83828 9.97634 2.29159 9.97634 2.85078V8.6037C9.97634 8.87294 10.1946 9.0912 10.4638 9.0912C10.7331 9.0912 10.9513 8.87294 10.9513 8.6037V2.85078Z"></path>
                 <path d="M8.71858 4.33231C8.71858 3.64886 8.16453 3.09481 7.48108 3.09481H2.28608C1.60263 3.09481 1.04858 3.64886 1.04858 4.33231V9.89992C1.04858 10.5834 1.60263 11.1374 2.28608 11.1374H7.48108C8.16453 11.1374 8.71858 10.5834 8.71858 9.89992V4.33231ZM7.48108 4.06981C7.62606 4.06981 7.74358 4.18734 7.74358 4.33231V9.89992C7.74358 10.0449 7.62606 10.1624 7.48108 10.1624H2.28608C2.14111 10.1624 2.02358 10.0449 2.02358 9.89992V4.33231C2.02358 4.18734 2.14111 4.06981 2.28608 4.06981H7.48108Z"></path>
               </svg>
+
+              {/* share button */}
+              <button className="sm:flex hidden">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 16 16"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                >
+                  <path d="M11.4308 1.37092C10.5584 1.37092 9.85123 2.07814 9.85123 2.95053C9.85123 3.28129 9.95217 3.58651 10.1249 3.83953C10.4104 4.2578 10.8889 4.53013 11.4308 4.53013C12.3032 4.53013 13.0104 3.82292 13.0104 2.95053C13.0104 2.07814 12.3032 1.37092 11.4308 1.37092ZM8.55123 2.95053C8.55123 1.36017 9.84047 0.0709229 11.4308 0.0709229C13.0212 0.0709229 14.3104 1.36017 14.3104 2.95053C14.3104 4.54089 13.0212 5.83013 11.4308 5.83013C10.6681 5.83013 9.9748 5.53324 9.46013 5.05008L6.23693 7.04849C6.34245 7.34813 6.39983 7.67026 6.39983 8.00512C6.39983 8.33738 6.34333 8.65713 6.23937 8.9548L9.46895 10.9027C9.9779 10.4476 10.6506 10.1699 11.388 10.1699C12.9784 10.1699 14.2676 11.4592 14.2676 13.0495C14.2676 14.6399 12.9784 15.9291 11.388 15.9291C9.79768 15.9291 8.50843 14.6399 8.50843 13.0495C8.50843 12.6676 8.58308 12.3024 8.71854 11.9682L5.544 10.0535C5.02439 10.5668 4.30956 10.8847 3.52023 10.8847C1.92987 10.8847 0.640625 9.59548 0.640625 8.00512C0.640625 6.41476 1.92987 5.12551 3.52023 5.12551C4.30698 5.12551 5.01973 5.44132 5.53891 5.95167L8.73672 3.96901C8.61684 3.65207 8.55123 3.30861 8.55123 2.95053ZM3.52023 6.42551C2.64784 6.42551 1.94062 7.13273 1.94062 8.00512C1.94062 8.87751 2.64784 9.58472 3.52023 9.58472C4.07844 9.58472 4.56955 9.29566 4.85141 8.85599C5.00861 8.61077 5.09983 8.31959 5.09983 8.00512C5.09983 7.69065 5.00861 7.39947 4.85141 7.15425C4.56955 6.71457 4.07844 6.42551 3.52023 6.42551ZM11.388 11.4699C10.8648 11.4699 10.4009 11.7237 10.1124 12.1176C9.92117 12.3788 9.80843 12.7001 9.80843 13.0495C9.80843 13.9219 10.5156 14.6291 11.388 14.6291C12.2604 14.6291 12.9676 13.9219 12.9676 13.0495C12.9676 12.1772 12.2604 11.4699 11.388 11.4699Z"></path>
+                </svg>
+              </button>
             </div>
+
+            <button className="flex items-center !text-[10px] !m-0 !h-[20px] button-gradient w-fit sm:hidden">
+              <svg
+                width="12px"
+                height="12px"
+                viewBox="0 0 12 12"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+              >
+                <path d="M8.96954 2H10.3265L7.36191 5.38837L10.8496 9.99918H8.11876L5.9799 7.20275L3.53256 9.99918H2.17475L5.34571 6.37494L2 2H4.80012L6.73346 4.55605L8.96954 2ZM8.49328 9.18695H9.24521L4.39155 2.76956H3.58466L8.49328 9.18695Z"></path>
+              </svg>
+              Add Twitter
+              <svg
+                width="9px"
+                height="9px"
+                viewBox="0 0 12 12"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                className="-rotate-90"
+              >
+                <path d="M1.91523 4.25654C2.1886 3.98317 2.63181 3.98317 2.90518 4.25654L6.4102 7.76156L9.91523 4.25654C10.1886 3.98317 10.6318 3.98317 10.9052 4.25654C11.1785 4.52991 11.1785 4.97312 10.9052 5.24649L6.4102 9.74146L1.91523 5.24649C1.64186 4.97312 1.64186 4.52991 1.91523 4.25654Z"></path>
+              </svg>
+            </button>
           </div>
         </div>
 
-        <div className="">
+        <div className="hidden sm:block">
           <button className="flex items-center text-secondary-foreground text-[14px] gap-2 h-[40px] rounded-[35px] min-w-[104px] justify-center bg-[#1f2024]">
             <svg
               width="16"
@@ -109,20 +148,22 @@ export default function Page({ params }) {
       {/* Refresh update and timeline dataset */}
       <div className="flex justify-between items-center mt-4">
         <div className="flex items-center text-[12px] gap-1">
-          <svg
-            width="12px"
-            height="12px"
-            viewBox="0 0 16 16"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="#C4CCCC"
-            color="#C4CCCC"
-          >
-            <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
-              d="M7.71472 3C4.94517 3 2.70001 5.24516 2.70001 8.01471C2.70001 10.7843 4.94517 13.0294 7.71472 13.0294C10.4843 13.0294 12.7294 10.7843 12.7294 8.01471C12.7294 7.60049 13.0652 7.26471 13.4794 7.26471C13.8936 7.26471 14.2294 7.60049 14.2294 8.01471C14.2294 11.6127 11.3127 14.5294 7.71472 14.5294C4.11675 14.5294 1.20001 11.6127 1.20001 8.01471C1.20001 4.41673 4.11675 1.5 7.71472 1.5C9.51241 1.5 11.1396 2.2284 12.3177 3.4046V2.25C12.3177 1.83579 12.6534 1.5 13.0677 1.5C13.4819 1.5 13.8177 1.83579 13.8177 2.25V5.54412C13.8177 5.95833 13.4819 6.29412 13.0677 6.29412H9.77354C9.35933 6.29412 9.02354 5.95833 9.02354 5.54412C9.02354 5.1299 9.35933 4.79412 9.77354 4.79412H11.5588C10.6382 3.69637 9.25751 3 7.71472 3Z"
-            ></path>
-          </svg>
+          <button className="cursor-pointer">
+            <svg
+              width="12px"
+              height="12px"
+              viewBox="0 0 16 16"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="#C4CCCC"
+              color="#C4CCCC"
+            >
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M7.71472 3C4.94517 3 2.70001 5.24516 2.70001 8.01471C2.70001 10.7843 4.94517 13.0294 7.71472 13.0294C10.4843 13.0294 12.7294 10.7843 12.7294 8.01471C12.7294 7.60049 13.0652 7.26471 13.4794 7.26471C13.8936 7.26471 14.2294 7.60049 14.2294 8.01471C14.2294 11.6127 11.3127 14.5294 7.71472 14.5294C4.11675 14.5294 1.20001 11.6127 1.20001 8.01471C1.20001 4.41673 4.11675 1.5 7.71472 1.5C9.51241 1.5 11.1396 2.2284 12.3177 3.4046V2.25C12.3177 1.83579 12.6534 1.5 13.0677 1.5C13.4819 1.5 13.8177 1.83579 13.8177 2.25V5.54412C13.8177 5.95833 13.4819 6.29412 13.0677 6.29412H9.77354C9.35933 6.29412 9.02354 5.95833 9.02354 5.54412C9.02354 5.1299 9.35933 4.79412 9.77354 4.79412H11.5588C10.6382 3.69637 9.25751 3 7.71472 3Z"
+              ></path>
+            </svg>
+          </button>
           Updated: 5h ago
         </div>
 
@@ -163,7 +204,7 @@ export default function Page({ params }) {
 
       {/* grid section */}
 
-      <div className="grid grid-cols-3 mt-5 h-[300px] gap-2">
+      <div className="grid lg:grid-cols-3 grid-cols-1 mt-5 min-h-[300px] gap-2">
         {/* left side grid */}
         <div className="col-span-1 h-full bg-accent-2 rounded-md p-2 px-3">
           <div className="flex justify-between items-center">
@@ -225,9 +266,9 @@ export default function Page({ params }) {
         </div>
 
         {/* right side grid */}
-        <div className="col-span-2 grid grid-cols-2 h-full">
+        <div className="lg:col-span-2 col-span-1 grid sm:grid-cols-2 sm:gap-0 gap-3  h-full">
           {/* there are 3 sections here */}
-          <div className="h-[200px] col-span-1 bg-accent-2 mr-[10px]  p-2 px-3 rounded-md">
+          <div className="h-[200px] col-span-1 bg-accent-2 sm:mr-[10px]  p-2 px-3 rounded-md">
             <div className="flex font-semibold items-center gap-2 text-[14px]">
               <span>Analysis</span>
             </div>
@@ -270,7 +311,7 @@ export default function Page({ params }) {
             </div>
           </div>
 
-          <div className="h-[200px] col-span-1  bg-accent-2  p-2 px-3 rounded-md">
+          <div className="h-[200px] col-span-1 bg-accent-2 p-2 px-3 rounded-md">
             <div className="flex font-semibold items-center gap-2 text-[14px]">
               <span>Distribution (0)</span>
             </div>
@@ -318,7 +359,7 @@ export default function Page({ params }) {
             </div>
           </div>
 
-          <div className="h-[100px] col-span-2 w-full bg-accent-2  mt-[10px] p-2 px-3 rounded-md">
+          <div className="min-h-[100px] sm:col-span-2 w-full bg-accent-2  sm:mt-[10px] p-2 px-3 rounded-md">
             <div className="flex font-semibold items-center gap-2 text-[14px]">
               <svg
                 width="14"
@@ -348,7 +389,7 @@ export default function Page({ params }) {
               <span>Phishing Check</span>
             </div>
 
-            <div className="text-[13px] w-[60%] mt-2 space-y-[1px] flex justify-between ">
+            <div className="text-[13px] lg:w-[60%] w-full mt-2 space-y-[1px] sm:flex justify-between ">
               <div className="">
                 <div className="text-[#c4cccc] flex gap-2 items-center">
                   <div className="w-3 h-3 rounded-full bg-prettyGreen"></div>
@@ -378,10 +419,10 @@ export default function Page({ params }) {
       </div>
 
       {/* final table */}
-      <div className="mt-5">
+      <div className="mt-10">
         {/* table tab */}
-        <div className="flex justify-between items-center">
-          <div className="flex gap-2 items-center">
+        <div className="sm:flex space-x-2 justify-between items-center">
+          <div className="flex gap-2 items-center py-2 whitespace-nowrap overflow-x-auto">
             <button
               onClick={() => setTableTabSwitch("1")}
               className={`text-[12px] font-[500] duration-200 ${

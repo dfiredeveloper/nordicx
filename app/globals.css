@@ -9,7 +9,6 @@
 }
 
 .button-gradient {
-  display: flex;
   height: 26px;
   border-radius: 32px;
   background: linear-gradient(92.56deg, rgb(136, 214, 147) 0%, rgb(28, 201, 255) 100%);
