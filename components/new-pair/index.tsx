@@ -1,14 +1,14 @@
 "use client";
 import { useEffect, useState } from "react"
 import UtilityBar from "./utilityBar"
-import Feed from "../reusable/feed"
+import Feed from "./feed"
 import Footer from "../common/footer"
 import Table from "./table/table1";
 import { useSearchParams } from "next/navigation";
 
 export default function Meme() {
-    const searchParams = useSearchParams()
-    const [switchTabs, setSwitch] = useState(searchParams.get("tab") || '1')
+    const searchParams = useSearchParams();
+    const [switchTabs, setSwitch] = useState(searchParams?.get("tab") || '1');
     useEffect(() => {
         if (window.innerWidth < 768) {
             setSwitch("2")
@@ -32,7 +32,7 @@ export default function Meme() {
 
     return (
         <div className='h-[90vh] overflow-hidden'>
-            <UtilityBar setSwitch={setSwitch} switchTabs={switchTabs} />
+            <UtilityBar switchTabs={switchTabs} />
             {
                 switchTabs == '1' ?
                     <Table /> :
