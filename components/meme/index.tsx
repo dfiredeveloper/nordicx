@@ -34,26 +34,26 @@ export default function Meme() {
 
     return (
         <div className='h-[90vh] overflow-hidden'>
-            <UtilityBar setSwitch={setSwitch} switchTabs={switchTabs} />
+            <UtilityBar switchTabs={switchTabs} />
             {
-                searchParams.get("tab") == "home" && <Feed switchTabs={switchTabs} />
+                searchParams?.get("tab") == "home" && <Feed switchTabs={switchTabs} />
             }
 
             {
-                searchParams.get("tab") == "new-creation" && <NewCreation />
+                searchParams?.get("tab") == "new-creation" && <NewCreation />
             }
 
 
             {
-                searchParams.get("tab") == "completing" && <Completing />
+                searchParams?.get("tab") == "completing" && <Completing />
             }
 
             {
-                searchParams.get("tab") == "completed" && <Completed />
+                searchParams?.get("tab") == "completed" && <Completed />
             }
 
             {
-                searchParams.get("tab") == "soaring" && <Soaring />
+                searchParams?.get("tab") == "soaring" && <Soaring />
             }
 
             <Footer />
