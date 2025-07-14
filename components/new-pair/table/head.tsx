@@ -3,7 +3,8 @@ import React, { useCallback } from 'react'
 
 export default function TableHead() {
     const pathname = usePathname()
-    const chain = useSearchParams()
+    const rawChain = useSearchParams();
+    const chain = React.useMemo(() => rawChain || new Map(), [rawChain]);
     const getChain = useCallback(() => chain.get("chain"), [chain]);
     return (
         <thead className="whitespace-nowrap border-b">
