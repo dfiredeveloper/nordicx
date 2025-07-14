@@ -23,10 +23,12 @@ export default function Page({ params }) {
       {/* header with avatar and address */}
       <div className="flex  justify-between items-center">
         <div className="flex items-center gap-3">
-          <img
+          <Image
             src="/static/testprofile.png"
             className="w-14 h-14 rounded-full"
             alt="testprofile"
+            width={56}
+            height={56}
           />
           <div className="sm:space-y-2">
             <div className="flex items-center sm:gap-2">

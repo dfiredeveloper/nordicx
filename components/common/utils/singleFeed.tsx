@@ -1,5 +1,5 @@
 import { copyToClipboard, formatNumber, truncAddress } from '@/lib/utils'
-import React, { useCallback } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import {
     Tooltip,
     TooltipContent,
@@ -12,7 +12,8 @@ import { useSearchParams } from 'next/navigation'
 
 
 export default function SingleFeed({ memeData }: { memeData: memeCoinsInterface }) {
-    const chain = useSearchParams()
+    const rawChain = useSearchParams();
+    const chain = useMemo(() => rawChain || new Map(), [rawChain]);
     const getChain = useCallback(() => chain.get("chain"), [chain]);
     return (
         <>
