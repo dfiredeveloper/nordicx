@@ -4,7 +4,7 @@ import React, { useCallback } from 'react'
 export default function TableHead() {
     const pathname = usePathname()
     const chain = useSearchParams()
-    const getChain = useCallback(() => chain.get("chain"), [chain]);
+    const getChain = useCallback(() => chain?.get("chain"), [chain]);
     return (
         <thead className="whitespace-nowrap border-b">
             <tr className="text-accent-aux-1 font-[300] bg-accent-2 text-[12px] z-[10] sticky top-0">

@@ -7,7 +7,7 @@ import { useSearchParams } from "next/navigation";
 
 export default function Trending() {
     const searchParams = useSearchParams()
-    const [switchTabs, setSwitch] = useState(searchParams.get("tab") || '1')
+    const [switchTabs, setSwitch] = useState(searchParams?.get("tab") || '1')
     useEffect(() => {
         if (window.innerWidth < 768) {
             setSwitch("2")
@@ -31,7 +31,7 @@ export default function Trending() {
 
     return (
         <div className='h-[90vh] overflow-hidden'>
-            <UtilityBar setSwitch={setSwitch} switchTabs={switchTabs} />
+            <UtilityBar switchTabs={switchTabs} />
             {
                 switchTabs == '1' ?
                     <Table />
