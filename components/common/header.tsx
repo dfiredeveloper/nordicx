@@ -6,7 +6,7 @@ import {
   updateUrlParams,
 } from "@/lib/utils";
 import Image from "next/image";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   Select,
   SelectContent,
@@ -31,6 +31,23 @@ import {
 } from "../ui/dialog";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import dynamic from 'next/dynamic';
+import { FC } from 'react';
+interface BlockiesProps {
+  seed: string;
+  size?: number;
+  scale?: number;
+  className?: string;
+}
+import { useAccount, useBalance, useDisconnect } from 'wagmi';
+// import { useWallet, useConnection } from '@solana/wallet-adapter-react';
+// import { useEffect as useSolanaEffect, useState as useSolanaState } from 'react';
+const Blockies = dynamic(() => import('react-blockies'), { ssr: false }) as unknown as FC<BlockiesProps>;
+const DynamicWalletMultiButton = dynamic(
+  () => import('@solana/wallet-adapter-react-ui').then(mod => mod.WalletMultiButton),
+  { ssr: false }
+);
 
 export default function Header() {
   const pathname = usePathname();
@@ -38,11 +55,12 @@ export default function Header() {
   const router = useRouter();
   const [switchMode, setSwitchMode] = useState(false);
   const [triggerInputDrop, setTriggerForInputDrpDown] = useState(false);
+  const [walletModalOpen, setWalletModalOpen] = useState(false);
   const navLinks = [
-    {
-      link: "/meme",
-      linkText: "Meme",
-    },
+    // {
+    //   link: "/meme",
+    //   linkText: "Top Movers",
+    // },
     {
       link: "/new-pair",
       linkText: "New pair",
@@ -75,6 +93,10 @@ export default function Header() {
       ntwk: "bsc",
     },
     {
+      img: "/static/sonic.webp",
+      ntwk: "sonic",
+    },
+    {
       img: "/static/tron.webp",
       ntwk: "tron",
     },
@@ -104,14 +126,147 @@ export default function Header() {
     setSwitchMode(themeMode().getFromStore() == "dark");
     updateUrlParams({ chain: localStore("network") || "sol" });
 
-    if (pathname == "/meme" && params.get("chain") != "sol") {
+    if (pathname == "/meme" && (params?.get("chain") ?? "sol") != "sol") {
       router.push("/");
     }
-  }, [pathname, params]);
+  }, [pathname, params, router]);
 
-  const getChain = useCallback(() => {
-    return params.get("chain");
-  }, [params]);
+  // EVM wallet info
+  const { address: evmAddress } = useAccount();
+  const { data: evmBalance } = useBalance({ address: evmAddress });
+  const { disconnect: evmDisconnect } = useDisconnect();
+
+  // Solana wallet info
+  // const { connection } = useConnection();
+  // const [solBalance, setSolBalance] = useSolanaState<number | null>(null);
+  // Temporarily disabled Solana balance fetch to test disconnect
+  // useSolanaEffect(() => {
+  //   console.log('Solana effect running:', {
+  //     connected: solanaWallet.connected,
+  //     publicKey: solanaWallet.publicKey?.toBase58(),
+  //     hasConnection: !!connection
+  //   });
+  //   
+  //   if (solanaWallet.connected && solanaWallet.publicKey && connection) {
+  //     console.log('Fetching Solana balance for:', solanaWallet.publicKey.toBase58());
+  //     connection.getBalance(solanaWallet.publicKey)
+  //       .then(balance => {
+  //         console.log('Solana balance fetched:', balance / 1e9);
+  //         setSolBalance(balance / 1e9); // SOL
+  //       })
+  //       .catch((e) => {
+  //         console.error('Failed to fetch Solana balance:', e);
+  //         setSolBalance(null);
+  //       });
+  //   } else {
+  //     console.log('Setting Solana balance to null - wallet not connected or no public key');
+  //     setSolBalance(null);
+  //   }
+  // }, [solanaWallet.connected, solanaWallet.publicKey, connection]);
+
+  // Custom account modal state
+  // const [accountDropdownOpen, setAccountDropdownOpen] = useState(false);
+  const accountBtnRef = useRef<HTMLButtonElement>(null);
+
+  // Determine if EVM or Solana wallet is connected
+  const isEvmConnected = !!evmAddress;
+  // const isSolanaConnected = solanaWallet.connected && solanaWallet.publicKey;
+
+  // Avatar (default if none)
+  const evmAvatarSeed = evmAddress ? evmAddress.toLowerCase() : 'default';
+  // const solAvatarSeed = solanaWallet.publicKey ? solanaWallet.publicKey.toBase58().toLowerCase() : 'default';
+
+  // Chain icon
+  const evmChainIcon = '/static/ether.webp'; // Replace with dynamic icon if needed
+  // const solChainIcon = '/static/solana.webp';
+
+  // Account button (shows when connected)
+  const renderAccountButton = () => {
+    if (isEvmConnected) {
+      return (
+        <button ref={accountBtnRef} onClick={() => {}} className="flex items-center gap-2 px-3 py-1 rounded-md bg-accent-4 text-xs font-[600] text-white dark:text-black relative min-h-[32px] min-w-[90px]">
+          <Blockies seed={evmAvatarSeed} size={8} scale={2} className="w-5 h-5 rounded-full border" />
+          <Image src={evmChainIcon} alt="chain" width={12} height={12} className="w-3 h-3" />
+          <span>{evmBalance ? `${parseFloat(evmBalance.formatted).toFixed(4)} ${evmBalance.symbol}` : '0'}</span>
+        </button>
+      );
+    }
+    // if (isSolanaConnected) {
+    //   return (
+    //     <button ref={accountBtnRef} onClick={() => setAccountDropdownOpen((v) => !v)} className="flex items-center gap-2 px-3 py-1 rounded-md bg-accent-4 text-xs font-[600] text-white dark:text-black relative min-h-[32px] min-w-[90px]">
+    //       <Blockies seed={solAvatarSeed} size={8} scale={2} className="w-5 h-5 rounded-full border" />
+    //       <Image src={solChainIcon} alt="chain" width={12} height={12} className="w-3 h-3" />
+    //       <span>{solBalance !== null ? `${solBalance.toFixed(4)} SOL` : '0 SOL'}</span>
+    //     </button>
+    //   );
+    // }
+    return null;
+  };
+
+  // Custom account modal (shows on account button click)
+  const renderAccountDropdown = () => {
+    // if (!(isEvmConnected || isSolanaConnected) || !accountDropdownOpen) return null;
+    const address = isEvmConnected ? evmAddress : null; // isSolanaConnected ? solanaWallet.publicKey?.toBase58() : null;
+    // const chainIcon = isEvmConnected ? evmChainIcon : solChainIcon;
+    // const balance = isEvmConnected
+    //   ? (evmBalance ? `${parseFloat(evmBalance.formatted).toFixed(4)} ${evmBalance.symbol}` : '0')
+    //   : (solBalance !== null ? `${solBalance.toFixed(4)} SOL` : '0 SOL');
+    return (
+      <div className="absolute right-0 mt-2 z-50 w-[340px] bg-[#18181b] rounded-xl shadow-lg p-6 text-white" style={{top: '100%'}}>
+        <div className="flex flex-col items-center gap-2 mb-4">
+          <Blockies seed={evmAvatarSeed} size={12} scale={6} className="w-16 h-16 rounded-full border-2 border-accent-4" />
+          <div className="flex items-center gap-2 mt-2">
+            <Image src={evmChainIcon} alt="chain" width={24} height={24} className="w-6 h-6" />
+            <span className="font-bold text-lg">{evmBalance ? `${parseFloat(evmBalance.formatted).toFixed(4)} ${evmBalance.symbol}` : '0'}</span>
+          </div>
+          <span className="text-xs text-accent-1 bg-[#23242a] px-2 py-1 rounded mt-1">{address && address.slice(0, 6) + '...' + address.slice(-4)}</span>
+        </div>
+        <div className="flex flex-col gap-2 mt-2">
+          <button className="flex items-center gap-2 px-4 py-2 rounded hover:bg-[#23242a]">
+            <svg width="20" height="20" fill="currentColor" className="text-accent-1"><rect width="20" height="20" rx="4" fill="#23242a"/><path d="M6 8h8v2H6V8zm0 4h5v2H6v-2z" fill="#fff"/></svg>
+            My Wallet
+          </button>
+          <button className="flex items-center gap-2 px-4 py-2 rounded hover:bg-[#23242a]">
+            <svg width="20" height="20" fill="currentColor" className="text-accent-1"><rect width="20" height="20" rx="4" fill="#23242a"/><path d="M10 4v8m0 0l3-3m-3 3l-3-3" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            Referral
+          </button>
+          <button className="flex items-center gap-2 px-4 py-2 rounded hover:bg-gradient-to-r from-green-400 to-blue-400">
+            <svg width="20" height="20" fill="currentColor" className="text-accent-1"><rect width="20" height="20" rx="4" fill="#23242a"/><path d="M8 12l2-2 2 2m-2-2v4" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            Contest(S6)
+          </button>
+          <button className="flex items-center gap-2 px-4 py-2 rounded hover:bg-[#23242a]">
+            <svg width="20" height="20" fill="currentColor" className="text-accent-1"><rect width="20" height="20" rx="4" fill="#23242a"/><path d="M10 8v4m0 0l3-3m-3 3l-3-3" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            TG Alert Tutorial
+          </button>
+          <button onClick={async () => {
+            if (isEvmConnected) {
+              await Promise.resolve(evmDisconnect());
+            }
+            // Debug: log state after disconnect
+            setTimeout(() => {
+              console.log('EVM address after disconnect:', evmAddress);
+              // Solana debug logs removed since Solana logic is disabled
+            }, 500);
+            window.location.reload();
+          }} className="flex items-center gap-2 px-4 py-2 rounded hover:bg-[#23242a] text-red-400">
+            <svg width="20" height="20" fill="currentColor" className="text-accent-1"><rect width="20" height="20" rx="4" fill="#23242a"/><path d="M6 6l8 8M6 14L14 6" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            Disconnect
+          </button>
+        </div>
+      </div>
+    );
+  };
+  // Close dropdown on outside click
+  // useSolanaEffect(() => {
+  //   if (!accountDropdownOpen) return;
+  //   function handleClick(e: MouseEvent) {
+  //     if (accountBtnRef.current && !accountBtnRef.current.contains(e.target as Node)) {
+  //       setAccountDropdownOpen(false);
+  //     }
+  //   }
+  //   document.addEventListener('mousedown', handleClick);
+  //   return () => document.removeEventListener('mousedown', handleClick);
+  // }, [accountDropdownOpen]);
 
   return (
     <div className="">
@@ -126,14 +281,14 @@ export default function Header() {
               className=" dark:hidden md:block hidden md:min-w-[170px] min-w-[100px]"
             />
             <Image
-              src="/logo_black.png"
+              src="/logo_black.svg"
               width={120}
               height={120}
               alt="logo dark"
               className=" md:dark:block md:block hidden md:min-w-[170px] min-w-[100px]"
             />
             <Image
-              src="/logo_black.png"
+              src="/logo_black.svg"
               width={120}
               height={120}
               alt="logo dark"
@@ -142,11 +297,6 @@ export default function Header() {
           </div>
           <ul className="md:flex gap-3 hidden overflow-hidden">
             {navLinks.map((item, index) => {
-              // Special case for Meme link on Solana chain
-              if (item.link === "/meme" && getChain() !== "sol") {
-                return null;
-              }
-
               const isActive = pathname === item.link;
               const linkClassName = `h-full w-full ${
                 isActive ? "dark:text-white text-black" : "text-accent-1"
@@ -545,19 +695,42 @@ export default function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-          <button className="md:px-4 px-2 py-[0.4rem] rounded-md bg-accent-4 text-xs font-[600] text-white dark:text-black">
+          {isEvmConnected ? (
+            <div className="relative">
+              {renderAccountButton()}
+              {isEvmConnected && renderAccountDropdown()}
+            </div>
+          ) : (
+            <>
+              <button
+                className="md:px-4 px-2 py-[0.4rem] rounded-md bg-accent-4 text-xs font-[600] text-white dark:text-black"
+                onClick={() => setWalletModalOpen(true)}
+              >
             Connect
           </button>
+              {walletModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+                  <div className="bg-white dark:bg-[#18181b] rounded-lg p-6 min-w-[320px] relative">
+                    <button className="absolute top-2 right-2 text-xl" onClick={() => setWalletModalOpen(false)}>&times;</button>
+                    <div className="flex flex-col gap-4">
+                      <div className="text-lg font-bold mb-2">Connect Wallet</div>
+                      <ConnectButton
+                        chainStatus="icon"
+                        showBalance={true}
+                        accountStatus="avatar"
+                      />
+                      <DynamicWalletMultiButton className="md:px-4 px-2 py-[0.4rem] rounded-md bg-accent-4 text-xs font-[600] text-white dark:text-black" />
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
         </div>
       </div>
       <div className="bg-accent-3 border-t w-full overflow-x-auto">
         <ul className="md:hidden gap-3 flex py-2 px-5">
           {navLinks.map((item, index) => {
-            // Special case for Meme link on Solana chain
-            if (item.link === "/meme" && getChain() !== "sol") {
-              return null;
-            }
-
             const isActive = pathname === item.link;
             const linkClassName = `h-full w-full ${
               isActive ? "dark:text-white text-black" : "text-accent-1"

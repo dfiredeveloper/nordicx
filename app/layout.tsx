@@ -5,6 +5,7 @@ import Header from "../components/common/header";
 import { Suspense } from "react";
 import { Metadata } from "next";
 import MemeCoinsWidget from "@/components/common/widget";
+import { WalletProviders } from '../components/providers/WalletProviders';
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -27,13 +28,14 @@ export default function RootLayout({
       <body
         className={`${poppins.variable} antialiased dark:bg-[#111111] bg-[#f4f4f5] text-[#111111] dark:text-[#f4f4f5]`}
       >
-        {/* here will have the auth modal */}
+        <WalletProviders>
         <Suspense>
           <AuthLayout />
           <MemeCoinsWidget />
           <Header />
           {children}
         </Suspense>
+        </WalletProviders>
       </body>
     </html>
   );

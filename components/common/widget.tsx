@@ -1,18 +1,48 @@
-import React from 'react';
+'use client';
+import React, { useEffect, useState } from 'react';
 
-const MEME_COINS = [
-    { id: 1, name: 'Dogecoin', logo: '🐶' },
-    { id: 2, name: 'Shiba Inu', logo: '🐕' },
-    { id: 3, name: 'Pepe', logo: '🐸' },
-    { id: 4, name: 'Bonk', logo: '🏏' },
-    { id: 5, name: 'Floki Inu', logo: '🚢' },
-    { id: 6, name: 'Samoyedcoin', logo: '🐩' },
-    { id: 7, name: 'MonaCoin', logo: '😺' },
-    { id: 8, name: 'ElonMogus', logo: '🚀' },
-    { id: 9, name: 'WifHat', logo: '🐶' },
-    { id: 10, name: 'Kabosu', logo: '🐾' }
-];
+interface HotPair {
+  id: string;
+  name: string;
+  symbol: string;
+  price: number;
+  priceChange24h: number;
+  volume24h: number;
+  liquidity: number;
+  chain: string;
+  pairAddress: string;
+}
+
 function MemeCoinsWidget() {
+    const [hotPairs, setHotPairs] = useState<HotPair[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchHotPairs = async () => {
+            try {
+                const response = await fetch('/api/hot-pairs');
+                const data = await response.json();
+                
+                if (data.success && data.data) {
+                    setHotPairs(data.data);
+                } else {
+                    console.error('Failed to fetch hot pairs:', data.error);
+                }
+            } catch (error) {
+                console.error('Error fetching hot pairs:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchHotPairs();
+        
+        // Refresh every 5 minutes
+        const interval = setInterval(fetchHotPairs, 5 * 60 * 1000);
+        
+        return () => clearInterval(interval);
+    }, []);
+
     return (
         <div className="overflow-hidden w-full h-[35px] relative">
             <div className="absolute left-0 right-0 z-10 h-full w-fit px-3 flex justify-center dark:bg-[#111111]">
@@ -21,76 +51,69 @@ function MemeCoinsWidget() {
                     <p className='uppercase whitespace-nowrap text-white sm:block hidden'>Hot pairs</p>
                 </div>
             </div>
-            <div
-                className="flex animate-slide gap-12 px-4"
-            // animate={{
-            //     x: [0, -1 * (MEME_COINS.length * 220)],
-            //     transition: {
-            //         x: {
-            //             repeat: Infinity,
-            //             duration: 15,
-            //             ease: "linear"
-            //         }
-            //     }
-            // }}
-            >
-                {/* {[...MEME_COINS, ...MEME_COINS].map((coin) => (
-                    <div
-                        key={`${coin.id}-${Math.random()}`}
-                        className="flex-shrink-0 w-fit flex items-center gap-2 text-[12px]"
-                    >
-                        <div className="text-2xl">{coin.logo}</div>
+            <div className="flex animate-slide gap-12 px-4">
+                {loading ? (
+                    // Loading state
+                    <div className="ml-[5rem] flex items-center gap-3">
+                        {Array(10).fill(0).map((_, index) => (
+                            <div key={index} className="flex-shrink-0 w-fit flex items-center gap-2 text-[12px] animate-pulse">
+                                <div className="w-6 h-6 bg-gray-600 rounded"></div>
                         <div>
-                            <span className="font-bold mr-2">#{coin.id}</span>
-                            <span>{coin.name}</span>
+                                    <div className="w-16 h-3 bg-gray-600 rounded mb-1"></div>
+                                    <div className="w-12 h-2 bg-gray-600 rounded"></div>
+                                </div>
                         </div>
+                        ))}
                     </div>
-                ))} */}
+                ) : (
+                    // Real data
+                    <>
                 <div className="ml-[5rem] flex items-center gap-3">
-                    {[...MEME_COINS].map((coin) => (
+                            {[...hotPairs, ...hotPairs].slice(0, 10).map((pair, index) => (
                         <div
-                            key={`${coin.id}-${Math.random()}`}
-                            className="flex-shrink-0 w-fit flex items-center gap-2 text-[12px]"
+                                    key={`${pair.id}-${index}`}
+                                    className="flex-shrink-0 w-fit flex items-center gap-2 text-[12px] hover:bg-gray-800 px-2 py-1 rounded cursor-pointer transition-colors"
                         >
-                            <div className="text-2xl">{coin.logo}</div>
+                                    <div className="text-lg">🔥</div>
                             <div>
-                                <span className="font-bold mr-2">#{coin.id}</span>
-                                <span>{coin.name}</span>
+                                        <div className="font-bold text-white">{pair.symbol}</div>
+                                        <div className="text-gray-400">{pair.priceChange24h >= 0 ? '+' : ''}{pair.priceChange24h.toFixed(2)}%</div>
                             </div>
                         </div>
                     ))}
                 </div>
 
                 <div className="ml-[10rem] flex items-center gap-8">
-                    {[...MEME_COINS].map((coin) => (
+                            {[...hotPairs, ...hotPairs].slice(10, 20).map((pair, index) => (
                         <div
-                            key={`${coin.id}-${Math.random()}`}
-                            className="flex-shrink-0 w-fit flex items-center gap-2 text-[12px]"
+                                    key={`${pair.id}-${index + 10}`}
+                                    className="flex-shrink-0 w-fit flex items-center gap-2 text-[12px] hover:bg-gray-800 px-2 py-1 rounded cursor-pointer transition-colors"
                         >
-                            <div className="text-2xl">{coin.logo}</div>
+                                    <div className="text-lg">🔥</div>
                             <div>
-                                <span className="font-bold mr-2">#{coin.id}</span>
-                                <span>{coin.name}</span>
+                                        <div className="font-bold text-white">{pair.symbol}</div>
+                                        <div className="text-gray-400">${(pair.volume24h / 1000).toFixed(1)}K</div>
                             </div>
                         </div>
                     ))}
                 </div>
 
                 <div className="ml-[10rem] flex items-center gap-8">
-                    {[...MEME_COINS].map((coin) => (
+                            {[...hotPairs, ...hotPairs].slice(20, 30).map((pair, index) => (
                         <div
-                            key={`${coin.id}-${Math.random()}`}
-                            className="flex-shrink-0 w-fit flex items-center gap-2 text-[12px]">
-                            <div className="text-2xl">{coin.logo}</div>
+                                    key={`${pair.id}-${index + 20}`}
+                                    className="flex-shrink-0 w-fit flex items-center gap-2 text-[12px] hover:bg-gray-800 px-2 py-1 rounded cursor-pointer transition-colors"
+                                >
+                                    <div className="text-lg">🔥</div>
                             <div>
-                                <span className="font-bold mr-2">#{coin.id}</span>
-                                <span>{coin.name}</span>
+                                        <div className="font-bold text-white">{pair.symbol}</div>
+                                        <div className="text-gray-400">${pair.price.toFixed(6)}</div>
                             </div>
                         </div>
                     ))}
                 </div>
-
-
+                    </>
+                )}
             </div>
         </div>
     );

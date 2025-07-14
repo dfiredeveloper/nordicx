@@ -13,15 +13,15 @@ import { useSearchParams } from 'next/navigation'
 
 export default function SingleFeed({ memeData }: { memeData: memeCoinsInterface }) {
     const chain = useSearchParams()
-    const getChain = useCallback(() => chain.get("chain"), [chain]);
+    const getChain = useCallback(() => chain?.get("chain"), [chain]);
     return (
         <>
             <a href={`/eth/token/${memeData.id}`} className='w-full flex items-center gap-3 mt-5 border-b px-4 py-2'>
                 <div className="min-w-[40px]  min-h-[40px]  text-[rgb(219,222,230)] rounded-[54px] relative flex justify-center item-center">
                     <div className="">
-                        <a className='absolute hover:opacity-65 duration-200 bg-accent-2 text-[#111] opacity-0 inset h-full w-full flex justify-center items-center z-1 text-[10px]' target='_parent' href="https://lens.google.com/uploadbyurl?url=https://dd.dexscreener.com/ds-data/tokens/ethereum/0x20c861450ca31429f9504397fddbe2d4be3615f1.png">
+                        <button className='absolute hover:opacity-65 duration-200 bg-accent-2 text-[#111] opacity-0 inset h-full w-full flex justify-center items-center z-1 text-[10px]' onClick={() => window.open("https://lens.google.com/uploadbyurl?url=https://dd.dexscreener.com/ds-data/tokens/ethereum/0x20c861450ca31429f9504397fddbe2d4be3615f1.png", "_blank")}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" fill="currentColor" viewBox="0 0 16 16"><path fillRule="evenodd" clipRule="evenodd" d="M7.5 2.8a4.7 4.7 0 100 9.4 4.7 4.7 0 000-9.4zM1.2 7.5a6.3 6.3 0 1112.6 0 6.3 6.3 0 01-12.6 0z"></path><path fillRule="evenodd" clipRule="evenodd" d="M10.934 10.934a.8.8 0 011.132 0l3 3a.8.8 0 11-1.132 1.132l-3-3a.8.8 0 010-1.132z"></path></svg>
-                        </a>
+                        </button>
                         <Image src={memeData.image} className='w-full h-full' width={40} height={40} alt="" />
                     </div>
                 </div>

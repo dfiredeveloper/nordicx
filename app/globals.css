@@ -157,7 +157,7 @@ body {
 }
 
 .animate-slide {
-  animation: slide 9s linear 5s infinite;
+  animation: slide 20s linear 1s infinite;
 }
 
 .animate-slide:hover {

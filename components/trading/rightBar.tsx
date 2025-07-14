@@ -1,12 +1,54 @@
 'use client';
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
 import Image from 'next/image'
 import QuickSettingModal from '../common/quickSettingModal';
 import { Switch } from '../ui/switch';
 import { copyToClipboard, formatNumber, truncAddress } from '@/lib/utils';
 
-export default function RightBar() {
+type TokenData = {
+    market_cap?: number;
+    liquidity_usd?: number;
+    volume_24h?: number;
+    holders_count?: number | string;
+    no_mint?: string;
+    blacklist?: string;
+    burnt?: string;
+    top10?: string;
+};
+
+export default function RightBar({ chain, address }: { chain: string, address: string }) {
+    const [tokenData, setTokenData] = useState<TokenData | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (!chain || !address) return;
+        setLoading(true);
+        setError(false);
+        fetch(`/api/trending-tokens?chain=${chain}&address=${address}&limit=1`)
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.data && data.data.length > 0) {
+                    setTokenData(data.data[0]);
+                } else {
+                    setTokenData(null);
+                }
+                setLoading(false);
+            })
+            .catch(() => {
+                setError(true);
+                setLoading(false);
+            });
+    }, [chain, address]);
+
+    // Helper to format numbers or fallback
+    const safeFormat = (val: number | string | undefined, fallback = '--') => {
+        if (typeof val === 'number') return formatNumber(val);
+        if (typeof val === 'string' && val) return val;
+        return fallback;
+    };
+
     return (
         <div className="w-[300px] rounded-tl-[12px]  h-[calc(100vh-160px)] overflow-y-auto rounded-tr-[12px]">
             <div className='flex flex-col w-full rounded-[12px] overflow-hidden'>
@@ -101,21 +143,27 @@ export default function RightBar() {
                             <div className="flex justify-between pb-[8px] px-[12px] border-b border-[rgb(38,40,44)]">
                                 <div className='flex flex-col gap-[4px]'>
                                     <div className='flex w-full justify-start text-accent-aux-1'>MKT Cap</div>
-                                    <div className='text-[12px] w-full flex  font-[500]'>$4.6M</div>
+                                    <div className='text-[12px] w-full flex  font-[500]'>
+                                        {loading ? 'Loading...' : error || !tokenData ? '$4.6M' : `$${safeFormat(tokenData.market_cap)}`}
+                                    </div>
                                 </div>
                                 <div className='flex flex-col gap-[4px]'>
                                     <div className='flex w-full justify-start text-accent-aux-1'>Liq</div>
-                                    <div className='text-[12px] w-full flex  font-[500]'>$423.2K</div>
+                                    <div className='text-[12px] w-full flex  font-[500]'>
+                                        {loading ? 'Loading...' : error || !tokenData ? '$423.2K' : `$${safeFormat(tokenData.liquidity_usd)}`}
+                                    </div>
                                 </div>
                                 <div className='flex flex-col gap-[4px]'>
                                     <div className='flex w-full justify-start text-accent-aux-1'>24h Vol</div>
-                                    <div className='text-[12px] w-full flex  font-[500]'>$15.5M</div>
+                                    <div className='text-[12px] w-full flex  font-[500]'>
+                                        {loading ? 'Loading...' : error || !tokenData ? '$15.5M' : `$${safeFormat(tokenData.volume_24h)}`}
+                                    </div>
                                 </div>
                                 <div className='flex flex-col gap-[4px]'>
                                     <div className='flex w-full justify-start text-accent-aux-1'>Holders</div>
                                     <div className='text-[12px] w-full flex justify-end font-[500]'>
                                         <div className='text-[13px] gap-[4px] w-full flex items-center font-[500]'>
-                                            <p>6K</p>
+                                            {loading ? 'Loading...' : error || !tokenData ? '6K' : safeFormat(tokenData.holders_count)}
                                         </div>
                                     </div>
                                 </div>
@@ -206,10 +254,10 @@ export default function RightBar() {
                 <Metric />
 
                 {/* pool Info */}
-                <PoolInfo />
+                <PoolInfo chain={chain} address={address} />
 
                 {/* degen audit */}
-                <DegenAudit />
+                <DegenAudit chain={chain} address={address} />
             </div>
         </div>
     )
@@ -713,7 +761,37 @@ export function Metric() {
 }
 
 
-export function PoolInfo() {
+export function PoolInfo({ chain, address }: { chain: string, address: string }) {
+    const [tokenData, setTokenData] = useState<TokenData | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (!chain || !address) return;
+        setLoading(true);
+        setError(false);
+        fetch(`/api/trending-tokens?chain=${chain}&address=${address}&limit=1`)
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.data && data.data.length > 0) {
+                    setTokenData(data.data[0]);
+                } else {
+                    setTokenData(null);
+                }
+                setLoading(false);
+            })
+            .catch(() => {
+                setError(true);
+                setLoading(false);
+            });
+    }, [chain, address]);
+
+    const safeFormat = (val: number | string | undefined, fallback = '--') => {
+        if (typeof val === 'number') return formatNumber(val);
+        if (typeof val === 'string' && val) return val;
+        return fallback;
+    };
+
     return (
         <div className="flex mt-3 w-full flex-col bg-accent-search rounded-[12px] p-[12px]">
             <div className="w-full flex justify-between items-center pb-2">
@@ -724,30 +802,28 @@ export function PoolInfo() {
                 <div className="flex w-full justify-between item-center ">
                     <p className=''>Total liq</p>
                     <p className='flex items-center'>
-                        $375k(807.12 SOL)
+                        {loading ? 'Loading...' : error || !tokenData ? '$375k' : `$${safeFormat(tokenData.liquidity_usd)}`}
                         <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" fill="#88D693" viewBox="0 0 12 12"><path d="M8.333 4.667h-.38v-.762A1.887 1.887 0 006.047 2a1.887 1.887 0 00-1.904 1.905v.762h-.381A.764.764 0 003 5.43v3.81c0 .418.343.761.762.761h4.571c.42 0 .762-.343.762-.761v-3.81a.764.764 0 00-.762-.762zM6.047 8.096a.765.765 0 01-.761-.762c0-.42.343-.763.761-.763.42 0 .763.344.763.763 0 .419-.343.762-.763.762zM7.23 4.667H4.867v-.762c0-.648.533-1.18 1.18-1.18.649 0 1.182.532 1.182 1.18v.762z"></path></svg>
                     </p>
                 </div>
                 <div className="flex w-full justify-between item-center ">
                     <p className=''>Market Cap</p>
                     <p className='flex items-center'>
-                        $3M
+                        {loading ? 'Loading...' : error || !tokenData ? '$3M' : `$${safeFormat(tokenData.market_cap)}`}
                     </p>
                 </div>
                 <div className="flex w-full justify-between item-center ">
                     <p className=''>Holders</p>
                     <p className='flex items-center'>
-                        9601
+                        {loading ? 'Loading...' : error || !tokenData ? '9601' : safeFormat(tokenData.holders_count)}
                     </p>
                 </div>
-
                 <div className="flex w-full justify-between item-center ">
                     <p className=''>Total supply</p>
                     <p className='flex items-center'>
                         {formatNumber(9996000)}
                     </p>
                 </div>
-
                 <div className="flex w-full justify-between item-center ">
                     <p className=''>Pair</p>
                     <p className='flex items-center'>
@@ -755,7 +831,6 @@ export function PoolInfo() {
                         <svg xmlns="http://www.w3.org/2000/svg" className="cursor-pointer" onClick={() => copyToClipboard("FAipEikduejyyr5Z")} width="12px" height="12px" fill="#5C6068" viewBox="0 0 12 12"><g clipPath="url(#clip0_6972_490)"><path d="M.5 5.214a2.357 2.357 0 012.357-2.357h3.929a2.357 2.357 0 012.357 2.357v3.929A2.357 2.357 0 016.786 11.5H2.857A2.357 2.357 0 01.5 9.143V5.214z"></path><path d="M2.987 2.084c.087-.008.174-.013.263-.013h3.929a2.75 2.75 0 012.75 2.75V8.75c0 .089-.005.177-.013.263A2.358 2.358 0 0011.5 6.786V2.857A2.357 2.357 0 009.143.5H5.214c-1.03 0-1.907.662-2.227 1.584z"></path></g><defs><clipPath id="clip0_6972_490"><rect width="12" height="12"></rect></clipPath></defs></svg>
                     </p>
                 </div>
-
                 <div className="flex w-full justify-between item-center ">
                     <p className=''>Token creator</p>
                     <p className='flex items-center'>
@@ -764,7 +839,6 @@ export function PoolInfo() {
                         <svg xmlns="http://www.w3.org/2000/svg" className="cursor-pointer" onClick={() => copyToClipboard("FAipEikduejyyr5Z")} width="12px" height="12px" fill="#5C6068" viewBox="0 0 12 12"><g clipPath="url(#clip0_6972_490)"><path d="M.5 5.214a2.357 2.357 0 012.357-2.357h3.929a2.357 2.357 0 012.357 2.357v3.929A2.357 2.357 0 016.786 11.5H2.857A2.357 2.357 0 01.5 9.143V5.214z"></path><path d="M2.987 2.084c.087-.008.174-.013.263-.013h3.929a2.75 2.75 0 012.75 2.75V8.75c0 .089-.005.177-.013.263A2.358 2.358 0 0011.5 6.786V2.857A2.357 2.357 0 009.143.5H5.214c-1.03 0-1.907.662-2.227 1.584z"></path></g><defs><clipPath id="clip0_6972_490"><rect width="12" height="12"></rect></clipPath></defs></svg>
                     </p>
                 </div>
-
                 <div className="flex w-full justify-between item-center ">
                     <p className=''>Pool created</p>
                     <p className='flex items-center'>
@@ -777,7 +851,44 @@ export function PoolInfo() {
 }
 
 
-export function DegenAudit() {
+export function DegenAudit({ chain, address }: { chain: string, address: string }) {
+    const [tokenData, setTokenData] = useState<TokenData | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (!chain || !address) return;
+        setLoading(true);
+        setError(false);
+        fetch(`/api/trending-tokens?chain=${chain}&address=${address}&limit=1`)
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.data && data.data.length > 0) {
+                    setTokenData(data.data[0]);
+                } else {
+                    setTokenData(null);
+                }
+                setLoading(false);
+            })
+            .catch(() => {
+                setError(true);
+                setLoading(false);
+            });
+    }, [chain, address]);
+
+    // Fallbacks for audit fields
+    const getField = (field: keyof TokenData, fallback: string) => {
+        if (loading) return 'Loading...';
+        if (error || !tokenData || tokenData[field] === undefined) return fallback;
+        return String(tokenData[field]);
+    };
+
+    // These fields are placeholders; adjust as needed based on your API response
+    const noMint = getField('no_mint' as keyof TokenData, 'Yes');
+    const blacklist = getField('blacklist' as keyof TokenData, 'No');
+    const burnt = getField('burnt' as keyof TokenData, 'No');
+    const top10 = getField('top10' as keyof TokenData, '13%');
+
     return (
         <div className="flex mt-3 w-full flex-col bg-accent-search rounded-[12px] p-[12px]">
             <div className="w-full flex justify-between items-center pb-2">
@@ -787,7 +898,7 @@ export function DegenAudit() {
                 <div className="flex w-full justify-between item-center ">
                     <p className=''>NoMint</p>
                     <div className='flex items-center gap-1'>
-                        <p className='text-prettyGreen'>Yes</p>
+                        <p className='text-prettyGreen'>{noMint}</p>
                         <p>
                             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="#88D693" viewBox="0 0 14 14"><path d="M12.956 2.686C9.51 1.576 7.002.031 7.002.031h-.004s-2.47 1.564-5.952 2.655c0 0-.662 7.75 5.935 11.283h.037c6.6-3.532 5.938-11.283 5.938-11.283zM10.044 5.34L7.233 9.025a.566.566 0 01-.85.056L4.598 7.292a.567.567 0 11.803-.8L6.726 7.82l2.417-3.168a.567.567 0 01.9.687z"></path></svg>
                         </p>
@@ -796,7 +907,7 @@ export function DegenAudit() {
                 <div className="flex w-full justify-between item-center ">
                     <p className=''>Blacklist</p>
                     <div className='flex items-center gap-1'>
-                        <p className='text-prettyGreen'>No</p>
+                        <p className='text-prettyGreen'>{blacklist}</p>
                         <p>
                             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="#88D693" viewBox="0 0 14 14"><path d="M12.956 2.686C9.51 1.576 7.002.031 7.002.031h-.004s-2.47 1.564-5.952 2.655c0 0-.662 7.75 5.935 11.283h.037c6.6-3.532 5.938-11.283 5.938-11.283zM10.044 5.34L7.233 9.025a.566.566 0 01-.85.056L4.598 7.292a.567.567 0 11.803-.8L6.726 7.82l2.417-3.168a.567.567 0 01.9.687z"></path></svg>
                         </p>
@@ -806,7 +917,7 @@ export function DegenAudit() {
                 <div className="flex w-full justify-between item-center ">
                     <p className=''>Burnt</p>
                     <div className='flex items-center gap-1'>
-                        <p className='text-prettyGreen'>No</p>
+                        <p className='text-prettyGreen'>{burnt}</p>
                         <p>
                             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="#88D693" viewBox="0 0 14 14"><path d="M12.956 2.686C9.51 1.576 7.002.031 7.002.031h-.004s-2.47 1.564-5.952 2.655c0 0-.662 7.75 5.935 11.283h.037c6.6-3.532 5.938-11.283 5.938-11.283zM10.044 5.34L7.233 9.025a.566.566 0 01-.85.056L4.598 7.292a.567.567 0 11.803-.8L6.726 7.82l2.417-3.168a.567.567 0 01.9.687z"></path></svg>
                         </p>
@@ -816,14 +927,12 @@ export function DegenAudit() {
                 <div className="flex w-full justify-between item-center ">
                     <p className=''>Top 10</p>
                     <div className='flex items-center gap-1'>
-                        <p className='text-prettyGreen'>13%</p>
+                        <p className='text-prettyGreen'>{top10}</p>
                         <p>
                             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="#88D693" viewBox="0 0 14 14"><path d="M12.956 2.686C9.51 1.576 7.002.031 7.002.031h-.004s-2.47 1.564-5.952 2.655c0 0-.662 7.75 5.935 11.283h.037c6.6-3.532 5.938-11.283 5.938-11.283zM10.044 5.34L7.233 9.025a.566.566 0 01-.85.056L4.598 7.292a.567.567 0 11.803-.8L6.726 7.82l2.417-3.168a.567.567 0 01.9.687z"></path></svg>
                         </p>
                     </div>
                 </div>
-
-
             </div>
         </div>
     )

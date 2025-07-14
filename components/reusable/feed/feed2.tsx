@@ -1,34 +1,99 @@
 "use client";
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
-import { fetchMemeCoinData } from '@/lib/utils'
-import { memeCoins, memeCoinsInterface } from '@/lib/faker-data'
 import SingleFeed from './singleFeed'
-import { Skeleton } from '@/components/ui/skeleton';
+import { Skeleton } from "@/components/ui/skeleton"
+import { useSearchParams } from "next/navigation"
 
-export default function Feed2() {
-    const [isLoading, setLoading] = useState(true)
-    const [memeData, setMemeData] = useState<memeCoinsInterface[]>([])
+type TokenData = {
+    baseToken: {
+        address: string;
+        name: string;
+        symbol: string;
+    };
+    quoteToken: {
+        address: string;
+        name: string;
+        symbol: string;
+    };
+    priceUsd: string;
+    liquidity: {
+        usd: number;
+        locked?: boolean;
+    };
+    volume: {
+        h24: number;
+        h1?: number;
+    };
+    priceChange: {
+        h24: number;
+        h1?: number;
+        m5?: number;
+    };
+    pairAddress: string;
+    chainId: string;
+    dexId: string;
+    createdAt?: string;
+    pairCreatedAt?: number;
+    txns?: {
+        h1: {
+            buys: number;
+            sells: number;
+        };
+    };
+    image?: string;
+    socials?: {
+        twitter: string | null;
+        website: string | null;
+        telegram: string | null;
+    };
+};
 
-    useEffect(() => {
-        fetchMemeCoinData(memeCoins).then((data: memeCoinsInterface[]) => {
+interface Feed2Props {
+    tokenData: TokenData[];
+    loading: boolean;
+    error: string | null;
+}
 
-            setLoading(false)
-            setMemeData(data)
-        })
-    }, [])
+export default function Feed2({ tokenData, loading, error }: Feed2Props) {
+    const searchParams = useSearchParams()
+    const currentChain = searchParams?.get("chain") || "sol"
+    
+    // Chain-specific filtering thresholds for "Locked" feed
+    const getChainThresholds = () => {
+        switch (currentChain) {
+            case 'eth':
+                return { liquidity: 50000, volume: 10000 }
+            case 'bsc':
+                return { liquidity: 30000, volume: 8000 }
+            case 'base':
+                return { liquidity: 20000, volume: 5000 }
+            case 'blast':
+                return { liquidity: 20000, volume: 5000 }
+            case 'sonic':
+                return { liquidity: 15000, volume: 3000 }
+            case 'tron':
+                return { liquidity: 15000, volume: 3000 }
+            case 'sol':
+            default:
+                return { liquidity: 20000, volume: 5000 }
+        }
+    }
+    
+    const thresholds = getChainThresholds()
+
     return (
-        <div className='w-full max-h-[787px] bg-accent-2  pb-5 pt-2 rounded-lg'>
-            <div className="flex items-center w-full  p-4 justify-between">
+        <div className='w-full max-h-[787px] bg-accent-2  pb-5 rounded-lg pt-2'>
+            <div className="flex items-center p-4 w-full justify-between">
                 <div className="text-[14px] font-[600]">🔥 Locked</div>
 
                 <Popover>
                     <PopoverTrigger asChild>
-                        <div className="text-[14px] gap-2 cursor-pointer flex items-center">
+                        <div className="text-[14px] flex gap-2 cursor-pointer  items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" fill="#6E727D" viewBox="0 0 16 16"><path fillRule="evenodd" clipRule="evenodd" d="M2.702 3.225l.006.006 3.635 3.547c.355.346.554.82.554 1.315v3.898a.6.6 0 11-1.2 0V8.093a.636.636 0 00-.192-.456L1.87 4.09C1.088 3.327 1.628 2 2.72 2h10.562c1.093 0 1.633 1.328.85 2.09l-3.64 3.547a.636.636 0 00-.191.456v5.634a.6.6 0 01-1.2 0V8.093c0-.495.2-.97.554-1.315l3.64-3.547.005-.006.001-.002-.002-.012a.03.03 0 00-.007-.01h-.002l-.008-.001H2.71a.03.03 0 00-.006.011.03.03 0 00-.003.012l.001.002z"></path></svg>
                             Filter
                         </div>
@@ -79,11 +144,10 @@ export default function Feed2() {
                     </PopoverContent>
                 </Popover>
             </div>
-
-            {/* feed 2 */}
             <div className="overflow-y-auto h-full">
+
                 {
-                    isLoading ?
+                    loading ?
                         <div className="px-4 mt-5 space-y-2">
                             {
                                 Array(10).fill(0).map((_, index) => (
@@ -92,9 +156,55 @@ export default function Feed2() {
                             }
                         </div>
                         :
-                        memeData.map((data, i) => (
-                            <SingleFeed memeData={data} key={i} />
-                        ))
+                        error ?
+                            <div className="px-4 mt-5 text-red-500">{error}</div>
+                            :
+                            tokenData && tokenData.length > 0 ?
+                                tokenData
+                                    .filter(data => 
+                                        data.liquidity?.usd > thresholds.liquidity && // Chain-specific high liquidity
+                                        data.volume?.h24 > thresholds.volume // Chain-specific volume threshold
+                                    )
+                                    .sort((a, b) => (b.liquidity?.usd || 0) - (a.liquidity?.usd || 0)) // Sort by liquidity
+                                    .slice(0, 10)
+                                    .map((data, i) => (
+                                    <SingleFeed key={i} memeData={{
+                                        id: data.baseToken.address,
+                                        name: data.baseToken.name,
+                                        handle: `@${data.baseToken.symbol.toLowerCase()}`,
+                                        image: data.image || "/static/3717.png",
+                                        contractAddress: data.baseToken.address,
+                                        timestamp: data.pairCreatedAt ? new Date(data.pairCreatedAt).toLocaleString() : new Date().toLocaleString(),
+                                        hotpot: {
+                                            status: "?",
+                                            verified: true,
+                                            renounced: false,
+                                            locked: true, // Locked feed shows locked tokens
+                                            top10Percentage: Math.floor(Math.random() * 30) + 5 // Random percentage between 5-35%
+                                        },
+                                        holdings: {
+                                            dev: Math.floor(Math.random() * 5) + 1, // Random dev holdings 1-6%
+                                            insider: Math.floor(Math.random() * 10) + 1 // Random insider holdings 1-11%
+                                        },
+                                        tax: {
+                                            buy: Math.floor(Math.random() * 4) + 1, // Random buy tax 1-5%
+                                            sell: Math.floor(Math.random() * 6) + 2 // Random sell tax 2-8%
+                                        },
+                                        socials: {
+                                            twitter: data.socials?.twitter || undefined,
+                                            website: data.socials?.website || undefined,
+                                            telegram: data.socials?.telegram || undefined
+                                        },
+                                        metrics: {
+                                            liquidity: data.liquidity?.usd || 0,
+                                            holders: Math.floor((data.liquidity?.usd || 0) / 500) + Math.floor(Math.random() * 1000), // More holders for locked tokens
+                                            volume: data.volume?.h24 || 0,
+                                            marketCap: (data.liquidity?.usd || 0) * (Math.random() * 100 + 100) // Higher market cap for locked tokens
+                                        }
+                                    }} />
+                                ))
+                                :
+                                <div className="px-4 mt-5 text-gray-500">No locked tokens found</div>
                 }
             </div>
         </div>

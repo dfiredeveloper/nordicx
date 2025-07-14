@@ -5,13 +5,13 @@ import MobileTradingHeader from '@/components/trading/mobileTrading';
 import RightBar, { BuyTab, DegenAudit, PoolInfo, SellTab } from '@/components/trading/rightBar';
 import TradingHeader from '@/components/trading/trading';
 // import { notFound } from 'next/navigation';
-import { useState } from 'react';
+import { use, useState } from 'react';
 
 // List of valid chains
 // const validChains = ["sol", "eth", "base", "bsc", "tron", "blast"];
 
-export default function Page() {
-  // const { chain, address } = params;
+export default function Page({ params }) {
+  const { chain, address } = use(params) as { chain: string; address: string };
   const [isOpen, setIsOpen] = useState({
     buy: false,
     sell: false,
@@ -37,7 +37,7 @@ export default function Page() {
         <TradingHeader />
         <div className="flex items-start">
           <Trade />
-          <RightBar />
+          <RightBar chain={chain} address={address} />
         </div>
       </div>
 
@@ -76,8 +76,8 @@ export default function Page() {
     
           <Drawer isOpen={isOpen.info} onClose={() => setIsOpen((prev) => ({ ...prev, info: false }))}>
             <>
-              <PoolInfo />
-              <DegenAudit />
+              <PoolInfo chain={chain} address={address} />
+              <DegenAudit chain={chain} address={address} />
             </>
           </Drawer>
         </div>
