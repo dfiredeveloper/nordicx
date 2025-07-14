@@ -12,7 +12,8 @@ import { useSearchParams } from 'next/navigation'
 
 
 export default function SingleFeed({ memeData }: { memeData: memeCoinsInterface }) {
-    const chain = useSearchParams()
+    const rawChain = useSearchParams();
+    const chain = React.useMemo(() => rawChain || new Map(), [rawChain]);
     const getChain = useCallback(() => chain.get("chain"), [chain]);
     return (
         <>
