@@ -10,7 +10,7 @@ export default function NewCreation() {
                 <table className="bg-accent-2">
                     <Colgroup />
                     <TableHead />
-                    <TableBody />
+                    <TableBody tokens={[]} />
                 </table>
             </div>
         </div >
