@@ -12,7 +12,9 @@ export default function HoldingTable() {
                     <table className="bg-accent-2 w-[1466px] min-w-full">
                         <HoldingColGrp />
                         <HoldingHead />
-                        <HoldingBody />
+                        <tbody>
+                            <HoldingBody />
+                        </tbody>
                     </table>
                 </div>
             </div>

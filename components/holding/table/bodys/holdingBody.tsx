@@ -99,7 +99,7 @@ export default function HoldingBody() {
     }
 
     return (
-        <tbody className="divide-y">
+        <>
             {holdings.map((holding, index) => (
                 <tr key={index} className="hover:bg-accent-3 transition-colors">
                     <td className="py-3 px-2 sticky left-0 z-[1] bg-accent-2">
@@ -170,6 +170,6 @@ export default function HoldingBody() {
                     </td>
                 </tr>
             ))}
-        </tbody>
+        </>
     )
 }

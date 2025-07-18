@@ -237,8 +237,8 @@ export default function TableBody() {
                 <td className="py-3 px-2">
                         {/* liq/initial */}
                     <div className="md:w-[131px] w-[84px] md:flex-[131px] flex-[84px]">
-                            <div className="">USDT <span className="text-accent-red">{token.liquidity_usd ? `$${formatNumber(token.liquidity_usd)}` : '--'}</span></div>
-                            <div className="text-accent-green text-[12px]">{token.percent_change_24h > 0 ? '+' : ''}{token.percent_change_24h.toFixed(2)}%</div>
+                        <div className="">USDT <span className="text-accent-red">{token.liquidity_usd ? `$${formatNumber(token.liquidity_usd)}` : '--'}</span></div>
+                        <div className="text-accent-green text-[12px]">{token.percent_change_24h > 0 ? '+' : ''}{token.percent_change_24h.toFixed(2)}%</div>
                     </div>
                 </td>
                 <td className="py-3 px-2">

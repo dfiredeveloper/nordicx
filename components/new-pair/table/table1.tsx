@@ -10,7 +10,9 @@ export default function Table() {
                 <table className="bg-accent-2">
                     <Colgroup />
                     <TableHead />
-                    <TableBody />
+                    <tbody>
+                        <TableBody />
+                    </tbody>
                 </table>
             </div>
         </div >

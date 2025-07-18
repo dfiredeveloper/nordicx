@@ -93,30 +93,28 @@ export default function StrategyBody() {
         )
     }
 
-    return (
-        <tbody className="divide-y">
-            {strategies.map((strategy) => (
-                <tr key={strategy.id} className="hover:bg-accent-3 transition-colors">
-                    <td className="py-3 px-2 sticky left-0 z-[1] bg-accent-2">
-                        <div className="flex items-center gap-2">
-                            <div className="rounded-full border w-fit relative">
-                                <Image 
-                                    src={strategy.logo || "/static/3717.png"} 
-                                    className='w-[30px] h-[30px]' 
-                                    width={30} 
-                                    height={30} 
-                                    alt={strategy.name} 
-                                    unoptimized 
-                                />
-                            </div>
-                            <div>
-                                <div className="flex items-center gap-1">
-                                    <h1 className="text-[14px] font-[400]">{strategy.name}</h1>
-                                    <span className="text-xs text-accent-1">{strategy.symbol}</span>
-                                </div>
-                                <div className="text-xs text-accent-aux-1 uppercase">
-                                    {strategy.type}
-                                </div>
+    return strategies.map((strategy) => (
+        <tr key={strategy.id} className="hover:bg-accent-3 transition-colors">
+            <td className="py-3 px-2 sticky left-0 z-[1] bg-accent-2">
+                <div className="flex items-center gap-2">
+                    <div className="rounded-full border w-fit relative">
+                        <Image 
+                            src={strategy.logo || "/static/3717.png"} 
+                            className='w-[30px] h-[30px]' 
+                            width={30} 
+                            height={30} 
+                            alt={strategy.name} 
+                            unoptimized 
+                        />
+                    </div>
+                    <div>
+                        <div className="flex items-center gap-1">
+                            <h1 className="text-[14px] font-[400]">{strategy.name}</h1>
+                            <span className="text-xs text-accent-1">{strategy.symbol}</span>
+                        </div>
+                        <div className="text-xs text-accent-aux-1 uppercase">
+                            {strategy.type}
+                        </div>
             </div>
         </div>
                     </td>
@@ -155,7 +153,5 @@ export default function StrategyBody() {
                         </div>
                     </td>
                 </tr>
-            ))}
-        </tbody>
-    )
+            ))
 }

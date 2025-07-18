@@ -53,7 +53,9 @@ export default function Table({ tokenData, loading, error }: TableProps) {
                 <table className="bg-accent-2">
                     <Colgroup />
                     <TableHead />
-                    <TableBody tokenData={tokenData} loading={loading} error={error} />
+                    <tbody>
+                        <TableBody tokenData={tokenData} loading={loading} error={error} />
+                    </tbody>
                 </table>
             </div>
         </div >
