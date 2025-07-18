@@ -9,8 +9,9 @@ export default function TableBody({ tokens }) {
     const searchParams = useSearchParams();
     const chain = searchParams?.get("chain") ?? "eth";
     const getChain = useCallback(() => chain, [chain]);
-    return tokens.map((token, index) => (
-        <tr key={index}>
+    return tokens.map((token, index) => {
+        return (
+            <tr key={index}>
                 <td className="py-3 px-2 sticky z-[1] left-0 bg-accent-2 ">
                     {/* token */}
                             <Link role="button" className="flex items-center md:w-[321px] w-[136px] md:flex-[321px] flex-[136px]" href={{ pathname: `/${chain}/token/${token.contract_address}`, query: { data: encodeURIComponent(JSON.stringify(token)) } }}>
