@@ -74,27 +74,29 @@ export default function TableBody({ tokenData, loading, error }: TableBodyProps)
         return '<1h';
     };
 
-    return tokenData.map((token, index) => (
-        <tr key={token.pairAddress || index}>
-            {/* Token Column */}
-            <td className="py-3 px-2 sticky z-[1] left-0 bg-accent-2 ">
+    return (
+        <tbody>
+            {tokenData.map((token, index) => (
+                <tr key={token.pairAddress || index}>
+                    {/* Token Column */}
+                    <td className="py-3 px-2 sticky z-[1] left-0 bg-accent-2 ">
                 <Link role="button" className="flex items-center md:w-[290px] w-[136px] md:flex-[290px] flex-[136px]" href={{ pathname: `/${chain}/token/${token.baseToken.address}`, query: { data: encodeURIComponent(JSON.stringify(token)) } }}>
-                    <div className="flex items-center gap-2">
-                        <div className="">
-                            {/* Placeholder for token logo */}
-                            <Image src={"/static/3717.png"} className='md:w-[30px] w-[25px] md:h-[30px] h-[25px]' width={35} height={35} alt='' />
-                        </div>
-                        <div className="">
-                            <div className="flex items-center gap-1">
-                                <h1 className="uppercase md:text-[14px] text-[13px] font-[400]">{token.baseToken.symbol}</h1>
+                            <div className="flex items-center gap-2">
+                                <div className="">
+                                    {/* Placeholder for token logo */}
+                                    <Image src={"/static/3717.png"} className='md:w-[30px] w-[25px] md:h-[30px] h-[25px]' width={35} height={35} alt='' />
+                                </div>
+                                <div className="">
+                                    <div className="flex items-center gap-1">
+                                        <h1 className="uppercase md:text-[14px] text-[13px] font-[400]">{token.baseToken.symbol}</h1>
+                                    </div>
+                                    <div className="flex items-center gap-1">
+                                        <p className='text-[#AEB2DB] text-[12px]'>{truncAddress(token.baseToken.address)}</p>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="flex items-center gap-1">
-                                <p className='text-[#AEB2DB] text-[12px]'>{truncAddress(token.baseToken.address)}</p>
-                            </div>
-                        </div>
-                    </div>
-                </Link>
-            </td>
+                        </Link>
+                    </td>
 
                     {/* Age Column */}
                     <td className="py-3 px-2 md:block hidden">
@@ -196,5 +198,5 @@ export default function TableBody({ tokenData, loading, error }: TableBodyProps)
                 </tr>
             ))}
         </tbody>
-    )
+    );
 }

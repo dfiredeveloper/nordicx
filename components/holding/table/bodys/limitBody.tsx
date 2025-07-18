@@ -94,27 +94,27 @@ export default function LimitBody() {
     }
 
     return orders.map((order) => (
-        <tr key={order.id} className="hover:bg-accent-3 transition-colors">
-            <td className="py-3 px-2 sticky left-0 z-[1] bg-accent-2">
-                <div className="flex items-center gap-2">
-                    <div className="rounded-full border w-fit relative">
-                        <Image 
-                            src={order.logo || "/static/3717.png"} 
-                            className='w-[30px] h-[30px]' 
-                            width={30} 
-                            height={30} 
-                            alt={order.name} 
-                            unoptimized 
-                        />
-                    </div>
-                    <div>
-                        <div className="flex items-center gap-1">
-                            <h1 className="uppercase text-[14px] font-[400]">{order.name}</h1>
-                            <span className="text-xs text-accent-1">{order.symbol}</span>
-                        </div>
-                        <div className={`text-xs ${order.type === 'buy' ? 'text-accent-green' : 'text-accent-red'}`}>
-                            {order.type.toUpperCase()}
-                        </div>
+                <tr key={order.id} className="hover:bg-accent-3 transition-colors">
+                    <td className="py-3 px-2 sticky left-0 z-[1] bg-accent-2">
+                        <div className="flex items-center gap-2">
+                            <div className="rounded-full border w-fit relative">
+                                <Image 
+                                    src={order.logo || "/static/3717.png"} 
+                                    className='w-[30px] h-[30px]' 
+                                    width={30} 
+                                    height={30} 
+                                    alt={order.name} 
+                                    unoptimized 
+                                />
+                            </div>
+                            <div>
+                                <div className="flex items-center gap-1">
+                                    <h1 className="uppercase text-[14px] font-[400]">{order.name}</h1>
+                                    <span className="text-xs text-accent-1">{order.symbol}</span>
+                                </div>
+                                <div className={`text-xs ${order.type === 'buy' ? 'text-accent-green' : 'text-accent-red'}`}>
+                                    {order.type.toUpperCase()}
+                                </div>
         </div>
       </div>
                     </td>

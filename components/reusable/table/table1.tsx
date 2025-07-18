@@ -54,7 +54,7 @@ export default function Table({ tokenData, loading, error }: TableProps) {
                     <Colgroup />
                     <TableHead />
                     <tbody>
-                        <TableBody tokenData={tokenData} loading={loading} error={error} />
+                    <TableBody tokenData={tokenData} loading={loading} error={error} />
                     </tbody>
                 </table>
             </div>

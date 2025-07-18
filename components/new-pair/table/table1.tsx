@@ -11,7 +11,7 @@ export default function Table() {
                     <Colgroup />
                     <TableHead />
                     <tbody>
-                        <TableBody />
+                    <TableBody />
                     </tbody>
                 </table>
             </div>

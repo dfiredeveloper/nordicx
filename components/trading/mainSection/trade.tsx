@@ -398,36 +398,36 @@ export function DataTable({ address, chain }) {
                             <div className="text-center text-gray-400 py-8">No recent activity</div>
                         ) : (
                             trades.map((trade, i) => (
-                                <div key={i} className="flex flex-row border-b border-accent-3 text-accent-aux-1">
+                            <div key={i} className="flex flex-row border-b border-accent-3 text-accent-aux-1">
                                     {/* td 1: Time */}
-                                    <div className="flex gap-[4px] py-[10px] px-[12px] items-center w-[14.11%] whitespace-nowrap dark:text-[f5f5f5]">
+                                <div className="flex gap-[4px] py-[10px] px-[12px] items-center w-[14.11%] whitespace-nowrap dark:text-[f5f5f5]">
                                         <div className="dark:text-[#9AA0AA] text-[12px]">{trade.blockTime ? new Date(trade.blockTime * 1000).toLocaleString() : '--'}</div>
-                                    </div>
+                                </div>
                                     {/* td 2: Type */}
-                                    <div className="flex gap-[4px] py-[10px] px-[10.58px] items-center w-[14%] whitespace-nowrap dark:text-[f5f5f5]">
+                                <div className="flex gap-[4px] py-[10px] px-[10.58px] items-center w-[14%] whitespace-nowrap dark:text-[f5f5f5]">
                                         <div className={`text-[12px] px-[12px] py-[4px] rounded-md font-[500] ${trade.side === 'buy' ? 'bg-[rgba(136,214,147,0.2)] text-prettyGreen' : 'bg-[rgba(255,0,0,0.2)] text-red-400'}`}>{trade.side || '--'}</div>
-                                    </div>
+                                </div>
                                     {/* td 3: Total (USD) */}
-                                    <div className="flex gap-[4px] py-[10px] px-[12px] items-center w-[14.11%] whitespace-nowrap dark:text-[f5f5f5]">
+                                <div className="flex gap-[4px] py-[10px] px-[12px] items-center w-[14.11%] whitespace-nowrap dark:text-[f5f5f5]">
                                         <div className="text-[12px] text-accent-green font-[500]">${trade.amountUsd ? Number(trade.amountUsd).toLocaleString(undefined, { maximumFractionDigits: 2 }) : '--'}</div>
-                                    </div>
+                                </div>
                                     {/* td 4: Amount */}
-                                    <div className="flex gap-[4px] py-[10px] px-[12px] items-center w-[10.58%] whitespace-nowrap dark:text-[f5f5f5]">
+                                <div className="flex gap-[4px] py-[10px] px-[12px] items-center w-[10.58%] whitespace-nowrap dark:text-[f5f5f5]">
                                         <div className="text-[12px] text-accent-green font-[500]">{trade.amount ? Number(trade.amount).toLocaleString(undefined, { maximumFractionDigits: 4 }) : '--'}</div>
-                                    </div>
+                                </div>
                                     {/* td 5: Price */}
-                                    <div className="flex gap-[4px] py-[10px] px-[12px] items-center w-[11.76%] whitespace-nowrap dark:text-[f5f5f5]">
+                                <div className="flex gap-[4px] py-[10px] px-[12px] items-center w-[11.76%] whitespace-nowrap dark:text-[f5f5f5]">
                                         <div className="text-[12px] text-accent-green font-[500]">{trade.price ? `$${Number(trade.price).toLocaleString(undefined, { maximumFractionDigits: 6 })}` : '--'}</div>
-                                    </div>
+                                </div>
                                     {/* td 6: Marker (address) */}
-                                    <div className="flex flex-col gap-[4px] py-[10px] px-[12px] items-start  w-[23.52%] whitespace-nowrap dark:text-[f5f5f5]">
-                                        <div className="flex w-[100px] gap-1 items-center">
+                                <div className="flex flex-col gap-[4px] py-[10px] px-[12px] items-start  w-[23.52%] whitespace-nowrap dark:text-[f5f5f5]">
+                                    <div className="flex w-[100px] gap-1 items-center">
                                             <div className="text-[12px] text-accent-green font-[500]">{trade.owner ? truncAddress(trade.owner) : '--'}</div>
-                                        </div>
+                                    </div>
                                     </div>
                                     {/* td 7: Share/Actions */}
-                                    <div className="flex justify-end gap-[4px] py-[10px] px-[12px] items-center w-[15.29%] whitespace-nowrap dark:text-[f5f5f5]">
-                                        <div className="flex items-center">
+                                <div className="flex justify-end gap-[4px] py-[10px] px-[12px] items-center w-[15.29%] whitespace-nowrap dark:text-[f5f5f5]">
+                                    <div className="flex items-center">
                                             <a href={`https://solscan.io/tx/${trade.txHash}`} target="_blank" rel="noopener noreferrer" className="flex text-[12px] ml-[0.1rem] underline">View</a>
                                         </div>
                                     </div>
@@ -441,7 +441,7 @@ export function DataTable({ address, chain }) {
                             <div>Buys (6h): {summary.h6?.buys ?? '--'} | Sells (6h): {summary.h6?.sells ?? '--'}</div>
                             <div>Buys (24h): {summary.h24?.buys ?? '--'} | Sells (24h): {summary.h24?.sells ?? '--'}</div>
                             <div className="mt-2">(Live trade feed not available for this chain)</div>
-                        </div>
+                            </div>
                     ) : (
                         <div className="text-center text-gray-400 py-8">No recent activity</div>
                     )}

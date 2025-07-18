@@ -13,7 +13,7 @@ export default function HoldingTable() {
                         <HoldingColGrp />
                         <HoldingHead />
                         <tbody>
-                            <HoldingBody />
+                        <HoldingBody />
                         </tbody>
                     </table>
                 </div>
