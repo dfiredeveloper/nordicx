@@ -10,7 +10,7 @@ export default function TableBody({ tokens }) {
     const chain = searchParams?.get("chain") ?? "eth";
     const getChain = useCallback(() => chain, [chain]);
     return (
-        <tbody className="md:text-[14px] text-[13px] divide-y">
+        <>
             {tokens.map((token, index) => (
                 <tr key={index}>
                         <td className="py-3 px-2 sticky z-[1] left-0 bg-accent-2 ">
@@ -198,6 +198,6 @@ export default function TableBody({ tokens }) {
                     </tr>
                 );
             })}
-        </tbody>
-    )
+        </>
+    );
 }
