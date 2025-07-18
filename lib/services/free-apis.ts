@@ -313,6 +313,52 @@ class FreeAPIService {
     }
   }
 
+  // Fetch creator address and contract creation date for EVM tokens
+  async getEvmTokenCreator(tokenAddress: string): Promise<{ creator: string | null, createdAt: number | null }> {
+    try {
+      const apiKey = process.env.ETHERSCAN_API_KEY || 'YourApiKeyToken';
+      const url = `https://api.etherscan.io/api?module=contract&action=getcontractcreation&contractaddresses=${tokenAddress}&apikey=${apiKey}`;
+      const response = await fetch(url, { headers: { 'Accept': 'application/json' } });
+      if (!response.ok) return { creator: null, createdAt: null };
+      const data = await response.json();
+      if (data.status === '1' && Array.isArray(data.result) && data.result.length > 0) {
+        const info = data.result[0];
+        // Get block number and creator address
+        const creator = info.contractCreator || null;
+        // Fetch block timestamp
+        if (info.blockNumber) {
+          const blockUrl = `https://api.etherscan.io/api?module=block&action=getblockreward&blockno=${info.blockNumber}&apikey=${apiKey}`;
+          const blockRes = await fetch(blockUrl, { headers: { 'Accept': 'application/json' } });
+          if (blockRes.ok) {
+            const blockData = await blockRes.json();
+            if (blockData.status === '1' && blockData.result && blockData.result.timeStamp) {
+              return { creator, createdAt: Number(blockData.result.timeStamp) * 1000 };
+            }
+          }
+        }
+        return { creator, createdAt: null };
+      }
+      return { creator: null, createdAt: null };
+    } catch {
+      return { creator: null, createdAt: null };
+    }
+  }
+
+  // Fetch creator address and creation date for Solana tokens
+  async getSolanaTokenCreator(tokenAddress: string): Promise<{ creator: string | null, createdAt: number | null }> {
+    try {
+      const url = `https://public-api.solscan.io/token/meta?tokenAddress=${tokenAddress}`;
+      const response = await fetch(url, { headers: { 'Accept': 'application/json' } });
+      if (!response.ok) return { creator: null, createdAt: null };
+      const data = await response.json();
+      const creator = data.mintAuthority || data.owner || null;
+      const createdAt = data.createdAt ? Number(data.createdAt) * 1000 : null;
+      return { creator, createdAt };
+    } catch {
+      return { creator: null, createdAt: null };
+    }
+  }
+
   // Get holders count for any chain
   async getHoldersCount(tokenAddress: string, chain: string): Promise<number> {
     try {

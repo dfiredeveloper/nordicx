@@ -477,6 +477,40 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
   }
 
+  // Normalize volume_24h, buys, sells, and net_buy for all tokens
+  finalTokens = finalTokens.map(token => {
+    // Try to get buys/sells from top-level, then from transactionData
+    const buys = typeof token.buy_tx_1m === 'number' ? token.buy_tx_1m : (token.transactionData && typeof token.transactionData.buyTx1m === 'number' ? token.transactionData.buyTx1m : 0);
+    const sells = typeof token.sell_tx_1m === 'number' ? token.sell_tx_1m : (token.transactionData && typeof token.transactionData.sellTx1m === 'number' ? token.transactionData.sellTx1m : 0);
+    return {
+      ...token,
+      volume_24h:
+        (token.quote && token.quote.USD && typeof token.quote.USD.volume_24h === 'number' && token.quote.USD.volume_24h) ||
+        (typeof token.volume_24h === 'number' && token.volume_24h) ||
+        (token.volume && typeof token.volume.h24 === 'number' && token.volume.h24) ||
+        0,
+      buys,
+      sells,
+      net_buy: buys - sells,
+      market_cap:
+        (token.quote && token.quote.USD && typeof token.quote.USD.market_cap === 'number' && token.quote.USD.market_cap) ||
+        (typeof token.market_cap === 'number' && token.market_cap) ||
+        0,
+      price:
+        (token.quote && token.quote.USD && typeof token.quote.USD.price === 'number' && token.quote.USD.price) ||
+        (typeof token.price === 'number' && token.price) ||
+        0,
+      percent_change_1h:
+        (token.quote && token.quote.USD && typeof token.quote.USD.percent_change_1h === 'number' && token.quote.USD.percent_change_1h) ||
+        (typeof token.percent_change_1h === 'number' && token.percent_change_1h) ||
+        0,
+      percent_change_24h:
+        (token.quote && token.quote.USD && typeof token.quote.USD.percent_change_24h === 'number' && token.quote.USD.percent_change_24h) ||
+        (typeof token.percent_change_24h === 'number' && token.percent_change_24h) ||
+        0
+    };
+  });
+
   res.status(200).json({ ...data, data: finalTokens });
   } catch (error) {
     if (error instanceof Error && error.name === 'AbortError') {

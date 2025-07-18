@@ -15,22 +15,46 @@ type TokenData = {
     blacklist?: string;
     burnt?: string;
     top10?: string;
+    address?: string;
+    symbol?: string;
+    name?: string;
+    chain?: string;
+    website?: string;
+    twitter?: string;
+    telegram?: string;
+    initial_liquidity_usd?: number;
+    total_supply?: number;
+    pool_address?: string;
+    creator_address?: string;
+    creator_fee?: string;
+    pool_created?: string | number;
+    percent_change_1h?: number;
+    percent_change_24h?: number;
+    [key: string]: unknown;
 };
 
-export default function RightBar({ chain, address }: { chain: string, address: string }) {
-    const [tokenData, setTokenData] = useState<TokenData | null>(null);
+type PoolInfoProps = { chain: string; address: string; tokenData?: TokenData | null };
+
+export default function RightBar({ chain, address, tokenData: propTokenData }: { chain: string, address: string, tokenData?: TokenData | null }) {
+    const [tokenData, setTokenData] = useState<TokenData | null>(propTokenData || null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<boolean>(false);
 
     useEffect(() => {
+        if (propTokenData) {
+            setTokenData(propTokenData);
+            setLoading(false);
+            setError(false);
+            return;
+        }
         if (!chain || !address) return;
         setLoading(true);
         setError(false);
-        fetch(`/api/trending-tokens?chain=${chain}&address=${address}&limit=1`)
+        fetch(`/api/token-data?chain=${chain}&address=${address}`)
             .then(res => res.json())
             .then(data => {
-                if (data && data.data && data.data.length > 0) {
-                    setTokenData(data.data[0]);
+                if (data && data.data) {
+                    setTokenData(data.data);
                 } else {
                     setTokenData(null);
                 }
@@ -40,7 +64,7 @@ export default function RightBar({ chain, address }: { chain: string, address: s
                 setError(true);
                 setLoading(false);
             });
-    }, [chain, address]);
+    }, [chain, address, propTokenData]);
 
     // Helper to format numbers or fallback
     const safeFormat = (val: number | string | undefined, fallback = '--') => {
@@ -53,25 +77,25 @@ export default function RightBar({ chain, address }: { chain: string, address: s
         <div className="w-[300px] rounded-tl-[12px]  h-[calc(100vh-160px)] overflow-y-auto rounded-tr-[12px]">
             <div className='flex flex-col w-full rounded-[12px] overflow-hidden'>
                 <div className='flex h-[32px] justify-between bg-accent-3 py-[6px] pb-[6px] w-full'>
-                    <a className="flex text-[12px] dark:text-[#f5f5f5] text-[#000] justify-center items-center cursor-pointer border-r-[1px] border-[#393c43] flex-grow flex-shrink px-[8px] whitespace-nowrap" target="_blank" href="https://x.com/search?q=$PILL">
+                    <a className="flex text-[12px] dark:text-[#f5f5f5] text-[#000] justify-center items-center cursor-pointer border-r-[1px] border-[#393c43] flex-grow flex-shrink px-[8px] whitespace-nowrap" target="_blank" href={`https://x.com/search?q=$${tokenData?.symbol || 'PILL'}`}> 
                         <div className='flex items-center gap-[2px] text-[#f5f5f5]'>
                             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M9.213 1.988a7.14 7.14 0 017.135 7.234c-.035 3.922-3.28 7.111-7.203 7.082-3.985-.03-7.181-3.276-7.14-7.25.042-3.933 3.253-7.081 7.208-7.066zm-.058 12.61a5.473 5.473 0 005.508-5.412c.04-3.025-2.465-5.536-5.51-5.524-3.007.012-5.45 2.467-5.45 5.476a5.455 5.455 0 005.452 5.46z"></path>
                                 <path d="M16.666 17.795l-1.24-1.24a.75.75 0 010-1.056l.055-.055a.749.749 0 011.056 0l1.24 1.24a.75.75 0 010 1.057l-.054.054a.75.75 0 01-1.057 0z"></path>
                             </svg>
-                            Name
+                            {tokenData?.name || 'Name'}
                         </div>
                     </a>
-                    <a className="flex text-[12px] dark:text-[#f5f5f5] text-[#000] justify-center items-center cursor-pointer border-r-[1px] border-[#393c43] flex-grow flex-shrink px-[8px] whitespace-nowrap" target="_blank" href="https://x.com/search?q=5XqzzdodsNtAM8TtQyiqGVbD7GwLBBN7oVnRA3hLpump">
+                    <a className="flex text-[12px] dark:text-[#f5f5f5] text-[#000] justify-center items-center cursor-pointer border-r-[1px] border-[#393c43] flex-grow flex-shrink px-[8px] whitespace-nowrap" target="_blank" href={`https://x.com/search?q=${tokenData?.address || '5XqzzdodsNtAM8TtQyiqGVbD7GwLBBN7oVnRA3hLpump'}`}> 
                         <div className='flex items-center gap-[2px]'>
                             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M9.213 1.988a7.14 7.14 0 017.135 7.234c-.035 3.922-3.28 7.111-7.203 7.082-3.985-.03-7.181-3.276-7.14-7.25.042-3.933 3.253-7.081 7.208-7.066zm-.058 12.61a5.473 5.473 0 005.508-5.412c.04-3.025-2.465-5.536-5.51-5.524-3.007.012-5.45 2.467-5.45 5.476a5.455 5.455 0 005.452 5.46z"></path>
                                 <path d="M16.666 17.795l-1.24-1.24a.75.75 0 010-1.056l.055-.055a.749.749 0 011.056 0l1.24 1.24a.75.75 0 010 1.057l-.054.054a.75.75 0 01-1.057 0z"></path>
                             </svg>
-                            CA
+                            {tokenData?.address ? truncAddress(tokenData.address) : 'CA'}
                         </div>
                     </a>
-                    <a className="flex text-[12px] dark:text-[#f5f5f5] text-[#000] justify-center items-center cursor-pointer border-r-[1px] border-[#393c43] flex-grow flex-shrink px-[8px] whitespace-nowrap" target="_blank" href="https://lifechangingpill.com/">
+                    <a className="flex text-[12px] dark:text-[#f5f5f5] text-[#000] justify-center items-center cursor-pointer border-r-[1px] border-[#393c43] flex-grow flex-shrink px-[8px] whitespace-nowrap" target="_blank" href={tokenData?.website || 'https://lifechangingpill.com/'}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 20 20">
                             <g clipPath="url(#clip0_1553_2200)">
                                 <path fillRule="evenodd" clipRule="evenodd" d="M10 0C4.477 0 0 4.477 0 10s4.477 10 10 10 10-4.477 10-10S15.523 0 10 0zM6.446 2.831A8.037 8.037 0 003.07 6h2.323c.212-1.023.505-1.96.865-2.77.06-.136.123-.269.188-.399zM2 10c0-.69.088-1.36.252-2h2.842a21.008 21.008 0 000 4H2.252A8.013 8.013 0 012 10zm1.07 4a8.037 8.037 0 003.376 3.169 9.877 9.877 0 01-.188-.399c-.36-.81-.653-1.747-.865-2.77H3.07zm4.372 0c.173.732.392 1.392.643 1.958.328.738.693 1.273 1.047 1.61.35.333.641.432.868.432.227 0 .518-.1.867-.432.355-.337.72-.872 1.048-1.61.251-.566.47-1.226.643-1.958H7.442zm7.165 0a13.716 13.716 0 01-.865 2.77c-.06.136-.123.269-.188.399A8.037 8.037 0 0016.93 14h-2.323zm3.14-2h-2.841a21.027 21.027 0 000-4h2.842c.165.64.252 1.31.252 2s-.087 1.36-.252 2zm-4.851 0H7.104A18.907 18.907 0 017 10c0-.693.037-1.362.104-2h5.792c.067.638.104 1.307.104 2 0 .693-.037 1.362-.104 2zm1.71-6h2.324a8.037 8.037 0 00-3.376-3.169c.065.13.128.263.188.399.36.81.653 1.747.865 2.77zm-6.52-1.958c-.252.566-.47 1.226-.644 1.958h5.116a11.248 11.248 0 00-.643-1.958c-.328-.738-.693-1.273-1.047-1.61C10.518 2.099 10.226 2 10 2c-.227 0-.518.1-.868.432-.354.337-.719.872-1.047 1.61z"></path>
@@ -83,7 +107,7 @@ export default function RightBar({ chain, address }: { chain: string, address: s
                             </defs>
                         </svg>
                     </a>
-                    <a className="flex text-[12px] dark:text-[#f5f5f5] text-[#000] justify-center items-center cursor-pointer border-r-[1px] border-[#393c43] flex-grow flex-shrink px-[8px] whitespace-nowrap" target="_blank" href="https://twitter.com/pillcto">
+                    <a className="flex text-[12px] dark:text-[#f5f5f5] text-[#000] justify-center items-center cursor-pointer border-r-[1px] border-[#393c43] flex-grow flex-shrink px-[8px] whitespace-nowrap" target="_blank" href={tokenData?.twitter || 'https://twitter.com/pillcto'}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 12 12">
                             <g clipPath="url(#clip0_7920_513)">
                                 <path d="M9.282 1h1.71L7.255 5.27l4.394 5.809H8.21L5.515 7.555 2.43 11.08H.721l3.995-4.567L.5 1h3.528l2.436 3.22L9.282 1zm-.6 9.056h.947L3.513 1.97H2.497l6.185 8.086z"></path>
@@ -95,7 +119,7 @@ export default function RightBar({ chain, address }: { chain: string, address: s
                             </defs>
                         </svg>
                     </a>
-                    <a className="flex text-[12px] dark:text-[#f5f5f5] text-[#000] justify-center items-center cursor-pointer border-r-[1px] border-[#393c43] flex-grow flex-shrink px-[8px] whitespace-nowrap" target="_blank" href="https://t.me/lifechangingpill">
+                    <a className="flex text-[12px] dark:text-[#f5f5f5] text-[#000] justify-center items-center cursor-pointer border-r-[1px] border-[#393c43] flex-grow flex-shrink px-[8px] whitespace-nowrap" target="_blank" href={tokenData?.telegram || 'https://t.me/lifechangingpill'}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 12 12">
                             <g clipPath="url(#clip0_7920_515)">
                                 <path d="M11.894 1.91l-1.8 8.487c-.134.6-.49.746-.992.465L6.36 8.842l-1.322 1.273c-.147.147-.27.27-.551.27l.196-2.793L9.764 3c.22-.196-.05-.307-.344-.11L3.138 6.844.43 6c-.588-.183-.6-.588.122-.869l10.582-4.078c.49-.183.918.11.76.857z"></path>
@@ -173,18 +197,30 @@ export default function RightBar({ chain, address }: { chain: string, address: s
                         <div className="flex justify-between px-[12px] mt-[6px] border-b border-[rgb(38,40,44)] pb-[8px]">
                             <div className='flex flex-col gap-[6px]'>
                                 <div className='flex text-accent-aux-1 w-full justify-start'>Pair</div>
-                                <div className='flex w-full font-[500] text-accent-aux-1'>PILL</div>
-                                <div className='flex w-full font-[500] text-accent-aux-1'>SOL</div>
+                                <div className='flex w-full font-[500] text-accent-aux-1'>{tokenData?.symbol || 'PILL'}</div>
+                                <div className='flex w-full font-[500] text-accent-aux-1'>{tokenData?.chain || 'SOL'}</div>
                             </div>
                             <div className='flex flex-col gap-[6px]'>
                                 <div className='flex text-accent-aux-1 w-full justify-center'>Liq/Initial</div>
-                                <div className='flex w-full font-[500] text-[#fff] dark-[#000]'>46.3M/206.9M (20.7%)</div>
-                                <div className='flex w-full font-[500] text-[#fff] dark-[#000]'>900.23/79.01 <span className='text-accent-green'>(+1K%)</span></div>
+                                <div className='flex w-full font-[500] text-[#fff] dark-[#000]'>
+                                  {tokenData?.liquidity_usd ? formatNumber(tokenData.liquidity_usd) : '--'}
+                                  {tokenData?.initial_liquidity_usd ? `/${formatNumber(tokenData.initial_liquidity_usd)}` : ''}
+                                  {tokenData?.liquidity_usd && tokenData?.initial_liquidity_usd ? ` (${((tokenData.liquidity_usd / tokenData.initial_liquidity_usd) * 100).toFixed(2)}%)` : ''}
+                                </div>
+                                <div className='flex w-full font-[500] text-[#fff] dark-[#000]'>
+                                  {/* Placeholder for a second row, if you have more data */}
+                                  --
+                                </div>
                             </div>
                             <div className='flex flex-col gap-[6px]'>
                                 <div className='flex text-accent-aux-1 w-full justify-start'>Value</div>
-                                <div className='flex w-full font-[500] text-[#fff] dark-[#000]'>$211.9K</div>
-                                <div className='flex w-full font-[500] text-[#fff] dark-[#000]'>$212.1K</div>
+                                <div className='flex w-full font-[500] text-[#fff] dark-[#000]'>
+                                  {tokenData?.market_cap ? `$${formatNumber(tokenData.market_cap)}` : tokenData?.liquidity_usd ? `$${formatNumber(tokenData.liquidity_usd)}` : '--'}
+                                </div>
+                                <div className='flex w-full font-[500] text-[#fff] dark-[#000]'>
+                                  {/* Placeholder for a second value row, if you have more data */}
+                                  --
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -193,25 +229,25 @@ export default function RightBar({ chain, address }: { chain: string, address: s
                         <div className='flex flex-col gap-[4px] text-[12px]'>
                             <div className='flex text-accent-aux-1 w-full justify-start'>NoMint</div>
                             <div className="flex items-center text-accent-green">
-                                Yes
+                                {tokenData?.no_mint || 'Yes'}
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14px" height="14px" fill="currentColor" style={{ marginLeft: "4px" }} viewBox="0 0 16 16"><path d="M14.78 3.47a.75.75 0 010 1.06l-8 8a.75.75 0 01-1.06 0l-4.5-4.5a.75.75 0 011.06-1.06l3.97 3.97 7.47-7.47a.75.75 0 011.06 0z"></path></svg>
                             </div>
                         </div>
                         <div className='flex flex-col gap-[4px] text-[12px]'>
                             <div className='flex text-accent-aux-1 w-full justify-start'>Blacklist</div>
                             <div className="flex items-center text-accent-green">
-                                No
+                                {tokenData?.blacklist || 'No'}
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14px" height="14px" fill="currentColor" style={{ marginLeft: "4px" }} viewBox="0 0 16 16"><path d="M14.78 3.47a.75.75 0 010 1.06l-8 8a.75.75 0 01-1.06 0l-4.5-4.5a.75.75 0 011.06-1.06l3.97 3.97 7.47-7.47a.75.75 0 011.06 0z"></path></svg>
                             </div>
                         </div>
                         <div className='flex flex-col gap-[4px] text-[12px]'>
                             <div className='flex text-accent-aux-1 w-full justify-start'>Burnt</div>
-                            <div className='flex items-center text-accent-green'>100% 🔥</div>
+                            <div className='flex items-center text-accent-green'>{tokenData?.burnt || '100%'} 🔥</div>
                         </div>
                         <div className='flex flex-col gap-[4px] text-[12px]'>
                             <div className='flex text-accent-aux-1 w-full justify-start'>Top 10</div>
                             <div className="flex items-center text-accent-green">
-                                Yes
+                                {tokenData?.top10 || 'Yes'}
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14px" height="14px" fill="currentColor" style={{ marginLeft: "4px" }} viewBox="0 0 16 16"><path d="M14.78 3.47a.75.75 0 010 1.06l-8 8a.75.75 0 01-1.06 0l-4.5-4.5a.75.75 0 011.06-1.06l3.97 3.97 7.47-7.47a.75.75 0 011.06 0z"></path></svg>
                             </div>
                         </div>
@@ -251,10 +287,10 @@ export default function RightBar({ chain, address }: { chain: string, address: s
                 <BuySellAuto />
 
                 {/* metric */}
-                <Metric />
+                <Metric tokenData={tokenData} />
 
                 {/* pool Info */}
-                <PoolInfo chain={chain} address={address} />
+                <PoolInfo chain={chain} address={address} tokenData={propTokenData} />
 
                 {/* degen audit */}
                 <DegenAudit chain={chain} address={address} />
@@ -704,56 +740,61 @@ export function NotConnected() {
     )
 }
 
-export function Metric() {
+export function Metric({ tokenData }: { tokenData: TokenData | null }) {
+    const formatChange = (val: number | undefined) => {
+        if (typeof val !== 'number') return '--';
+        const sign = val > 0 ? '+' : '';
+        return `${sign}${val.toFixed(2)}%`;
+    };
+    const getColor = (val: number | undefined) => {
+        if (typeof val !== 'number') return 'text-accent-aux-1';
+        return val >= 0 ? 'text-accent-green' : 'text-accent-red';
+    };
     return (
         <div className="flex mt-3 w-full flex-col bg-accent-search rounded-[12px]">
             <div className="bg-transparent rounded-[12px] inline-flex items-center flex-wrap gap-[0px] w-full">
                 <div className="flex flex-col bg-transparent w-[20%] flex-grow justify-center text-accent-aux-1 cursor-pointer text-[12px] items-center h-[54px] flex-nowrap rounded-tl-[12px] rounded-tr-0 border-b border-r border-accent-3">
                     <div className="flex justify-center dark:text-[#9AA0AA] w-full">1m</div>
                     <div className="text-[12px] flex dark:text-[9AA0AA]">
-                        <div className="flex text-accent-green w-full justify-center font-[500]">+0.87%</div>
+                        <div className="flex text-accent-aux-1 w-full justify-center font-[500]">--</div>
                     </div>
                 </div>
                 <div className="flex flex-col bg-transparent w-[20%] flex-grow justify-center text-accent-aux-1 cursor-pointer text-[12px] items-center h-[54px] flex-nowrap rounded-tl-[12px] rounded-tr-0 border-b border-r border-accent-3">
                     <div className="flex justify-center dark:text-[#9AA0AA] w-full">5m</div>
                     <div className="text-[12px] flex dark:text-[9AA0AA]">
-                        <div className="flex text-accent-green w-full justify-center font-[500]">+4.87%</div>
+                        <div className="flex text-accent-aux-1 w-full justify-center font-[500]">--</div>
                     </div>
                 </div>
                 <div className="flex flex-col bg-transparent w-[20%] flex-grow justify-center text-accent-aux-1 cursor-pointer text-[12px] items-center h-[54px] flex-nowrap rounded-tl-[12px] rounded-tr-0 border-b border-r border-accent-3">
                     <div className="flex justify-center dark:text-[#9AA0AA] w-full">1h</div>
                     <div className="text-[12px] flex dark:text-[9AA0AA]">
-                        <div className="flex text-accent-red w-full justify-center font-[500]">-12.87%</div>
+                        <div className={`flex w-full justify-center font-[500] ${getColor(tokenData?.percent_change_1h)}`}>{formatChange(tokenData?.percent_change_1h)}</div>
                     </div>
                 </div>
                 <div className="flex flex-col bg-transparent w-[20%] flex-grow justify-center text-accent-aux-1 cursor-pointer text-[12px] items-center h-[54px] flex-nowrap rounded-tl-[12px] rounded-tr-0 border-b  border-accent-3">
                     <div className="flex justify-center dark:text-[#9AA0AA] w-full">24h</div>
                     <div className="text-[12px] flex dark:text-[9AA0AA]">
-                        <div className="flex text-accent-green w-full justify-center font-[500]">+223.7%</div>
+                        <div className={`flex w-full justify-center font-[500] ${getColor(tokenData?.percent_change_24h)}`}>{formatChange(tokenData?.percent_change_24h)}</div>
                     </div>
                 </div>
             </div>
-
             {/* bottom side */}
             <div className="flex justify-between pb-[8px] px-[12px] text-[12px] mt-[6px]">
                 <div className="flex flex-col gap-4">
                     <div className="flex text-accent-aux-1 justify-start w-full">Vol</div>
-                    <div className="flex w-full justify-start font-[500]">$21.1K</div>
+                    <div className="flex w-full justify-start font-[500]">${tokenData && tokenData.volume_24h ? formatNumber(tokenData.volume_24h) : '$21.1K'}</div>
                 </div>
-
                 <div className="flex flex-col gap-4">
                     <div className="flex text-accent-aux-1 justify-start w-full">Buys</div>
-                    <div className="flex w-full text-accent-green justify-start font-[500]">$21.1K</div>
+                    <div className="flex w-full text-accent-green justify-start font-[500]">${tokenData && typeof tokenData.buys === 'number' ? formatNumber(tokenData.buys) : '$21.1K'}</div>
                 </div>
-
                 <div className="flex flex-col gap-4">
                     <div className="flex text-accent-aux-1 justify-start w-full">Sells</div>
-                    <div className="flex w-full text-accent-red justify-start font-[500]">$21.1K</div>
+                    <div className="flex w-full text-accent-red justify-start font-[500]">${tokenData && typeof tokenData.sells === 'number' ? formatNumber(tokenData.sells) : '$21.1K'}</div>
                 </div>
-
                 <div className="flex flex-col gap-4">
                     <div className="flex text-accent-aux-1 justify-start w-full">Net Buy</div>
-                    <div className="flex w-full justify-start font-[500] text-accent-green">$21.1K</div>
+                    <div className="flex w-full justify-start font-[500] text-accent-green">${tokenData && typeof tokenData.net_buy === 'number' ? formatNumber(tokenData.net_buy) : '$21.1K'}</div>
                 </div>
             </div>
         </div>
@@ -761,12 +802,18 @@ export function Metric() {
 }
 
 
-export function PoolInfo({ chain, address }: { chain: string, address: string }) {
-    const [tokenData, setTokenData] = useState<TokenData | null>(null);
+export function PoolInfo({ chain, address, tokenData: propTokenData }: PoolInfoProps) {
+    const [tokenData, setTokenData] = useState<TokenData | null>(propTokenData || null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<boolean>(false);
 
     useEffect(() => {
+        if (propTokenData) {
+            setTokenData(propTokenData);
+            setLoading(false);
+            setError(false);
+            return;
+        }
         if (!chain || !address) return;
         setLoading(true);
         setError(false);
@@ -784,7 +831,7 @@ export function PoolInfo({ chain, address }: { chain: string, address: string })
                 setError(true);
                 setLoading(false);
             });
-    }, [chain, address]);
+    }, [chain, address, propTokenData]);
 
     const safeFormat = (val: number | string | undefined, fallback = '--') => {
         if (typeof val === 'number') return formatNumber(val);
@@ -821,28 +868,28 @@ export function PoolInfo({ chain, address }: { chain: string, address: string })
                 <div className="flex w-full justify-between item-center ">
                     <p className=''>Total supply</p>
                     <p className='flex items-center'>
-                        {formatNumber(9996000)}
+                        {tokenData?.total_supply ? formatNumber(tokenData.total_supply) : formatNumber(10000000)}
                     </p>
                 </div>
                 <div className="flex w-full justify-between item-center ">
                     <p className=''>Pair</p>
                     <p className='flex items-center'>
-                        <span>{truncAddress("FAipEikduejyyr5Z")}</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" className="cursor-pointer" onClick={() => copyToClipboard("FAipEikduejyyr5Z")} width="12px" height="12px" fill="#5C6068" viewBox="0 0 12 12"><g clipPath="url(#clip0_6972_490)"><path d="M.5 5.214a2.357 2.357 0 012.357-2.357h3.929a2.357 2.357 0 012.357 2.357v3.929A2.357 2.357 0 016.786 11.5H2.857A2.357 2.357 0 01.5 9.143V5.214z"></path><path d="M2.987 2.084c.087-.008.174-.013.263-.013h3.929a2.75 2.75 0 012.75 2.75V8.75c0 .089-.005.177-.013.263A2.358 2.358 0 0011.5 6.786V2.857A2.357 2.357 0 009.143.5H5.214c-1.03 0-1.907.662-2.227 1.584z"></path></g><defs><clipPath id="clip0_6972_490"><rect width="12" height="12"></rect></clipPath></defs></svg>
+                        <span>{tokenData?.pool_address ? truncAddress(tokenData.pool_address) : truncAddress("FAipEikduejyyr5Z")}</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="cursor-pointer" onClick={() => copyToClipboard(tokenData?.pool_address || "FAipEikduejyyr5Z")} width="12px" height="12px" fill="#5C6068" viewBox="0 0 12 12"><g clipPath="url(#clip0_6972_490)"><path d="M.5 5.214a2.357 2.357 0 012.357-2.357h3.929a2.357 2.357 0 012.357 2.357v3.929A2.357 2.357 0 016.786 11.5H2.857A2.357 2.357 0 01.5 9.143V5.214z"></path><path d="M2.987 2.084c.087-.008.174-.013.263-.013h3.929a2.75 2.75 0 012.75 2.75V8.75c0 .089-.005.177-.013.263A2.358 2.358 0 0011.5 6.786V2.857A2.357 2.357 0 009.143.5H5.214c-1.03 0-1.907.662-2.227 1.584z"></path></g><defs><clipPath id="clip0_6972_490"><rect width="12" height="12"></rect></clipPath></defs></svg>
                     </p>
                 </div>
                 <div className="flex w-full justify-between item-center ">
                     <p className=''>Token creator</p>
                     <p className='flex items-center'>
-                        <span>{truncAddress("C4udFGorfjenrindfiU")}</span>
-                        <span>(2.5SOL)</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" className="cursor-pointer" onClick={() => copyToClipboard("FAipEikduejyyr5Z")} width="12px" height="12px" fill="#5C6068" viewBox="0 0 12 12"><g clipPath="url(#clip0_6972_490)"><path d="M.5 5.214a2.357 2.357 0 012.357-2.357h3.929a2.357 2.357 0 012.357 2.357v3.929A2.357 2.357 0 016.786 11.5H2.857A2.357 2.357 0 01.5 9.143V5.214z"></path><path d="M2.987 2.084c.087-.008.174-.013.263-.013h3.929a2.75 2.75 0 012.75 2.75V8.75c0 .089-.005.177-.013.263A2.358 2.358 0 0011.5 6.786V2.857A2.357 2.357 0 009.143.5H5.214c-1.03 0-1.907.662-2.227 1.584z"></path></g><defs><clipPath id="clip0_6972_490"><rect width="12" height="12"></rect></clipPath></defs></svg>
+                        <span>{tokenData?.creator_address ? truncAddress(tokenData.creator_address) : truncAddress("C4udFGorfjenrindfiU")}</span>
+                        <span>({tokenData?.creator_fee || "2.5SOL"})</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="cursor-pointer" onClick={() => copyToClipboard(tokenData?.creator_address || "C4udFGorfjenrindfiU")} width="12px" height="12px" fill="#5C6068" viewBox="0 0 12 12"><g clipPath="url(#clip0_6972_490)"><path d="M.5 5.214a2.357 2.357 0 012.357-2.357h3.929a2.357 2.357 0 012.357 2.357v3.929A2.357 2.357 0 016.786 11.5H2.857A2.357 2.357 0 01.5 9.143V5.214z"></path><path d="M2.987 2.084c.087-.008.174-.013.263-.013h3.929a2.75 2.75 0 012.75 2.75V8.75c0 .089-.005.177-.013.263A2.358 2.358 0 0011.5 6.786V2.857A2.357 2.357 0 009.143.5H5.214c-1.03 0-1.907.662-2.227 1.584z"></path></g><defs><clipPath id="clip0_6972_490"><rect width="12" height="12"></rect></clipPath></defs></svg>
                     </p>
                 </div>
                 <div className="flex w-full justify-between item-center ">
                     <p className=''>Pool created</p>
                     <p className='flex items-center'>
-                        01/22/2025 11:09
+                        {tokenData?.pool_created ? (typeof tokenData.pool_created === 'number' ? new Date(tokenData.pool_created).toLocaleString() : new Date(tokenData.pool_created).toLocaleString()) : '01/22/2025 11:09'}
                     </p>
                 </div>
             </div>

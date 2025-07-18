@@ -166,7 +166,14 @@ export default function TableBody() {
                     <tr key={token.id}>
                 <td className="py-3 px-2 sticky z-[1] left-0 bg-accent-2 ">
                     {/* token */}
-                        <Link role="button" className="flex items-center md:w-[290px] w-[136px] md:flex-[290px] flex-[136px]" href={`/${token.platform?.toLowerCase() || 'eth'}/token/${token.id}`}>
+                        <Link
+  role="button"
+  className="flex items-center md:w-[290px] w-[136px] md:flex-[290px] flex-[136px]"
+  href={{
+    pathname: `/${chain}/token/${token.contract_address}`,
+    query: { data: encodeURIComponent(JSON.stringify(token)) }
+  }}
+>
                         <div className="flex items-center gap-2">
                             <div className=""><svg xmlns="http://www.w3.org/2000/svg" className="md:w-[16px] w-[13px]" width="16px" height="16px" fill="#AEB2BD" viewBox="0 0 16 16"><g clipPath="url(#clip0_6939_489)"><path fillRule="evenodd" clipRule="evenodd" d="M6.421.99a1.754 1.754 0 013.158 0l1.587 3.127 3.352.603c1.414.254 1.976 2.051.975 3.121l-2.37 2.536.484 3.5c.204 1.477-1.267 2.587-2.554 1.93L8 14.245l-3.053 1.56c-1.287.658-2.758-.452-2.554-1.929l.484-3.5L.507 7.84c-1-1.07-.439-2.867.975-3.121l3.352-.603L6.421.99z"></path></g><defs><clipPath id="clip0_6939_489"><rect width="16" height="16"></rect></clipPath></defs></svg></div>
                             <div className="flex items-center gap-1">

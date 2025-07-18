@@ -1,5 +1,4 @@
 "use client";
-import { Checkbox } from "@/components/ui/checkbox"
 import {
     ResizableHandle,
     ResizablePanel,
@@ -8,9 +7,10 @@ import {
 import { Switch } from "@/components/ui/switch"
 import { truncAddress } from "@/lib/utils"
 import Image from "next/image";
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import ChartContainer from '../ChartContainer';
 
-export default function Trade() {
+export default function Trade({ chain, address }: { chain: string; address: string }) {
     const [resize, setResize] = useState<"vertical" | "horizontal">("vertical")
     const [toggleLeftPane, setLeftPaneToggle] = useState(false)
     return (
@@ -131,23 +131,25 @@ export default function Trade() {
 
             <ResizablePanelGroup direction={resize} className="md:block hidden">
                 <ResizablePanel minSize={20} maxSize={90}>
-                    <div className=" bg-black w-full h-full overflow-y-auto">
+                    <div className="bg-black w-full h-full overflow-y-auto">
+                        <ChartContainer chain={chain} address={address} />
                     </div>
                 </ResizablePanel>
                 <ResizableHandle withHandle />
                 <ResizablePanel minSize={20} maxSize={90} className="overflow-y-auto">
                     <div className="h-full w-full overflow-scroll">
-                        <TradeTable setResize={setResize} />
+                        <TradeTable setResize={setResize} address={address} chain={chain} />
                     </div>
                 </ResizablePanel>
             </ResizablePanelGroup>
 
             {/* mobile view */}
             <div className="w-full md:hidden">
-                <div className=" bg-black w-full h-[300px] overflow-y-auto">
+                <div className="bg-black w-full h-[400px]">
+                    <ChartContainer chain={chain} address={address} />
                 </div>
                 <div className="w-full overflow-scroll">
-                    <TradeTable setResize={setResize} />
+                    <TradeTable setResize={setResize} address={address} chain={chain} />
                 </div>
             </div>
 
@@ -161,7 +163,7 @@ export default function Trade() {
     )
 }
 
-export function TradeTable({ setResize }) {
+export function TradeTable({ setResize, address, chain }) {
     return (
         <div className="relative">
             <div className="sticky top-0 dark:bg-[#111111] flex gap-2 overflow-x-scroll items-center justify-between py-[10px] px-[12px]">
@@ -194,14 +196,122 @@ export function TradeTable({ setResize }) {
             {/*  */}
 
             {/* table */}
-            <DataTable />
+            <DataTable address={address} chain={chain} />
 
         </div>
     )
 }
 
 
-export function DataTable() {
+export function DataTable({ address, chain }) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [trades, setTrades] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [summary, setSummary] = useState<any>(null); // For non-Solana summary stats
+
+    // Supported chains for DexScreener
+    const supportedChains = [
+        'sol', 'solana', 'eth', 'ethereum', 'bsc', 'binance', 'base', 'blast', 'polygon', 'matic', 'arbitrum', 'optimism', 'avalanche', 'avax'
+    ];
+    const CHAIN_MAP = {
+        sol: 'solana',
+        eth: 'ethereum',
+        bsc: 'bsc',
+        base: 'base',
+        blast: 'blast',
+        polygon: 'polygon',
+        matic: 'polygon',
+        arbitrum: 'arbitrum',
+        optimism: 'optimism',
+        avalanche: 'avalanche',
+        avax: 'avalanche',
+    };
+    const apiChain = CHAIN_MAP[chain?.toLowerCase()] || chain?.toLowerCase();
+    const isSupported = chain && supportedChains.includes(chain?.toLowerCase());
+    const isSolana = apiChain === 'solana';
+
+    useEffect(() => {
+        if (!address || !isSupported) return;
+        setLoading(true);
+        setError(false);
+        setTrades([]);
+        setSummary(null);
+        let intervalId: NodeJS.Timeout;
+
+        const fetchSolanaTrades = async () => {
+            try {
+                // Step 1: Get pair address from DexScreener
+                const dsRes = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${address}`);
+                const dsData = await dsRes.json();
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                let pair: any = null;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const pairs: any[] = dsData.pairs || [];
+                if (pairs.length > 0) {
+                    pair = pairs.find((p) => p.chainId?.toLowerCase() === apiChain);
+                    if (!pair) pair = pairs[0];
+                }
+                const pairAddress = pair?.pairAddress;
+                if (!pairAddress) {
+                    setError(true);
+                    setTrades([]);
+                    setLoading(false);
+                    return;
+                }
+                // For testing: use a known active pair address (e.g. Raydium USDC/SOL)
+                // pairAddress = '8HoQnePLqPj4M7PUDzfw8e3Yw1E5NH5x5uFWDzj1hJys';
+                const beRes = await fetch(`https://public-api.birdeye.so/public/txs/pair/${pairAddress}?limit=20`, {
+                    headers: { 'X-API-KEY': '06d5d7fbfc2140d481cae657538988ee' }
+                });
+                if (beRes.status === 404) {
+                    setTrades([]); // No activity, but not an error
+                    setLoading(false);
+                    return;
+                }
+                const beData = await beRes.json();
+                setTrades(beData.data || []);
+            } catch (err) {
+                console.error('Birdeye fetch error:', err);
+                setError(true);
+                setTrades([]);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        const fetchDexScreenerSummary = async () => {
+            try {
+                const res = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${address}`);
+                const data = await res.json();
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                let pair: any = null;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const pairs: any[] = data.pairs || [];
+                if (pairs.length > 0) {
+                    pair = pairs.find((p) => p.chainId?.toLowerCase() === apiChain);
+                    if (!pair) pair = pairs[0];
+                }
+                setSummary(pair?.txns || null);
+            } catch {
+                setError(true);
+                setSummary(null);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (isSolana) {
+            fetchSolanaTrades();
+            intervalId = setInterval(fetchSolanaTrades, 5000);
+        } else {
+            fetchDexScreenerSummary();
+            intervalId = setInterval(fetchDexScreenerSummary, 5000);
+        }
+        return () => clearInterval(intervalId);
+    }, [address, chain, isSupported, apiChain, isSolana]);
+
     return (
         <div className="overflow-x-scroll">
             <div className="relatie min-w-[850px] h-full dark:bg-[#111111]">
@@ -242,12 +352,6 @@ export function DataTable() {
                         <div className="text-[12px]">Total</div>
                         <div className="space-x-1 flex items-center text-[12px]">
                             <span>USD</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="12px" height="12px" fill="#5C6068" viewBox="0 0 16 16"><g clipPath="url(#clip0_7009_491)"><path d="M5.89 1.305a.5.5 0 01.371-.602 7.503 7.503 0 017.19 12.452.5.5 0 01-.816-.131l-1.087-2.312a.5.5 0 01.905-.425l.755 1.606A6.502 6.502 0 006.493 1.675a.5.5 0 01-.602-.37z"></path><path d="M2.992 2.695a.5.5 0 01.374.281l1.087 2.31a.5.5 0 01-.905.426l-.755-1.605a6.502 6.502 0 006.714 10.218.5.5 0 01.232.973A7.503 7.503 0 012.55 2.845a.5.5 0 01.442-.15z"></path><path d="M5.5 7A1.5 1.5 0 017 5.5h.5V5a.5.5 0 111 0v.5H10a.5.5 0 010 1H7a.5.5 0 100 1h2a1.5 1.5 0 110 3h-.5v.5a.5.5 0 01-1 0v-.5H6a.5.5 0 010-1h3a.5.5 0 000-1H6.997A1.5 1.5 0 015.5 7z"></path></g><defs><clipPath id="clip0_7009_491"><rect width="16" height="16"></rect></clipPath></defs></svg>
-                        </div>
-                        <div className="">
-                            <div className="flex cursor-pointer">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" fill="#5C6068" viewBox="0 0 16 16"><path fillRule="evenodd" clipRule="evenodd" d="M2.702 3.225l.006.006 3.635 3.547c.355.346.554.82.554 1.315v3.898a.6.6 0 11-1.2 0V8.093a.636.636 0 00-.192-.456L1.87 4.09C1.088 3.327 1.628 2 2.72 2h10.562c1.093 0 1.633 1.328.85 2.09l-3.64 3.547a.636.636 0 00-.191.456v5.634a.6.6 0 01-1.2 0V8.093c0-.495.2-.97.554-1.315l3.64-3.547.005-.006.001-.002-.002-.012a.03.03 0 00-.007-.01h-.002l-.008-.001H2.71a.03.03 0 00-.006.011.03.03 0 00-.003.012l.001.002z"></path></svg>
-                            </div>
                         </div>
                     </div>
 
@@ -259,21 +363,11 @@ export function DataTable() {
                     {/* th 5 */}
                     <div className="flex gap-[4px] py-[10px] px-[12px] items-center w-[11.76%] whitespace-nowrap dark:text-[f5f5f5]">
                         <div className="text-[12px]">Price</div>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14px" height="14px" fill="#5C6068" viewBox="0 0 16 16"><path fillRule="evenodd" clipRule="evenodd" d="M9.37 1.846a.6.6 0 01.654.13l4 4a.6.6 0 01-.848.848L10.2 3.85V13.6a.6.6 0 11-1.2 0V2.4a.6.6 0 01.37-.554z"></path><path fillRule="evenodd" clipRule="evenodd" d="M6.63 14.154a.6.6 0 01-.654-.13l-4-4a.6.6 0 01.848-.848L5.8 12.152V2.4a.6.6 0 011.2 0v11.2a.6.6 0 01-.37.554z"></path></svg>
                     </div>
 
                     {/* th 6 */}
                     <div className="flex gap-[4px] py-[10px] px-[12px] items-center w-[23.52%] whitespace-nowrap dark:text-[f5f5f5]">
                         <div className="text-[12px]">Marker</div>
-                        <div className="flex items-center gap-1">
-                            <div className="flex cursor-pointer">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" fill="#5C6068" viewBox="0 0 16 16"><path fillRule="evenodd" clipRule="evenodd" d="M2.702 3.225l.006.006 3.635 3.547c.355.346.554.82.554 1.315v3.898a.6.6 0 11-1.2 0V8.093a.636.636 0 00-.192-.456L1.87 4.09C1.088 3.327 1.628 2 2.72 2h10.562c1.093 0 1.633 1.328.85 2.09l-3.64 3.547a.636.636 0 00-.191.456v5.634a.6.6 0 01-1.2 0V8.093c0-.495.2-.97.554-1.315l3.64-3.547.005-.006.001-.002-.002-.012a.03.03 0 00-.007-.01h-.002l-.008-.001H2.71a.03.03 0 00-.006.011.03.03 0 00-.003.012l.001.002z"></path></svg>
-                            </div>
-                            <div className="dark:text-[#f5f5f5] text-[12px] flex items-center gap-1">
-                                <Checkbox id="filter_bot" className="" />
-                                <label htmlFor="filter_bot" className="cursor-pointer">Filter bot</label>
-                            </div>
-                        </div>
                     </div>
 
                     {/* th 7 */}
@@ -285,66 +379,74 @@ export function DataTable() {
                     </div>
                 </div>
                 <div className="overflow-y-scroll w-full max-h-[600px] min-w-[200px]">
-                    {
-                        Array.from({ length: 35 }).map((_, i) => (
-                            <div key={i} className="flex flex-row border-b border-accent-3 text-accent-aux-1">
-                                {/* td 1 */}
-                                <div className="flex gap-[4px] py-[10px] px-[12px] items-center w-[14.11%] whitespace-nowrap dark:text-[f5f5f5]">
-                                    <div className="dark:text-[#9AA0AA] text-[12px]">01/29 14:20:22</div>
-                                </div>
-
-                                {/* td 2 */}
-                                <div className="flex gap-[4px] py-[10px] px-[10.58px] items-center w-[14%] whitespace-nowrap dark:text-[f5f5f5]">
-                                    <div className="text-[12px] px-[12px] py-[4px] rounded-md font-[500] bg-[rgba(136,214,147,0.2)] text-prettyGreen">Buy</div>
-                                </div>
-
-                                {/* td 3 */}
-                                <div className="flex gap-[4px] py-[10px] px-[12px] items-center w-[14.11%] whitespace-nowrap dark:text-[f5f5f5]">
-                                    <div className="text-[12px] text-accent-green font-[500]">$68.17</div>
-
-                                </div>
-
-                                {/* td 4 */}
-                                <div className="flex gap-[4px] py-[10px] px-[12px] items-center w-[10.58%] whitespace-nowrap dark:text-[f5f5f5]">
-                                    <div className="text-[12px] text-accent-green font-[500]">$68.17</div>
-                                </div>
-
-                                {/* td 5 */}
-                                <div className="flex gap-[4px] py-[10px] px-[12px] items-center w-[11.76%] whitespace-nowrap dark:text-[f5f5f5]">
-                                    <div className="text-[12px] text-accent-green font-[500]">$68.17</div>
-                                </div>
-
-                                {/* td 6 */}
-                                <div className="flex flex-col gap-[4px] py-[10px] px-[12px] items-start  w-[23.52%] whitespace-nowrap dark:text-[f5f5f5]">
-                                    <div className="flex w-[100px] gap-1 items-center">
-                                        <div className="text-[12px] text-accent-green font-[500]">{truncAddress("✨HerueunduansdjnsidiY")}</div>
-                                        <button>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="12px" height="12px" fill="#9AA0AA" viewBox="0 0 14 14"><path d="M7.572 3.558l2.625 2.695L3.625 13H1v-2.695l6.572-6.747zm.75-.77l1.515-1.556a.75.75 0 011.075 0l1.578 1.62a.75.75 0 010 1.047l-1.543 1.584L8.322 2.79zM7.308 11.5h4.939a.75.75 0 110 1.5h-5.69a.44.44 0 01-.31-.75l.53-.53a.75.75 0 01.531-.22z"></path></svg>
-                                        </button>
-                                        <div className="flex h-[14px] px-[4px] rounded-[4px] bg-[#393c42] text-[10px] items-center">3</div>
-                                    </div>
-
-                                    <div className="h-[3px] rounded-[22px] bg-[rgb(57,60,67)] w-[100px] text-left">
-                                        <div className="h-[3px] rounded-[22px] bg-[rgb(154,160,170)]" style={{ width: "37.9912%" }}></div>
-                                    </div>
-                                </div>
-
-                                {/* td 7 */}
-                                <div className="flex justify-end gap-[4px] py-[10px] px-[12px] items-center w-[15.29%] whitespace-nowrap dark:text-[f5f5f5]">
-                                    <div className="flex items-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" clipRule="evenodd" d="M4 6a2 2 0 012-2h2a1 1 0 000-2H6a4 4 0 00-4 4v8a4 4 0 004 4h8a4 4 0 004-4v-2a1 1 0 10-2 0v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm7-3a1 1 0 011-1h4a2 2 0 012 2v4a1 1 0 11-2 0V5.414l-5.293 5.293a1 1 0 01-1.414-1.414L14.586 4H12a1 1 0 01-1-1z"></path></svg>
-                                        <div className="flex text-[12px] ml-[0.1rem]">Share</div>
-                                    </div>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="12px" height="12px" fill="#9AA0AA" viewBox="0 0 16 16"><path fillRule="evenodd" clipRule="evenodd" d="M2.702 3.225l.006.006 3.635 3.547c.355.346.554.82.554 1.315v3.898a.6.6 0 11-1.2 0V8.093a.636.636 0 00-.192-.456L1.87 4.09C1.088 3.327 1.628 2 2.72 2h10.562c1.093 0 1.633 1.328.85 2.09l-3.64 3.547a.636.636 0 00-.191.456v5.634a.6.6 0 01-1.2 0V8.093c0-.495.2-.97.554-1.315l3.64-3.547.005-.006.001-.002-.002-.012a.03.03 0 00-.007-.01h-.002l-.008-.001H2.71a.03.03 0 00-.006.011.03.03 0 00-.003.012l.001.002z"></path></svg>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="12px" height="12px" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" clipRule="evenodd" d="M10 20c5.523 0 10-4.477 10-10S15.523 0 10 0 0 4.477 0 10s4.477 10 10 10zM6.465 5.501a.386.386 0 00-.266.11L4.39 7.42a.188.188 0 00.133.32h9.164c.101 0 .197-.04.266-.109l1.81-1.81a.188.188 0 00-.133-.32H6.465zm0 6.758a.376.376 0 00-.266.11l-1.81 1.81a.188.188 0 00.133.32h9.164c.101 0 .197-.04.266-.11l1.81-1.81a.188.188 0 00-.133-.32H6.465zm7.487-3.289a.376.376 0 00-.266-.11H4.522a.188.188 0 00-.133.321l1.81 1.81c.07.07.165.11.266.11h9.164a.188.188 0 00.133-.32l-1.81-1.81z"></path></svg>
-                                </div>
+                    {loading ? (
+                        Array.from({ length: 10 }).map((_, i) => (
+                            <div key={i} className="flex flex-row border-b border-accent-3 text-accent-aux-1 animate-pulse">
+                                <div className="flex gap-[4px] py-[10px] px-[12px] items-center w-[14.11%] bg-gray-800 rounded" style={{ height: 24 }} />
+                                <div className="flex gap-[4px] py-[10px] px-[10.58px] items-center w-[14%] bg-gray-800 rounded" style={{ height: 24 }} />
+                                <div className="flex gap-[4px] py-[10px] px-[12px] items-center w-[14.11%] bg-gray-800 rounded" style={{ height: 24 }} />
+                                <div className="flex gap-[4px] py-[10px] px-[12px] items-center w-[10.58%] bg-gray-800 rounded" style={{ height: 24 }} />
+                                <div className="flex gap-[4px] py-[10px] px-[12px] items-center w-[11.76%] bg-gray-800 rounded" style={{ height: 24 }} />
+                                <div className="flex flex-col gap-[4px] py-[10px] px-[12px] items-start w-[23.52%] bg-gray-800 rounded" style={{ height: 24 }} />
+                                <div className="flex justify-end gap-[4px] py-[10px] px-[12px] items-center w-[15.29%] bg-gray-800 rounded" style={{ height: 24 }} />
                             </div>
                         ))
-                    }
+                    ) : error ? (
+                        <div className="text-center text-red-500 py-8">Failed to load activity</div>
+                    ) : isSolana ? (
+                        trades.length === 0 ? (
+                            <div className="text-center text-gray-400 py-8">No recent activity</div>
+                        ) : (
+                            trades.map((trade, i) => (
+                                <div key={i} className="flex flex-row border-b border-accent-3 text-accent-aux-1">
+                                    {/* td 1: Time */}
+                                    <div className="flex gap-[4px] py-[10px] px-[12px] items-center w-[14.11%] whitespace-nowrap dark:text-[f5f5f5]">
+                                        <div className="dark:text-[#9AA0AA] text-[12px]">{trade.blockTime ? new Date(trade.blockTime * 1000).toLocaleString() : '--'}</div>
+                                    </div>
+                                    {/* td 2: Type */}
+                                    <div className="flex gap-[4px] py-[10px] px-[10.58px] items-center w-[14%] whitespace-nowrap dark:text-[f5f5f5]">
+                                        <div className={`text-[12px] px-[12px] py-[4px] rounded-md font-[500] ${trade.side === 'buy' ? 'bg-[rgba(136,214,147,0.2)] text-prettyGreen' : 'bg-[rgba(255,0,0,0.2)] text-red-400'}`}>{trade.side || '--'}</div>
+                                    </div>
+                                    {/* td 3: Total (USD) */}
+                                    <div className="flex gap-[4px] py-[10px] px-[12px] items-center w-[14.11%] whitespace-nowrap dark:text-[f5f5f5]">
+                                        <div className="text-[12px] text-accent-green font-[500]">${trade.amountUsd ? Number(trade.amountUsd).toLocaleString(undefined, { maximumFractionDigits: 2 }) : '--'}</div>
+                                    </div>
+                                    {/* td 4: Amount */}
+                                    <div className="flex gap-[4px] py-[10px] px-[12px] items-center w-[10.58%] whitespace-nowrap dark:text-[f5f5f5]">
+                                        <div className="text-[12px] text-accent-green font-[500]">{trade.amount ? Number(trade.amount).toLocaleString(undefined, { maximumFractionDigits: 4 }) : '--'}</div>
+                                    </div>
+                                    {/* td 5: Price */}
+                                    <div className="flex gap-[4px] py-[10px] px-[12px] items-center w-[11.76%] whitespace-nowrap dark:text-[f5f5f5]">
+                                        <div className="text-[12px] text-accent-green font-[500]">{trade.price ? `$${Number(trade.price).toLocaleString(undefined, { maximumFractionDigits: 6 })}` : '--'}</div>
+                                    </div>
+                                    {/* td 6: Marker (address) */}
+                                    <div className="flex flex-col gap-[4px] py-[10px] px-[12px] items-start  w-[23.52%] whitespace-nowrap dark:text-[f5f5f5]">
+                                        <div className="flex w-[100px] gap-1 items-center">
+                                            <div className="text-[12px] text-accent-green font-[500]">{trade.owner ? truncAddress(trade.owner) : '--'}</div>
+                                        </div>
+                                    </div>
+                                    {/* td 7: Share/Actions */}
+                                    <div className="flex justify-end gap-[4px] py-[10px] px-[12px] items-center w-[15.29%] whitespace-nowrap dark:text-[f5f5f5]">
+                                        <div className="flex items-center">
+                                            <a href={`https://solscan.io/tx/${trade.txHash}`} target="_blank" rel="noopener noreferrer" className="flex text-[12px] ml-[0.1rem] underline">View</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                        )
+                    ) : summary ? (
+                        <div className="text-center text-gray-400 py-8">
+                            <div>Buys (5m): {summary.m5?.buys ?? '--'} | Sells (5m): {summary.m5?.sells ?? '--'}</div>
+                            <div>Buys (1h): {summary.h1?.buys ?? '--'} | Sells (1h): {summary.h1?.sells ?? '--'}</div>
+                            <div>Buys (6h): {summary.h6?.buys ?? '--'} | Sells (6h): {summary.h6?.sells ?? '--'}</div>
+                            <div>Buys (24h): {summary.h24?.buys ?? '--'} | Sells (24h): {summary.h24?.sells ?? '--'}</div>
+                            <div className="mt-2">(Live trade feed not available for this chain)</div>
+                        </div>
+                    ) : (
+                        <div className="text-center text-gray-400 py-8">No recent activity</div>
+                    )}
                 </div>
             </div>
-
-            {/* <Sheet /> */}
         </div>
-    )
+    );
 }

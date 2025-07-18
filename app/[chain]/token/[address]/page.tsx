@@ -1,49 +1,67 @@
 "use client";
+import { use, useEffect, useState } from "react";
 import Drawer from '@/components/common/drawer';
 import Trade from '@/components/trading/mainSection/trade';
 import MobileTradingHeader from '@/components/trading/mobileTrading';
 import RightBar, { BuyTab, DegenAudit, PoolInfo, SellTab } from '@/components/trading/rightBar';
 import TradingHeader from '@/components/trading/trading';
 // import { notFound } from 'next/navigation';
-import { use, useState } from 'react';
-
-// List of valid chains
-// const validChains = ["sol", "eth", "base", "bsc", "tron", "blast"];
 
 export default function Page({ params }) {
   const { chain, address } = use(params) as { chain: string; address: string };
-  const [isOpen, setIsOpen] = useState({
-    buy: false,
-    sell: false,
-    info: false
-  })
+  const [isOpen, setIsOpen] = useState({ buy: false, sell: false, info: false });
+  // TODO: Replace 'any' with a proper TokenData type if available
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [tokenData, setTokenData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Check if the chain is valid
-  // if (!validChains.includes(chain)) {
-  //   notFound(); // This will render the 404 page
-  // }
+  useEffect(() => {
+    async function fetchToken() {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await fetch(`/api/trending-tokens?chain=${chain}&address=${address}`);
+        const json = await res.json();
+        setTokenData(json.data?.[0] || null);
+      } catch {
+        setError("Failed to fetch token data");
+        setTokenData(null);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchToken();
+  }, [chain, address]);
+
+  if (loading) return <div className="flex justify-center items-center h-40">Loading...</div>;
+  if (error || !tokenData) return <div className="flex justify-center items-center h-40 text-red-500">Token not found or failed to load.</div>;
+
+  const showWarning = tokenData && tokenData.liquidity_usd !== undefined && tokenData.liquidity_usd < 15000;
 
   return (
     <div className="">
       {/* warning issue */}
+      {showWarning && (
       <div className="">
         <div className="text-risk flex justify-center items-center h-[40px] gap-1 bg-riskWarn">
           <svg xmlns="http://www.w3.org/2000/svg" width="14px" height="14px" fill="#FFD039" viewBox="0 0 14 14"><path fillRule="evenodd" clipRule="evenodd" d="M8.212 2.093a1.4 1.4 0 00-2.423 0L.517 11.198A1.4 1.4 0 001.73 13.3h10.544a1.4 1.4 0 001.211-2.101L8.212 2.093zM7.001 9.255a.7.7 0 01-.7-.7V5.6a.7.7 0 111.4 0v2.955a.7.7 0 01-.7.7zm.7 1.167a.7.7 0 11-1.4 0 .7.7 0 011.4 0z"></path></svg>
           <p className='text-[12px] font-[500]'>This token has low liquidity. Trade carefully!</p>
         </div>
       </div>
+      )}
 
       <div className="md:block hidden">
-        <TradingHeader />
+        <TradingHeader tokenData={tokenData} />
         <div className="flex items-start">
-          <Trade />
-          <RightBar chain={chain} address={address} />
+          <Trade chain={chain} address={address} />
+          <RightBar chain={chain} address={address} tokenData={tokenData} />
         </div>
       </div>
 
       <div className="md:hidden block">
-        <MobileTradingHeader />
-        <Trade />
+        <MobileTradingHeader tokenData={tokenData} />
+        <Trade chain={chain} address={address} />
       </div>
 
       <div className="flex w-full fixed bottom-[0px] z-[40] dark:bg-[#17181b] md:hidden">

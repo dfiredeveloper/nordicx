@@ -80,7 +80,7 @@ export default function TableBody({ tokenData, loading, error }: TableBodyProps)
                 <tr key={token.pairAddress || index}>
                     {/* Token Column */}
                     <td className="py-3 px-2 sticky z-[1] left-0 bg-accent-2 ">
-                        <Link role="button" className="flex items-center md:w-[290px] w-[136px] md:flex-[290px] flex-[136px]" href={`/${chain}/token/${token.baseToken.address}`}>
+                        <Link role="button" className="flex items-center md:w-[290px] w-[136px] md:flex-[290px] flex-[136px]" href={{ pathname: `/${chain}/token/${token.baseToken.address}`, query: { data: encodeURIComponent(JSON.stringify(token)) } }}>
                             <div className="flex items-center gap-2">
                                 <div className="">
                                     {/* Placeholder for token logo */}
