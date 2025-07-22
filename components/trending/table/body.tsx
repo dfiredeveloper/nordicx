@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { CmcTrendingToken } from "@/lib/services/coinmarketcap";
 import { useSearchParams } from "next/navigation";
 import MiniChart from "@/components/ui/mini-chart";
+import TableHead from "./head";
 
 // Function to format age in human-readable format
 const formatAge = (days: number): string => {
@@ -38,6 +39,33 @@ const generateMockSparkline = (token: CmcTrendingToken): number[] => {
     return data;
 };
 
+// Define the expected structure of a token from the API
+type ApiToken = {
+  id: number;
+  name: string;
+  symbol: string;
+  platform?: { name: string; token_address?: string };
+  quote: {
+    USD: {
+      price: number;
+      percent_change_1h: number;
+      percent_change_24h: number;
+      percent_change_7d: number;
+      market_cap: number;
+      volume_24h: number;
+    };
+  };
+  logo?: string;
+  age?: number;
+  contract_address?: string;
+  holders_count?: number;
+  buy_tx_1m?: number;
+  sell_tx_1m?: number;
+  total_tx_1m?: number;
+  liquidity_usd?: number;
+  pool_address?: string;
+};
+
 export default function TableBody() {
     const searchParams = useSearchParams();
     const chain = searchParams?.get("chain") || "eth";
@@ -49,109 +77,123 @@ export default function TableBody() {
     const [sparklines, setSparklines] = useState<Record<string, number[] | null>>({});
     const [sparklineLoading, setSparklineLoading] = useState<Record<string, boolean>>({});
 
+    // Sorting state
+    const [sortKey, setSortKey] = useState<string | null>(null);
+    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+
+    // Reset sorting when chain or timeframe changes
     useEffect(() => {
-        setLoading(true);
-        fetch(`/api/trending-tokens?chain=${chain}&timeframe=${timeframe}&limit=300`)
+      setSortKey(null);
+      setSortDirection('desc');
+    }, [chain, timeframe]);
+
+    // Fetch tokens
+    useEffect(() => {
+      setLoading(true);
+      fetch(`/api/trending-tokens?chain=${chain}&timeframe=${timeframe}&limit=300`)
+        .then(res => res.json())
+        .then(data => {
+          const tokens: CmcTrendingToken[] = Array.isArray(data.data) ? data.data.map((token: unknown) => {
+            if (
+              typeof token === 'object' && token !== null &&
+              'id' in token && 'name' in token && 'symbol' in token &&
+              'quote' in token && typeof (token as { quote: unknown }).quote === 'object' &&
+              'USD' in (token as { quote: { USD: unknown } }).quote
+            ) {
+              const t = token as ApiToken;
+              return {
+                id: t.id,
+                name: t.name,
+                symbol: t.symbol,
+                price: t.quote.USD.price,
+                percent_change_1h: t.quote.USD.percent_change_1h,
+                percent_change_24h: t.quote.USD.percent_change_24h,
+                percent_change_7d: t.quote.USD.percent_change_7d,
+                market_cap: t.quote.USD.market_cap,
+                volume_24h: t.quote.USD.volume_24h,
+                platform: t.platform?.name || 'Ethereum',
+                logo: t.logo || null,
+                age: t.age,
+                contract_address: t.contract_address,
+                holders_count: t.holders_count || 0,
+                buy_tx_1m: t.buy_tx_1m || 0,
+                sell_tx_1m: t.sell_tx_1m || 0,
+                total_tx_1m: t.total_tx_1m || 0,
+                liquidity_usd: t.liquidity_usd || 0,
+                pool_address: t.pool_address || '',
+              };
+            }
+            return null;
+          }).filter(Boolean) as CmcTrendingToken[] : [];
+          setTokens(tokens);
+          setLoading(false);
+        })
+        .catch(() => {
+          setTokens([]);
+          setLoading(false);
+        });
+    }, [chain, timeframe]);
+
+    // Fetch sparklines for all tokens - use real data for supported, mock for others
+    useEffect(() => {
+      if (!tokens) return;
+      setSparklines({});
+      setSparklineLoading({});
+      tokens.forEach(token => {
+        const symbol = token.symbol.toLowerCase();
+        const supportedSymbols = ["btc","eth","pepe","shib","doge","sol","arb","link"];
+        if (supportedSymbols.includes(symbol)) {
+          setSparklineLoading(prev => ({ ...prev, [symbol]: true }));
+          fetch(`/api/token-sparkline?symbol=${symbol}`)
             .then(res => res.json())
             .then(data => {
-                // Map API response to CmcTrendingToken[]
-                const tokens: CmcTrendingToken[] = Array.isArray(data.data) ? data.data.map((token: unknown) => {
-                    if (
-                        typeof token === 'object' && token !== null &&
-                        'id' in token && 'name' in token && 'symbol' in token &&
-                        'quote' in token && typeof (token as { quote: unknown }).quote === 'object' &&
-                        'USD' in (token as { quote: { USD: unknown } }).quote
-                    ) {
-                        const t = token as {
-                            id: number;
-                            name: string;
-                            symbol: string;
-                            platform?: { name: string; address?: string };
-                            quote: { USD: {
-                                price: number;
-                                percent_change_1h: number;
-                                percent_change_24h: number;
-                                percent_change_7d: number;
-                                market_cap: number;
-                                volume_24h: number;
-                            }};
-                            logo?: string;
-                            age?: number;
-                            contract_address?: string;
-                            holders_count?: number;
-                            buy_tx_1m?: number;
-                            sell_tx_1m?: number;
-                            total_tx_1m?: number;
-                            liquidity_usd?: number;
-                            pool_address?: string;
-                        };
-                        return {
-                            id: t.id,
-                            name: t.name,
-                            symbol: t.symbol,
-                            price: t.quote.USD.price,
-                            percent_change_1h: t.quote.USD.percent_change_1h,
-                            percent_change_24h: t.quote.USD.percent_change_24h,
-                            percent_change_7d: t.quote.USD.percent_change_7d,
-                            market_cap: t.quote.USD.market_cap,
-                            volume_24h: t.quote.USD.volume_24h,
-                            platform: t.platform?.name || 'Ethereum',
-                            logo: t.logo || null,
-                            age: t.age,
-                            contract_address: t.contract_address,
-                            holders_count: t.holders_count || 0,
-                            buy_tx_1m: t.buy_tx_1m || 0,
-                            sell_tx_1m: t.sell_tx_1m || 0,
-                            total_tx_1m: t.total_tx_1m || 0,
-                            liquidity_usd: t.liquidity_usd || 0,
-                            pool_address: t.pool_address || '',
-                        };
-                    }
-                    return null;
-                }).filter(Boolean) as CmcTrendingToken[] : [];
-                setTokens(tokens);
-                setLoading(false);
-                // Fetch sparklines for all tokens - use real data for supported, mock for others
-                tokens.forEach(token => {
-                  const symbol = token.symbol.toLowerCase();
-                  const supportedSymbols = ["btc","eth","pepe","shib","doge","sol","arb","link"];
-                  
-                  if (supportedSymbols.includes(symbol)) {
-                    // Try to get real data for supported tokens
-                    setSparklineLoading(prev => ({ ...prev, [symbol]: true }));
-                    fetch(`/api/token-sparkline?symbol=${symbol}`)
-                      .then(res => res.json())
-                      .then(data => {
-                        setSparklines(prev => ({ ...prev, [symbol]: data.success ? data.prices : null }));
-                        setSparklineLoading(prev => ({ ...prev, [symbol]: false }));
-                      })
-                      .catch(() => {
-                        setSparklines(prev => ({ ...prev, [symbol]: null }));
-                        setSparklineLoading(prev => ({ ...prev, [symbol]: false }));
-                      });
-                  } else {
-                    // Generate mock data for unsupported tokens
-                    const mockData = generateMockSparkline(token);
-                    setSparklines(prev => ({ ...prev, [symbol]: mockData }));
-                  }
-                });
+              setSparklines(prev => ({ ...prev, [symbol]: data.success ? data.prices : null }));
+              setSparklineLoading(prev => ({ ...prev, [symbol]: false }));
             })
             .catch(() => {
-                setTokens([]);
-                setLoading(false);
+              setSparklines(prev => ({ ...prev, [symbol]: null }));
+              setSparklineLoading(prev => ({ ...prev, [symbol]: false }));
             });
-    }, [chain, timeframe]);
+        } else {
+          const mockData = generateMockSparkline(token);
+          setSparklines(prev => ({ ...prev, [symbol]: mockData }));
+        }
+      });
+    }, [tokens]);
+
+    // Sorting logic
+    const handleSort = (key: string) => {
+      if (sortKey === key) {
+        setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+      } else {
+        setSortKey(key);
+        setSortDirection('desc');
+      }
+    };
+
+    let displayTokens = tokens;
+    if (tokens && sortKey) {
+      displayTokens = [...tokens].sort((a, b) => {
+        const aValue = a[sortKey] ?? 0;
+        const bValue = b[sortKey] ?? 0;
+        if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
+        if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
 
     if (loading) {
         return <tbody><tr><td colSpan={12} className="text-center py-10">Loading trending tokens...</td></tr></tbody>;
     }
-    if (!tokens || tokens.length === 0) {
+    if (!displayTokens || displayTokens.length === 0) {
         return <tbody><tr><td colSpan={12} className="text-center py-10">No trending tokens found.</td></tr></tbody>;
     }
 
     return (
+      <>
+        <TableHead sortKey={sortKey} sortDirection={sortDirection} onSort={handleSort} />
         <tbody className="md:text-[14px] text-[13px] divide-y">
-            {tokens.map((token, index) => {
+            {displayTokens.map((token, index) => {
                 console.log('Token logo:', token.logo, 'for', token.name);
                 // Use real sparkline if available, else show no data
                 const symbol = token.symbol.toLowerCase();
@@ -328,5 +370,6 @@ export default function TableBody() {
                 );
             })}
         </tbody>
+      </>
     );
 }

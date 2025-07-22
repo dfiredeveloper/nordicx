@@ -46,7 +46,29 @@ interface CmcApiToken {
 }
 
 class CoinMarketCapService {
-  async getTrendingTokens(limit: number = 40): Promise<CmcTrendingToken[]> {
+  async getTokenLogos(ids: number[]): Promise<Record<string, string>> {
+    if (!ids.length) return {};
+    const url = `${CMC_BASE_URL}/cryptocurrency/info?id=${ids.join(',')}`;
+    const res = await fetch(url, {
+      headers: {
+        'X-CMC_PRO_API_KEY': CMC_API_KEY,
+        'Accept': 'application/json',
+      },
+    });
+    if (!res.ok) return {};
+    const data = await res.json();
+    if (!data.data) return {};
+    const logos: Record<string, string> = {};
+    for (const id of ids) {
+      const info = data.data[id];
+      if (info && typeof info.logo === 'string') {
+        logos[id] = info.logo;
+      }
+    }
+    return logos;
+  }
+
+  async getTrendingTokens(limit: number = 40, withLogos = false): Promise<CmcTrendingToken[]> {
     const url = `${CMC_BASE_URL}/cryptocurrency/listings/latest?sort=percent_change_24h&sort_dir=desc&limit=${limit}`;
     const res = await fetch(url, {
       headers: {
@@ -56,7 +78,7 @@ class CoinMarketCapService {
     });
     if (!res.ok) throw new Error('Failed to fetch trending tokens from CoinMarketCap');
     const data = await res.json();
-    return (data.data as CmcApiToken[]).map((token) => ({
+    const tokens = (data.data as CmcApiToken[]).map((token) => ({
       id: token.id,
       name: token.name,
       symbol: token.symbol,
@@ -67,8 +89,15 @@ class CoinMarketCapService {
       market_cap: token.quote.USD.market_cap,
       volume_24h: token.quote.USD.volume_24h,
       platform: token.platform?.name || 'Ethereum',
+      contract_address: token.platform?.token_address || undefined,
       // logo: ... (can be fetched with /cryptocurrency/info)
     }));
+    if (withLogos) {
+      const ids = tokens.map(t => t.id);
+      const logos = await this.getTokenLogos(ids);
+      return tokens.map(t => ({ ...t, logo: logos[t.id] || undefined }));
+    }
+    return tokens;
   }
 }
 

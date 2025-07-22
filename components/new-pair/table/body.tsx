@@ -16,8 +16,8 @@ export default function TableBody() {
     return (
         <tbody className="md:text-[14px] text-[13px] divide-y">
             {Array(40).fill(0).map((_, index) => (
-                <tr key={index}>
-                    <td className="py-3 px-2 sticky z-[1] left-0 bg-accent-2 ">
+                    <tr key={index}>
+                <td className="py-3 px-2 sticky z-[1] left-0 bg-accent-2 ">
                         <Link
                             role="button"
                             className="flex items-center md:w-[321px] w-[136px] md:flex-[321px] flex-[136px]"
@@ -26,7 +26,7 @@ export default function TableBody() {
                                 query: { data: encodeURIComponent(JSON.stringify(token)) },
                             }}
                         >
-                            <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2">
                                 <div>
                                     <svg xmlns="http://www.w3.org/2000/svg" className="md:w-[16px] w-[13px]" width="16px" height="16px" fill="#AEB2BD" viewBox="0 0 16 16">
                                         <g clipPath="url(#clip0_6939_489)">
@@ -45,12 +45,12 @@ export default function TableBody() {
                                         <Image src="/static/ether.webp" className="md:w-[15px] w-[10px] md:h-[15px] h-[10px] absolute bottom-0 right-0" width={15} height={15} alt="" />
                                     </div>
                                     <div>
-                                        <div className="flex items-center gap-1">
+                                    <div className="flex items-center gap-1">
                                             <h1 className="uppercase md:text-[14px] text-[13px] font-[400]">{token.name}</h1>
-                                            <div className="flex gap-1">
-                                                <TooltipProvider>
-                                                    <Tooltip>
-                                                        <TooltipTrigger>
+                                        <div className="flex gap-1">
+                                            <TooltipProvider>
+                                                <Tooltip>
+                                                    <TooltipTrigger>
                                                             <span onClick={() => window.open('https://twitter.com', '_blank')} style={{ cursor: 'pointer' }}>
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="12px" height="12px" fill="#AEB2BD" viewBox="0 0 12 12">
                                                                     <g clipPath="url(#clip0_9095_133)">
@@ -63,13 +63,13 @@ export default function TableBody() {
                                                                         </clipPath>
                                                                     </defs>
                                                                 </svg>
-                                                            </span>
-                                                        </TooltipTrigger>
-                                                        <TooltipContent className='bg-accent-3 text-[#111111] text-[12px] font-[400]'>
-                                                            <p>Search on twitter</p>
-                                                        </TooltipContent>
-                                                    </Tooltip>
-                                                </TooltipProvider>
+                                                        </span>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent className='bg-accent-3 text-[#111111] text-[12px] font-[400]'>
+                                                        <p>Search on twitter</p>
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </TooltipProvider>
 
                                                 <svg
                                                     className="md:hidden block cursor-pointer"

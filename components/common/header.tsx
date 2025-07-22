@@ -2,7 +2,6 @@
 import {
   localStore,
   themeMode,
-  truncAddress,
   updateUrlParams,
 } from "@/lib/utils";
 import Image from "next/image";
@@ -34,6 +33,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import dynamic from 'next/dynamic';
 import { FC } from 'react';
+import type { CmcTrendingToken } from '@/lib/services/coinmarketcap';
 interface BlockiesProps {
   seed: string;
   size?: number;
@@ -268,6 +268,39 @@ export default function Header() {
   //   return () => document.removeEventListener('mousedown', handleClick);
   // }, [accountDropdownOpen]);
 
+  // Search state
+  const [search, setSearch] = useState("");
+  const [searchResults, setSearchResults] = useState<CmcTrendingToken[]>([]);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [searchTouched, setSearchTouched] = useState(false);
+  const searchTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  // Fetch search results with debounce
+  useEffect(() => {
+    if (!search) {
+      setSearchResults([]);
+      setSearchLoading(false);
+      return;
+    }
+    setSearchLoading(true);
+    if (searchTimeout.current) clearTimeout(searchTimeout.current);
+    searchTimeout.current = setTimeout(() => {
+      fetch(`/api/search-tokens?query=${encodeURIComponent(search)}`)
+        .then(res => res.json())
+        .then(data => {
+          setSearchResults(data.tokens || []);
+          setSearchLoading(false);
+        })
+        .catch(() => {
+          setSearchResults([]);
+          setSearchLoading(false);
+        });
+    }, 350);
+    return () => {
+      if (searchTimeout.current) clearTimeout(searchTimeout.current);
+    };
+  }, [search]);
+
   return (
     <div className="">
       <div className="md:px-[1.3rem] px-[.5rem] h-[56px] flex items-center gap-5 justify-between w-full">
@@ -323,6 +356,7 @@ export default function Header() {
           </ul>
         </div>
 
+        {/* Desktop search bar */}
         <div className="relative max-w-[440px] w-full md:flex mx-[24px] hidden">
           <div className="w-full relative h-[40px] rounded-lg overflow-hidden hover:border-inherit border border-transparent">
             <div className="absolute z-[2]  top-0 h-[40px] left-[4px] flex items-center justify-center text-accent-4  text-aux-1">
@@ -339,8 +373,10 @@ export default function Header() {
             </div>
             <input
               type="text"
+              value={search}
+              onChange={e => { setSearch(e.target.value); setSearchTouched(true); setTriggerForInputDrpDown(true); }}
               onFocus={() => setTriggerForInputDrpDown(true)}
-              onBlur={() => setTriggerForInputDrpDown(false)}
+              onBlur={() => setTimeout(() => setTriggerForInputDrpDown(false), 150)}
               className="w-full h-full pl-8 placeholder:opacity-50 outline-none text-xs bg-accent-2"
               placeholder="Search token/contract/wallet"
             />
@@ -353,86 +389,53 @@ export default function Header() {
 
           {/* drop down */}
           {!!triggerInputDrop && (
-            <div className="absolute w-full bg-accent-2 rounded-md left-0 top-[50px] p-3 h-[400px] overflow-y-auto scroll-smooth">
-              <div className="text-sm">Trending 24h</div>
-
-              <div className="mt-3 space-y-4 ">
-                {Array(10)
-                  .fill(1)
-                  .map((_, i) => (
+            <div className="absolute w-full bg-accent-2 rounded-md left-0 top-[50px] p-3 h-[400px] overflow-y-auto scroll-smooth z-50">
+              {searchLoading ? (
+                <div className="text-center py-4 text-xs text-gray-400">Searching...</div>
+              ) : search && searchResults.length === 0 && searchTouched ? (
+                <div className="text-center py-4 text-xs text-gray-400">No tokens found.</div>
+              ) : (
+                <div className="mt-1 space-y-2 ">
+                  {searchResults.slice(0, 20).map((token, i) => (
                     <Link
-                      key={i}
-                      href="/eth/token/18765"
+                      key={token.id || i}
+                      href={`/${token.platform?.toLowerCase() || 'eth'}/token/${token.contract_address || token.id}`}
                       role="button"
                       className="flex items-center justify-between p-2 hover:bg-accent-3 rounded-lg"
+                      onClick={() => setTriggerForInputDrpDown(false)}
                     >
-                      <div className="flex gap-2">
-                        <button>
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16px"
-                            height="16px"
-                            fill="#AEB2BD"
-                            viewBox="0 0 16 16"
-                          >
-                            <g clipPath="url(#clip0_6939_489)">
-                              <path
-                                fillRule="evenodd"
-                                clipRule="evenodd"
-                                d="M6.421.99a1.754 1.754 0 013.158 0l1.587 3.127 3.352.603c1.414.254 1.976 2.051.975 3.121l-2.37 2.536.484 3.5c.204 1.477-1.267 2.587-2.554 1.93L8 14.245l-3.053 1.56c-1.287.658-2.758-.452-2.554-1.929l.484-3.5L.507 7.84c-1-1.07-.439-2.867.975-3.121l3.352-.603L6.421.99z"
-                              ></path>
-                            </g>
-                            <defs>
-                              <clipPath id="clip0_6939_489">
-                                <rect width="16" height="16"></rect>
-                              </clipPath>
-                            </defs>
-                          </svg>
-                        </button>
-
-                        <div className="flex items-center gap-2">
-                          <div className="rounded-full border w-fit relative">
-                            <Image
-                              src={"/static/3717.png"}
-                              className="w-[35px] h-[35px]"
-                              width={35}
-                              height={35}
-                              alt=""
-                            />
-                            <Image
-                              src={"/static/ether.webp"}
-                              className="w-[15px] h-[15px] absolute bottom-0 right-0"
-                              width={15}
-                              height={15}
-                              alt=""
-                            />
+                      <div className="flex gap-2 items-center">
+                        <div className="rounded-full border w-fit relative">
+                          <Image
+                            src={token.logo || "/static/3717.png"}
+                            className="w-[35px] h-[35px]"
+                            width={35}
+                            height={35}
+                            alt={token.name}
+                            unoptimized
+                          />
+                        </div>
+                        <div>
+                          <div className="max-w-[13rem] text-ellipsis overflow-hidden whitespace-nowrap text-[15px] font-[600] uppercase leading-[20px]">
+                            {token.name} <span className="text-xs text-accent-1">{token.symbol}</span>
                           </div>
-
-                          <div className="">
-                            <div className="max-w-[13rem] text-ellipsis overflow-hidden whitespace-nowrap text-[18px] font-[600] uppercase leading-[20px]">
-                              Ether
-                            </div>
-                            <Link
-                              href=""
-                              className="text-[13px] underline text-accent-1"
-                            >
-                              {truncAddress("0x1i48j8hned98")}
-                            </Link>
+                          <div className="text-[12px] text-accent-1">
+                            {token.contract_address ? `${token.contract_address.slice(0, 6)}...${token.contract_address.slice(-4)}` : '--'}
                           </div>
                         </div>
                       </div>
-
                       <div className="text-right">
-                        <div className="max-w-[13rem] text-ellipsis overflow-hidden whitespace-nowrap text-[18px] font-[600] uppercase leading-[20px]">
-                          $101.5k
+                        <div className="max-w-[13rem] text-ellipsis overflow-hidden whitespace-nowrap text-[15px] font-[600] uppercase leading-[20px]">
+                          {typeof token.price === 'number' ? `$${token.price.toLocaleString(undefined, { maximumFractionDigits: 6 })}` : '--'}
                         </div>
                         <div className="text-[13px] text-[rgb(223,72,76)]/80">
-                          -5.98%
+                          {token.percent_change_24h ? `${token.percent_change_24h > 0 ? '+' : ''}${token.percent_change_24h.toFixed(2)}%` : ''}
                         </div>
                       </div>
                     </Link>
                   ))}
-              </div>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -513,6 +516,8 @@ export default function Header() {
                     </div>
                     <input
                       type="text"
+                      value={search}
+                      onChange={e => { setSearch(e.target.value); setSearchTouched(true); }}
                       className="w-full h-full pl-8 placeholder:opacity-50 outline-none text-xs"
                       placeholder="Search token/contract/wallet"
                     />
@@ -524,87 +529,51 @@ export default function Header() {
                   </div>
 
                   <div className=" w-full mt-5 rounded-md h-full overflow-y-auto scroll-smooth">
-                    <div className="text-sm w-full text-black">
-                      Trending 24h
-                    </div>
-
-                    <div className="mt-3 space-y-4">
-                      {Array(10)
-                        .fill(1)
-                        .map((_, i) => (
+                    {searchLoading ? (
+                      <div className="text-center py-4 text-xs text-gray-400">Searching...</div>
+                    ) : search && searchResults.length === 0 && searchTouched ? (
+                      <div className="text-center py-4 text-xs text-gray-400">No tokens found.</div>
+                    ) : (
+                      <div className="mt-1 space-y-2 ">
+                        {searchResults.slice(0, 20).map((token, i) => (
                           <Link
-                            key={i}
-                            href="/eth/token/18765"
+                            key={token.id || i}
+                            href={`/${token.platform?.toLowerCase() || 'eth'}/token/${token.contract_address || token.id}`}
                             role="button"
                             className="flex items-center justify-between p-2 hover:bg-accent-3 rounded-lg"
                           >
-                            <div className="flex gap-2">
-                              <button>
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width="16px"
-                                  height="16px"
-                                  fill="#AEB2BD"
-                                  viewBox="0 0 16 16"
-                                >
-                                  <g clipPath="url(#clip0_6939_489)">
-                                    <path
-                                      fillRule="evenodd"
-                                      clipRule="evenodd"
-                                      d="M6.421.99a1.754 1.754 0 013.158 0l1.587 3.127 3.352.603c1.414.254 1.976 2.051.975 3.121l-2.37 2.536.484 3.5c.204 1.477-1.267 2.587-2.554 1.93L8 14.245l-3.053 1.56c-1.287.658-2.758-.452-2.554-1.929l.484-3.5L.507 7.84c-1-1.07-.439-2.867.975-3.121l3.352-.603L6.421.99z"
-                                    ></path>
-                                  </g>
-                                  <defs>
-                                    <clipPath id="clip0_6939_489">
-                                      <rect width="16" height="16"></rect>
-                                    </clipPath>
-                                  </defs>
-                                </svg>
-                              </button>
-
-                              <div className="flex items-center gap-2">
-                                <div className="rounded-full border w-fit relative">
-                                  <Image
-                                    src={"/static/3717.png"}
-                                    className="w-[35px] h-[35px]"
-                                    width={35}
-                                    height={35}
-                                    alt=""
-                                  />
-                                  <Image
-                                    src={"/static/ether.webp"}
-                                    className="w-[15px] h-[15px] absolute bottom-0 right-0"
-                                    width={15}
-                                    height={15}
-                                    alt=""
-                                  />
+                            <div className="flex gap-2 items-center">
+                              <div className="rounded-full border w-fit relative">
+                                <Image
+                                  src={token.logo || "/static/3717.png"}
+                                  className="w-[35px] h-[35px]"
+                                  width={35}
+                                  height={35}
+                                  alt={token.name}
+                                  unoptimized
+                                />
+                              </div>
+                              <div>
+                                <div className="max-w-[13rem] text-ellipsis overflow-hidden whitespace-nowrap text-[15px] font-[600] uppercase leading-[20px]">
+                                  {token.name} <span className="text-xs text-accent-1">{token.symbol}</span>
                                 </div>
-
-                                <div className="">
-                                  <div className="max-w-[13rem] text-ellipsis overflow-hidden whitespace-nowrap text-[14px] font-[600] uppercase leading-[20px]">
-                                    Ether
-                                  </div>
-                                  <Link
-                                    href=""
-                                    className="text-[12px] underline text-accent-1"
-                                  >
-                                    {truncAddress("0x1i48j8hned98")}
-                                  </Link>
+                                <div className="text-[12px] text-accent-1">
+                                  {token.contract_address ? `${token.contract_address.slice(0, 6)}...${token.contract_address.slice(-4)}` : '--'}
                                 </div>
                               </div>
                             </div>
-
                             <div className="text-right">
-                              <div className="max-w-[13rem] text-ellipsis overflow-hidden whitespace-nowrap text-[14px] font-[600] uppercase leading-[20px]">
-                                $101.5k
+                              <div className="max-w-[13rem] text-ellipsis overflow-hidden whitespace-nowrap text-[15px] font-[600] uppercase leading-[20px]">
+                                {typeof token.price === 'number' ? `$${token.price.toLocaleString(undefined, { maximumFractionDigits: 6 })}` : '--'}
                               </div>
                               <div className="text-[13px] text-[rgb(223,72,76)]/80">
-                                -5.98%
+                                {token.percent_change_24h ? `${token.percent_change_24h > 0 ? '+' : ''}${token.percent_change_24h.toFixed(2)}%` : ''}
                               </div>
                             </div>
                           </Link>
                         ))}
-                    </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </DialogContent>

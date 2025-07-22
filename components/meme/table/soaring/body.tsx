@@ -9,8 +9,8 @@ export default function TableBody({ tokens }) {
     const getChain = useCallback(() => chain, [chain]);
     return tokens.map((token, index) => (
         <tr key={index}>
-            <td className="py-3 px-2 sticky z-[1] left-0 bg-accent-2 ">
-                {/* token */}
+                <td className="py-3 px-2 sticky z-[1] left-0 bg-accent-2 ">
+                    {/* token */}
                 <Link
                     role="button"
                     className="flex items-center md:w-[321px] w-[136px] md:flex-[321px] flex-[136px]"
@@ -19,27 +19,27 @@ export default function TableBody({ tokens }) {
                         query: { data: encodeURIComponent(JSON.stringify(token)) }
                     }}
                 >
-                    <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2">
                         <div>
                             {/* star icon svg */}
                         </div>
-                        <div className="flex items-center gap-1">
-                            <div className="rounded-full border w-fit relative">
+                            <div className="flex items-center gap-1">
+                                <div className="rounded-full border w-fit relative">
                                 {/* token image */}
-                            </div>
+                                </div>
                             <div>
                                 {/* meme name and socials */}
-                                <div className="flex items-center gap-1">
+                                    <div className="flex items-center gap-1">
                                     {/* name and socials */}
-                                </div>
-                                <div className="flex items-center gap-1">
+                                    </div>
+                                    <div className="flex items-center gap-1">
                                     {/* address and copy */}
                                 </div>
                             </div>
                         </div>
                     </div>
                 </Link>
-            </td>
+                </td>
                     {/* STATUS */}
                     <td className="py-3 px-2 hidden md:block">
                     <div className="flex md:w-[119px] w-[92px] md:flex-[119px] flex-[92px]">

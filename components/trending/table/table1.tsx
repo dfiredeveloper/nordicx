@@ -1,5 +1,4 @@
 import TableBody from "./body";
-import TableHead from "./head";
 import Colgroup from "./colgroup";
 
 
@@ -9,7 +8,6 @@ export default function Table() {
             <div className="relative overflow-auto h-full">
                 <table className="bg-accent-2">
                     <Colgroup />
-                    <TableHead />
                     <TableBody />
                 </table>
             </div>
