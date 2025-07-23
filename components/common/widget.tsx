@@ -1,5 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 
 interface HotPair {
   id: string;
@@ -8,9 +9,7 @@ interface HotPair {
   price: number;
   priceChange24h: number;
   volume24h: number;
-  liquidity: number;
-  chain: string;
-  pairAddress: string;
+  image: string;
 }
 
 function MemeCoinsWidget() {
@@ -74,9 +73,16 @@ function MemeCoinsWidget() {
                                     key={`${pair.id}-${index}`}
                                     className="flex-shrink-0 w-fit flex items-center gap-2 text-[12px] hover:bg-gray-800 px-2 py-1 rounded cursor-pointer transition-colors"
                         >
-                                    <div className="text-lg">🔥</div>
+                                    <Image
+                                      src={pair.image || "/static/3717.png"}
+                                      alt={pair.symbol}
+                                      width={20}
+                                      height={20}
+                                      className="rounded-full"
+                                      style={{ minWidth: 20, minHeight: 20 }}
+                                    />
                             <div>
-                                        <div className="font-bold text-white">{pair.symbol}</div>
+                                        <div className="font-bold text-white">{pair.name.toUpperCase()}</div>
                                         <div className="text-gray-400">{pair.priceChange24h >= 0 ? '+' : ''}{pair.priceChange24h.toFixed(2)}%</div>
                             </div>
                         </div>
@@ -89,9 +95,16 @@ function MemeCoinsWidget() {
                                     key={`${pair.id}-${index + 10}`}
                                     className="flex-shrink-0 w-fit flex items-center gap-2 text-[12px] hover:bg-gray-800 px-2 py-1 rounded cursor-pointer transition-colors"
                         >
-                                    <div className="text-lg">🔥</div>
+                                    <Image
+                                      src={pair.image || "/static/3717.png"}
+                                      alt={pair.symbol}
+                                      width={20}
+                                      height={20}
+                                      className="rounded-full"
+                                      style={{ minWidth: 20, minHeight: 20 }}
+                                    />
                             <div>
-                                        <div className="font-bold text-white">{pair.symbol}</div>
+                                        <div className="font-bold text-white">{pair.name.toUpperCase()}</div>
                                         <div className="text-gray-400">${(pair.volume24h / 1000).toFixed(1)}K</div>
                             </div>
                         </div>
@@ -104,9 +117,16 @@ function MemeCoinsWidget() {
                                     key={`${pair.id}-${index + 20}`}
                                     className="flex-shrink-0 w-fit flex items-center gap-2 text-[12px] hover:bg-gray-800 px-2 py-1 rounded cursor-pointer transition-colors"
                                 >
-                                    <div className="text-lg">🔥</div>
+                                    <Image
+                                      src={pair.image || "/static/3717.png"}
+                                      alt={pair.symbol}
+                                      width={20}
+                                      height={20}
+                                      className="rounded-full"
+                                      style={{ minWidth: 20, minHeight: 20 }}
+                                    />
                             <div>
-                                        <div className="font-bold text-white">{pair.symbol}</div>
+                                        <div className="font-bold text-white">{pair.name.toUpperCase()}</div>
                                         <div className="text-gray-400">${pair.price.toFixed(6)}</div>
                             </div>
                         </div>

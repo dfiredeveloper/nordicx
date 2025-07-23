@@ -99,6 +99,100 @@ class CoinMarketCapService {
     }
     return tokens;
   }
+
+  async getLogoByContract(chain: string, address: string): Promise<string | undefined> {
+    if (!address) return undefined;
+    // Map chain to CMC's contract_address param
+    const chainParamMap: Record<string, string> = {
+      ethereum: 'contract_address_eth',
+      eth: 'contract_address_eth',
+      bsc: 'contract_address_bsc',
+      binance: 'contract_address_bsc',
+      polygon: 'contract_address_polygon',
+      matic: 'contract_address_polygon',
+      arbitrum: 'contract_address_arbitrum',
+      base: 'contract_address_base',
+      solana: 'contract_address_solana',
+      sol: 'contract_address_solana',
+      tron: 'contract_address_tron',
+      blast: 'contract_address_blast',
+    };
+    const param = chainParamMap[chain.toLowerCase()];
+    if (!param) return undefined;
+    const url = `${CMC_BASE_URL}/cryptocurrency/info?${param}=${address}`;
+    const res = await fetch(url, {
+      headers: {
+        'X-CMC_PRO_API_KEY': CMC_API_KEY,
+        'Accept': 'application/json',
+      },
+    });
+    if (!res.ok) return undefined;
+    const data = await res.json();
+    if (!data.data) return undefined;
+    // The data object keys are CMC IDs
+    for (const key in data.data) {
+      const info = data.data[key];
+      if (info && typeof info.logo === 'string') {
+        return info.logo;
+      }
+    }
+    return undefined;
+  }
 }
 
-export const coinMarketCapService = new CoinMarketCapService(); 
+export const coinMarketCapService = new CoinMarketCapService();
+
+// Utility: Get CoinGecko logo by contract address and chain
+export async function getCoinGeckoLogo(chain: string, address: string): Promise<string | undefined> {
+  if (!address) return undefined;
+  // Map to CoinGecko's chain names
+  const chainMap: Record<string, string> = {
+    ethereum: 'ethereum',
+    eth: 'ethereum',
+    bsc: 'binance-smart-chain',
+    binance: 'binance-smart-chain',
+    polygon: 'polygon-pos',
+    matic: 'polygon-pos',
+    arbitrum: 'arbitrum-one',
+    base: 'base',
+    solana: 'solana',
+    sol: 'solana',
+    tron: 'tron',
+    blast: 'blast',
+  };
+  const cgChain = chainMap[chain.toLowerCase()];
+  if (!cgChain) return undefined;
+  // Try CoinGecko API only
+  try {
+    const apiUrl = `https://api.coingecko.com/api/v3/coins/${cgChain}/contract/${address}`;
+    const res = await fetch(apiUrl);
+    if (res.ok) {
+      const data = await res.json();
+      if (data.image && (data.image.large || data.image.thumb)) {
+        return data.image.large || data.image.thumb;
+      }
+    }
+  } catch {}
+  // No static URL fallback to avoid broken images
+  return undefined;
+}
+
+// Utility: Get TrustWallet logo by contract address and chain
+export function getTrustWalletLogo(chain: string, address: string): string | undefined {
+  if (!address) return undefined;
+  // Map to TrustWallet's chain names
+  const chainMap: Record<string, string> = {
+    ethereum: 'ethereum',
+    eth: 'ethereum',
+    bsc: 'smartchain',
+    binance: 'smartchain',
+    polygon: 'polygon',
+    matic: 'polygon',
+    arbitrum: 'arbitrum',
+    base: 'base',
+    blast: 'blast',
+  };
+  const twChain = chainMap[chain.toLowerCase()];
+  if (!twChain) return undefined;
+  return `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/${twChain}/assets/${address}/logo.png`;
+} 
