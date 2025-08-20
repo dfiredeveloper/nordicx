@@ -5,7 +5,7 @@ import {
   updateUrlParams,
 } from "@/lib/utils";
 import Image from "next/image";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import {
   Select,
   SelectContent,
@@ -30,7 +30,6 @@ import {
 } from "../ui/dialog";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { ConnectButton } from '@rainbow-me/rainbowkit';
 import dynamic from 'next/dynamic';
 import { FC } from 'react';
 import type { CmcTrendingToken } from '@/lib/services/coinmarketcap';
@@ -41,13 +40,14 @@ interface BlockiesProps {
   className?: string;
 }
 import { useAccount, useBalance, useDisconnect } from 'wagmi';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
 // import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 // import { useEffect as useSolanaEffect, useState as useSolanaState } from 'react';
 const Blockies = dynamic(() => import('react-blockies'), { ssr: false }) as unknown as FC<BlockiesProps>;
-const DynamicWalletMultiButton = dynamic(
-  () => import('@solana/wallet-adapter-react-ui').then(mod => mod.WalletMultiButton),
-  { ssr: false }
-);
+// const DynamicWalletMultiButton = dynamic(
+//   () => import('@solana/wallet-adapter-react-ui').then(mod => mod.WalletMultiButton),
+//   { ssr: false }
+// );
 
 export default function Header() {
   const pathname = usePathname();
@@ -55,7 +55,7 @@ export default function Header() {
   const router = useRouter();
   const [switchMode, setSwitchMode] = useState(false);
   const [triggerInputDrop, setTriggerForInputDrpDown] = useState(false);
-  const [walletModalOpen, setWalletModalOpen] = useState(false);
+  // const [walletModalOpen, setWalletModalOpen] = useState(false);
   const navLinks = [
     // {
     //   link: "/meme",
@@ -132,9 +132,233 @@ export default function Header() {
   }, [pathname, params, router]);
 
   // EVM wallet info
-  const { address: evmAddress } = useAccount();
+  const { address: evmAddress, isConnected, isConnecting } = useAccount();
   const { data: evmBalance } = useBalance({ address: evmAddress });
   const { disconnect: evmDisconnect } = useDisconnect();
+  const { openConnectModal, connectModalOpen } = useConnectModal();
+
+  // Additional modal state management
+  const [forceCloseAttempts, setForceCloseAttempts] = useState(0);
+  const [lastConnectionAttempt, setLastConnectionAttempt] = useState<number>(0);
+  const [modalCloseTimeout, setModalCloseTimeout] = useState<NodeJS.Timeout | null>(null);
+
+  // Custom hook to force close modal
+  const useForceCloseModal = () => {
+    const closeModal = useCallback(() => {
+      // Clear any existing timeout
+      if (modalCloseTimeout) {
+        clearTimeout(modalCloseTimeout);
+      }
+      
+      // Set a new timeout to force close
+      const timeout = setTimeout(() => {
+        console.log('Force closing modal after timeout');
+        forceCloseRainbowKitModal();
+        
+        // If still open after 3 seconds, force refresh
+        setTimeout(() => {
+          if (connectModalOpen) {
+            console.log('Modal still open after 3 seconds, forcing refresh');
+            window.location.reload();
+          }
+        }, 3000);
+      }, 1000);
+      
+      setModalCloseTimeout(timeout);
+    }, [modalCloseTimeout, connectModalOpen]);
+    
+    return closeModal;
+  };
+
+  const forceCloseModal = useForceCloseModal();
+
+  // Debug wallet state changes
+  useEffect(() => {
+    console.log('Wallet state changed:', {
+      address: evmAddress,
+      isConnected,
+      isConnecting,
+      connectModalOpen,
+      forceCloseAttempts,
+      lastConnectionAttempt: lastConnectionAttempt ? new Date(lastConnectionAttempt).toISOString() : null,
+    });
+  }, [evmAddress, isConnected, isConnecting, connectModalOpen, forceCloseAttempts, lastConnectionAttempt]);
+
+  // Auto-close modal when wallet connects successfully
+  useEffect(() => {
+    if (isConnected && connectModalOpen) {
+      console.log('Wallet connected, forcing modal to close');
+      setForceCloseAttempts(prev => prev + 1);
+      
+      // Use the custom force close function
+      forceCloseModal();
+      
+      // Immediate attempt to close
+      forceCloseRainbowKitModal();
+      
+      // Multiple attempts with increasing delays
+      setTimeout(() => forceCloseRainbowKitModal(), 100);
+      setTimeout(() => forceCloseRainbowKitModal(), 500);
+      setTimeout(() => forceCloseRainbowKitModal(), 1000);
+      setTimeout(() => forceCloseRainbowKitModal(), 2000);
+    }
+  }, [isConnected, connectModalOpen, forceCloseModal]);
+
+  // Function to force close RainbowKit modal
+  const forceCloseRainbowKitModal = () => {
+    try {
+      console.log('Attempting to force close RainbowKit modal');
+      
+      // Method 1: Target RainbowKit specific elements
+      const rainbowKitModals = document.querySelectorAll('[data-rk]');
+      rainbowKitModals.forEach(modal => {
+        if (modal instanceof HTMLElement) {
+          // Try to find and click close buttons
+          const closeButtons = modal.querySelectorAll('button[aria-label="Close"], [data-testid="close"], .close-button');
+          closeButtons.forEach(btn => {
+            if (btn instanceof HTMLElement) {
+              btn.click();
+            }
+          });
+          
+          // Try to click outside the modal
+          modal.click();
+        }
+      });
+      
+      // Method 2: Target all portal elements
+      const allPortals = document.querySelectorAll('[data-radix-portal], [role="dialog"], [aria-modal="true"]');
+      allPortals.forEach(portal => {
+        if (portal instanceof HTMLElement) {
+          // Find close buttons
+          const closeButtons = portal.querySelectorAll('button[aria-label="Close"], [data-testid="close"], .close-button, [aria-label="Close dialog"]');
+          closeButtons.forEach(btn => {
+            if (btn instanceof HTMLElement) {
+              btn.click();
+            }
+          });
+          
+          // Try to click outside
+          portal.click();
+        }
+      });
+      
+      // Method 3: Force remove modal from DOM
+      const modalBackdrops = document.querySelectorAll('[data-radix-portal] > div');
+      modalBackdrops.forEach(backdrop => {
+        if (backdrop instanceof HTMLElement && backdrop.style.position === 'fixed') {
+          backdrop.remove();
+        }
+      });
+      
+      // Method 4: Dispatch custom close event
+      window.dispatchEvent(new CustomEvent('forceCloseWalletModal'));
+      
+      // Method 5: Simulate ESC key multiple times
+      for (let i = 0; i < 3; i++) {
+        setTimeout(() => {
+          const escEvent = new KeyboardEvent('keydown', {
+            key: 'Escape',
+            code: 'Escape',
+            keyCode: 27,
+            which: 27,
+            bubbles: true,
+            cancelable: true
+          });
+          document.dispatchEvent(escEvent);
+        }, i * 100);
+      }
+      
+      // Method 6: Nuclear option - try to access RainbowKit's internal modal state
+      try {
+        // @ts-expect-error - Access RainbowKit's internal modal state
+        if (window.__RAINBOW_KIT__ && window.__RAINBOW_KIT__.modal) {
+          // @ts-expect-error - Access internal modal close method
+          window.__RAINBOW_KIT__.modal.close();
+        }
+      } catch {
+        console.log('Could not access RainbowKit internal state');
+      }
+      
+      // Method 7: Force remove all modal-related elements
+      const allModalElements = document.querySelectorAll('[data-rk], [data-radix-portal], [role="dialog"], [aria-modal="true"]');
+      allModalElements.forEach(element => {
+        if (element instanceof HTMLElement) {
+          element.style.display = 'none';
+          element.remove();
+        }
+      });
+      
+    } catch (error) {
+      console.error('Error in forceCloseRainbowKitModal:', error);
+    }
+  };
+
+  // Reset force close attempts when modal closes
+  useEffect(() => {
+    if (!connectModalOpen) {
+      setForceCloseAttempts(0);
+    }
+  }, [connectModalOpen]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (modalCloseTimeout) {
+        clearTimeout(modalCloseTimeout);
+      }
+    };
+  }, [modalCloseTimeout]);
+
+  // Global modal close handler with improved logic
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // ESC key to close modal
+      if (event.key === 'Escape' && connectModalOpen) {
+        console.log('ESC pressed, attempting to close modal');
+        event.preventDefault();
+        event.stopPropagation();
+        
+        // Use the aggressive close function
+        forceCloseRainbowKitModal();
+      }
+    };
+
+    // Global click handler to close modal when clicking outside
+    const handleGlobalClick = (event: MouseEvent) => {
+      if (connectModalOpen) {
+        const target = event.target as HTMLElement;
+        
+        // Check if click is outside modal content
+        const isOutsideModal = !target.closest('[data-rk]') && 
+                              !target.closest('[data-radix-portal]') && 
+                              !target.closest('[role="dialog"]');
+        
+        if (isOutsideModal) {
+          console.log('Click outside modal detected, closing modal');
+          forceCloseRainbowKitModal();
+        }
+      }
+    };
+
+    // Handle custom force close modal event
+    const handleForceCloseModal = () => {
+      console.log('Force close modal event received');
+      forceCloseRainbowKitModal();
+    };
+
+    // Add event listeners
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('click', handleGlobalClick);
+    window.addEventListener('forceCloseWalletModal', handleForceCloseModal);
+
+    // Cleanup
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('click', handleGlobalClick);
+      window.removeEventListener('forceCloseWalletModal', handleForceCloseModal);
+    };
+  }, [connectModalOpen]);
 
   // Solana wallet info
   // const { connection } = useConnection();
@@ -673,25 +897,74 @@ export default function Header() {
             <>
               <button
                 className="md:px-4 px-2 py-[0.4rem] rounded-md bg-accent-4 text-xs font-[600] text-white dark:text-black"
-                onClick={() => setWalletModalOpen(true)}
+                onClick={() => {
+                  const now = Date.now();
+                  setLastConnectionAttempt(now);
+                  
+                  // Clear any stuck modal state before opening
+                  if (connectModalOpen) {
+                    console.log('Modal is already open, attempting to close first');
+                    try {
+                      // Try to close the modal programmatically
+                      const modalOverlays = document.querySelectorAll('[data-radix-portal]');
+                      modalOverlays.forEach(overlay => {
+                        if (overlay instanceof HTMLElement) {
+                          overlay.click();
+                        }
+                      });
+                      
+                      // Force close by dispatching custom event
+                      window.dispatchEvent(new CustomEvent('forceCloseWalletModal'));
+                      
+                      // Wait a bit then try to open again
+                      setTimeout(() => {
+                        if (openConnectModal) {
+                          openConnectModal();
+                        }
+                      }, 100);
+                    } catch (error) {
+                      console.error('Error closing stuck modal:', error);
+                      // Force a page refresh if modal is stuck
+                      window.location.reload();
+                    }
+                    return;
+                  }
+                  if (openConnectModal) {
+                    openConnectModal();
+                  } else {
+                    console.error('Connect modal not available');
+                  }
+                }}
               >
-            Connect
-          </button>
-              {walletModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-                  <div className="bg-white dark:bg-[#18181b] rounded-lg p-6 min-w-[320px] relative">
-                    <button className="absolute top-2 right-2 text-xl" onClick={() => setWalletModalOpen(false)}>&times;</button>
-                    <div className="flex flex-col gap-4">
-                      <div className="text-lg font-bold mb-2">Connect Wallet</div>
-                      <ConnectButton
-                        chainStatus="icon"
-                        showBalance={true}
-                        accountStatus="avatar"
-                      />
-                      <DynamicWalletMultiButton className="md:px-4 px-2 py-[0.4rem] rounded-md bg-accent-4 text-xs font-[600] text-white dark:text-black" />
-                    </div>
-                  </div>
-                </div>
+                Connect
+              </button>
+              {/* Emergency close button if modal is stuck */}
+              {connectModalOpen && (
+                <button
+                  className="md:px-2 px-1 py-[0.4rem] rounded-md bg-red-500 text-xs font-[600] text-white"
+                  onClick={() => {
+                    console.log('Emergency modal close');
+                    try {
+                      // Try to close the modal programmatically first
+                      const modalOverlays = document.querySelectorAll('[data-radix-portal]');
+                      modalOverlays.forEach(overlay => {
+                        if (overlay instanceof HTMLElement) {
+                          overlay.click();
+                        }
+                      });
+                      
+                      // Force close by dispatching custom event
+                      window.dispatchEvent(new CustomEvent('forceCloseWalletModal'));
+                      
+                    } catch (error) {
+                      console.error('Error in emergency modal close:', error);
+                      // Last resort: force page refresh
+                      window.location.reload();
+                    }
+                  }}
+                >
+                  Close Modal
+                </button>
               )}
             </>
           )}

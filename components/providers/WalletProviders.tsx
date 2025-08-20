@@ -3,14 +3,14 @@ import { ReactNode } from 'react';
 import { RainbowKitProvider, getDefaultConfig, darkTheme } from '@rainbow-me/rainbowkit';
 import { WagmiProvider } from 'wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { mainnet, polygon, optimism, arbitrum, base, bsc } from 'wagmi/chains';
+import { mainnet, bsc, base } from 'wagmi/chains';
 import '@rainbow-me/rainbowkit/styles.css';
 import { SolanaWalletProvider } from './SolanaWalletProvider';
 
 const wagmiConfig = getDefaultConfig({
   appName: 'Nordic.AI',
-  projectId: 'WALLETCONNECT_PROJECT_ID', // TODO: Replace with your WalletConnect project ID
-  chains: [mainnet, polygon, optimism, arbitrum, base, bsc],
+  projectId: '17530c504453fa187cf8d73c4667c564',
+  chains: [mainnet, bsc, base], // Only chains with Alchemy apps
   ssr: true,
 });
 
