@@ -1,37 +1,35 @@
 "use client";
-import Image from 'next/image'
-import React, { useState } from 'react'
-import { truncAddress, formatNumber } from '@/lib/utils'
+import Image from 'next/image';
+import React, { useState } from 'react';
+import { truncAddress, formatNumber } from '@/lib/utils';
 import AuthLayout from '../common/authLayout';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import TradingForm from './TradingForm';
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
 
-interface TokenData {
-  name?: string;
-  symbol?: string;
-  price?: number;
-  logo?: string;
-  price_24h_change?: number;
-  address?: string;
-  chain?: string;
-  website?: string;
-  twitter?: string;
-  telegram?: string;
-  age?: string;
-  sniperCount?: number;
-  sniperTotal?: number;
-  bluechipPercent?: string;
-  top10Percent?: string;
-  auditStatus?: string;
-  auditScore?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: any;
-}
+import type { TokenData } from '@/types/token';
 
 export default function TradingHeader({ tokenData }: { tokenData: TokenData | null }) {
-    const [showAuth, setShowAuth] = useState(false)
+    const [showAuth, setShowAuth] = useState(false);
+
+    // Debug log the token data structure
+    React.useEffect(() => {
+      console.log('TradingHeader - tokenData:', tokenData);
+      if (tokenData) {
+        console.log('Available token data keys:', Object.keys(tokenData));
+        // Check for common address fields
+        const possibleAddressFields = ['address', 'contract_address', 'id', 'tokenAddress'];
+        possibleAddressFields.forEach(field => {
+          if (tokenData[field as keyof TokenData]) {
+            console.log(`Found token address in field '${field}':`, tokenData[field as keyof TokenData]);
+          }
+        });
+      }
+    }, [tokenData]);
 
     if (!tokenData) {
-      return <div className="flex items-center h-[57px] px-[12px] bg-[#111111]">Loading...</div>;
+      return <div className="flex items-center h-[57px] px-[12px] bg-[#111111]">Loading token data...</div>;
     }
 
     const copyToClipboard = (text: string) => {
@@ -207,6 +205,23 @@ export default function TradingHeader({ tokenData }: { tokenData: TokenData | nu
                     </div>
                 </div>
             </div>
+            
+            {/* Trading Form Section */}
+            <div className="p-4 bg-card border-t border-border">
+              <TradingForm 
+                tokenData={tokenData} 
+                onTradeSuccess={(txHash) => {
+                  toast.success('Trade executed successfully!', {
+                    description: `Transaction: ${truncAddress(txHash)}`,
+                    action: {
+                      label: 'View',
+                      onClick: () => window.open(`https://etherscan.io/tx/${txHash}`, '_blank')
+                    },
+                  });
+                }}
+              />
+            </div>
+
             {
                 showAuth && <AuthLayout showAuth={showAuth} setAuthModal={setShowAuth} />
             }

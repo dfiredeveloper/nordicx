@@ -1,15 +1,10 @@
 'use client';
-import React, { useState, useEffect } from 'react';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
-import Image from 'next/image';
+import React, { useState, useEffect } from 'react'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
+import Image from 'next/image'
 import QuickSettingModal from '../common/quickSettingModal';
 import { Switch } from '../ui/switch';
 import { copyToClipboard, formatNumber, truncAddress } from '@/lib/utils';
-import { useSwapQuote } from '@/lib/trading/hooks/useSwapQuote';
-import { useSwap } from '@/lib/trading/hooks/useSwap';
-import { TRADING_CONFIG } from '@/lib/trading/constants';
-import { Address } from 'viem';
-import { useAccount } from 'wagmi';
 
 type TokenData = {
     market_cap?: number;
@@ -439,38 +434,7 @@ export function SellTab() {
     )
 }
 
-
 export function SellNow() {
-    // --- Trading logic state ---
-    // Use a known supported token address for demo; in real app, make these dynamic or from props
-    const [amount, setAmount] = useState('');
-    const [tokenIn, setTokenIn] = useState<Address | null>('0xdAC17F958D2ee523a2206206994597C13D831ec7'); // USDT mainnet
-    const [tokenOut, setTokenOut] = useState<Address | null>('0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'); // WETH mainnet
-    const [slippage, setSlippage] = useState(TRADING_CONFIG.DEFAULT_SLIPPAGE);
-    const { quote, isLoading: isQuoteLoading, error: quoteError } = useSwapQuote({
-        tokenIn,
-        tokenOut,
-        amountIn: amount,
-        slippage,
-        enabled: true,
-    });
-    const { swap, isLoading: isSwapLoading, error: swapError } = useSwap();
-    const [txHash, setTxHash] = useState<string | null>(null);
-    const { address } = useAccount();
-
-    // --- UI logic ---
-    const handleSell = async () => {
-        if (!tokenIn || !tokenOut || !amount || !address) return;
-        const result = await swap({
-            tokenIn,
-            tokenOut,
-            amountIn: amount,
-            slippage,
-            recipient: address,
-        });
-        if (result.success) setTxHash(result.hash);
-    };
-
     return (
         <>
             <div className='flex flex-col gap-[12px]'>
@@ -514,40 +478,7 @@ export function SellNow() {
     )
 }
 
-
-
-
 export function BuyNow({ setTpSlCheck, tpSlCheck }) {
-    // --- Trading logic state ---
-    // Use a known supported token address for demo; in real app, make these dynamic or from props
-    const [amount, setAmount] = useState('');
-    const [tokenIn, setTokenIn] = useState<Address | null>('0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'); // WETH mainnet
-    const [tokenOut, setTokenOut] = useState<Address | null>('0xdAC17F958D2ee523a2206206994597C13D831ec7'); // USDT mainnet
-    const [slippage, setSlippage] = useState(TRADING_CONFIG.DEFAULT_SLIPPAGE);
-    const { quote, isLoading: isQuoteLoading, error: quoteError } = useSwapQuote({
-        tokenIn,
-        tokenOut,
-        amountIn: amount,
-        slippage,
-        enabled: true,
-    });
-    const { swap, isLoading: isSwapLoading, error: swapError } = useSwap();
-    const [txHash, setTxHash] = useState<string | null>(null);
-    const { address } = useAccount();
-
-    // --- UI logic ---
-    const handleBuy = async () => {
-        if (!tokenIn || !tokenOut || !amount || !address) return;
-        const result = await swap({
-            tokenIn,
-            tokenOut,
-            amountIn: amount,
-            slippage,
-            recipient: address,
-        });
-        if (result.success) setTxHash(result.hash);
-    };
-
     return (
         <>
             <div className='flex flex-col gap-[12px]'>
@@ -639,18 +570,8 @@ export function BuyNow({ setTpSlCheck, tpSlCheck }) {
                     {/* button */}
                     <div className='flex items-center gap-[4px]'>
                         <div className="flex justify-center w-full">
-                            <button
-                                type="button"
-                                className="inline-flex w-full appearance-none items-center justify-center select-none relative whitespace-nowrap leading-[1.2] min-w-[2.5rem] px-[.7rem] py-[.7rem] dark:bg-[#393C43] dark:text-accent-aux-1 text-[14px] rounded-[8px] font-[500]"
-                                onClick={handleBuy}
-                                disabled={isQuoteLoading || isSwapLoading || !amount || !quote}
-                            >
-                                {isSwapLoading ? 'Swapping...' : 'Buy'}
-                            </button>
+                            <button type="button" className="inline-flex w-full appearance-none items-center justify-center select-none relative whitespace-nowrap leading-[1.2] min-w-[2.5rem] px-[.7rem] py-[.7rem] dark:bg-[#393C43] dark:text-accent-aux-1 text-[14px] rounded-[8px] font-[500]">Buy</button>
                         </div>
-                        {quoteError && <div className="text-xs text-red-500">{quoteError}</div>}
-                        {swapError && <div className="text-xs text-red-500">{swapError}</div>}
-                        {txHash && <div className="text-xs text-green-500">Tx: {txHash}</div>}
                         <QuickSettingModal className={`w-auto h-auto`} />
                     </div>
                 </div>

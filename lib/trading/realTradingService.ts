@@ -1,5 +1,23 @@
 import { SUPPORTED_CHAINS } from './constants';
 import { getApiKey, isTradingEnabled } from './config';
+import { type WalletClient, type Hash, type Chain } from 'viem';
+import { Transaction } from '@solana/web3.js';
+
+// Define chain configuration type for EVM chains
+interface ChainConfig {
+  id: number;
+  name: string;
+  network: string;
+  nativeCurrency: {
+    name: string;
+    symbol: string;
+    decimals: number;
+  };
+  rpcUrls: {
+    default: { http: string[] };
+    public: { http: string[] };
+  };
+}
 
 // Real trading service for live pricing and swap execution
 export class RealTradingService {
@@ -145,30 +163,75 @@ export class RealTradingService {
     }
   }
 
-  // Execute swap transaction
+  /**
+   * Execute a swap transaction using the provided wallet client
+   * @param quote The swap quote from getBestQuote
+   * @param walletClient The connected wallet client (EVM)
+   * @param solanaSignTransaction Optional Solana sign transaction function
+   * @param userAddress The user's wallet address
+   * @param chainId The chain ID for the transaction
+   * @param slippage The slippage tolerance percentage (default: 1%)
+   */
   async executeSwap(
     quote: any,
-    userAddress: string,
-    chainId: number,
-    slippage: number = 1
-  ) {
+    walletClient?: WalletClient,
+    solanaSignTransaction?: (tx: Transaction) => Promise<Transaction>,
+    userAddress?: string,
+    chainId?: number,
+    _slippage: number = 1
+  ): Promise<{
+    success: boolean;
+    txHash?: string;
+    quote?: any;
+    error?: string;
+  }> {
     try {
       const chain = Object.values(SUPPORTED_CHAINS).find(c => c.chainId === chainId);
       if (!chain) throw new Error('Unsupported chain');
 
-      // This would integrate with the actual DEX contracts
-      // For now, return the transaction data that the frontend can use
-      return {
-        success: true,
-        transactionData: {
-          to: quote.to || '0x...', // Contract address for the swap
-          data: quote.data || '0x...', // Transaction data
-          value: quote.value || '0', // ETH value if swapping ETH
-          gasLimit: quote.gasEstimate || '150000',
-          chainId: chainId
-        },
-        quote: quote
-      };
+      if (!quote.success) {
+        throw new Error(quote.error || 'Invalid swap quote');
+      }
+
+      if (!chainId) {
+        throw new Error('Chain ID is required');
+      }
+
+      // Handle EVM chains
+      if (walletClient) {
+        if (!userAddress) {
+          throw new Error('User address is required for EVM transactions');
+        }
+        
+        const txHash = await walletClient.sendTransaction({
+          account: userAddress as `0x${string}`,
+          to: quote.to as `0x${string}`,
+          data: quote.data as `0x${string}`,
+          value: BigInt(quote.value || '0'),
+          gas: BigInt(quote.gasEstimate || '150000'),
+          chain: this.getChainConfig(chainId)
+        });
+        
+        return { 
+          success: true, 
+          txHash,
+          quote
+        };
+      }
+      // Handle Solana
+      else if (solanaSignTransaction && quote.data) {
+        const transaction = Transaction.from(Buffer.from(quote.data, 'base64'));
+        const signedTx = await solanaSignTransaction(transaction);
+        const serializedTx = signedTx.serialize();
+        
+        return { 
+          success: true, 
+          txHash: serializedTx.toString('hex'),
+          quote
+        };
+      } else {
+        throw new Error('No wallet client or signer provided');
+      }
     } catch (error) {
       console.error('Execute swap error:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
@@ -176,7 +239,12 @@ export class RealTradingService {
   }
 
   // Get real-time token prices
-  async getTokenPrice(tokenAddress: string, chainId: number) {
+  async getTokenPrice(tokenAddress: string, chainId: number): Promise<{
+    success: boolean;
+    price?: number;
+    timestamp?: number;
+    error?: string;
+  }> {
     try {
       // Use CoinGecko API for price data
       const response = await fetch(`https://api.coingecko.com/api/v3/simple/token_price/ethereum?contract_addresses=${tokenAddress}&vs_currencies=usd`);
@@ -193,19 +261,41 @@ export class RealTradingService {
       };
     } catch (error) {
       console.error('Token price error:', error);
-      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+      return { 
+        success: false, 
+        error: error instanceof Error ? error.message : 'Unknown error' 
+      };
     }
   }
 
-  // Get chain name for 1inch API
-  private getChainNameFor1inch(chainId: number): string {
-    switch (chainId) {
-      case 1: return 'ethereum';
-      case 56: return 'bsc';
-      case 8453: return 'base';
-      case 81457: return 'blast';
-      default: return 'ethereum';
+  // Get chain configuration for the given chain ID
+  private getChainConfig(chainId: number): Chain {
+    // Find the chain by ID
+    const chainEntry = Object.entries(SUPPORTED_CHAINS).find(
+      ([, config]) => config.chainId === chainId
+    );
+    
+    if (!chainEntry) {
+      throw new Error(`Unsupported chain ID: ${chainId}`);
     }
+    
+    const [chainName, chainConfig] = chainEntry;
+    const nativeCurrencySymbol = chainConfig.nativeCurrency;
+    
+    return {
+      id: chainConfig.chainId,
+      name: chainConfig.name,
+      network: chainName,
+      nativeCurrency: {
+        name: nativeCurrencySymbol,
+        symbol: nativeCurrencySymbol,
+        decimals: 18
+      },
+      rpcUrls: {
+        default: { http: [chainConfig.rpcUrl] },
+        public: { http: [chainConfig.rpcUrl] }
+      }
+    } as Chain;
   }
 }
 

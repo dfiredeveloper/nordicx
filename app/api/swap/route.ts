@@ -44,13 +44,13 @@ export async function POST(request: NextRequest) {
     console.log('Body:', JSON.stringify(body, null, 2));
     
     const { 
-      tokenIn,        // Frontend sends this
-      tokenOut,       // Frontend sends this  
-      amountIn,       // Frontend sends this
+      tokenIn,       
+      tokenOut,        
+      amountIn,       
       slippage = 0.5,
       chainId = 1,
-      userAddress,    // Optional for now
-      execute = false // Whether to execute the swap or just get quote
+      userAddress,   
+      execute = false 
     } = body;
 
     // Log individual parameters
@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
           message: 'Real swap execution successful',
           data: {
             ...realQuote,
-            transactionData: swapExecution.transactionData,
+            txHash: swapExecution.txHash,
             chainId,
             chainName: chain.name,
             slippage,
