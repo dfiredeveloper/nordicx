@@ -5,32 +5,26 @@ import Image from 'next/image'
 import QuickSettingModal from '../common/quickSettingModal';
 import { Switch } from '../ui/switch';
 import { copyToClipboard, formatNumber, truncAddress } from '@/lib/utils';
+import { useAccount } from 'wagmi';
+import { useTokenBalances } from '@/lib/trading/hooks/useTokenBalances';
 
-type TokenData = {
-    market_cap?: number;
+import { TokenData as MainTokenData } from '@/types/token';
+
+type TokenData = MainTokenData & {
+    // Additional fields specific to this component
     liquidity_usd?: number;
-    volume_24h?: number;
-    holders_count?: number | string;
     no_mint?: string;
     blacklist?: string;
     burnt?: string;
     top10?: string;
-    address?: string;
-    symbol?: string;
-    name?: string;
     chain?: string;
-    website?: string;
-    twitter?: string;
-    telegram?: string;
     initial_liquidity_usd?: number;
-    total_supply?: number;
     pool_address?: string;
     creator_address?: string;
     creator_fee?: string;
     pool_created?: string | number;
     percent_change_1h?: number;
     percent_change_24h?: number;
-    [key: string]: unknown;
 };
 
 type PoolInfoProps = { chain: string; address: string; tokenData?: TokenData | null };
@@ -389,6 +383,14 @@ export function BuyTab() {
     const [tpSlCheck, setTpSlCheck] = useState(false)
     const [moreSetting, setMoreSetting] = useState(false)
     const [buyTabs, setBuyTabs] = useState("buy-now")
+    const { address, isConnected } = useAccount()
+    const { balances, isLoading } = useTokenBalances([])
+    
+    // Find native token balance (SOL/ETH/BNB etc.)
+    const nativeBalance = balances?.find(b => b.token.address === '0x0000000000000000000000000000000000');
+    const displayBalance = !isConnected ? 'Connect Wallet' : 
+                         isLoading ? 'Loading...' : 
+                         nativeBalance ? `Bal: ${parseFloat(nativeBalance.balance).toFixed(4)} ${nativeBalance.token.symbol}` : '0.0';
 
     return (
         <div className="flex flex-col gap-[8px] space-y-2 mt-2">
@@ -397,7 +399,7 @@ export function BuyTab() {
                     <div onClick={() => setBuyTabs("buy-now")} className={`flex font-[500] ${buyTabs == "buy-now" ? 'dark:text-[#ffff]' : 'dark:text-accent-aux-1'} cursor-pointer`}>Buy Now</div>
                     <div onClick={() => setBuyTabs("buy-dip")} className={`flex font-[500] ${buyTabs == "buy-dip" ? 'dark:text-[#ffff]' : 'dark:text-accent-aux-1'} cursor-pointer`}>Buy Dip</div>
                 </div>
-                <div className='flex whitespace-nowrap text-accent-aux-1'>Bal:--SOL</div>
+                <div className='flex whitespace-nowrap text-accent-aux-1'>{displayBalance}</div>
             </div>
 
             {/* tabs for buy now and buy dip */}
@@ -414,6 +416,14 @@ export function BuyTab() {
 export function SellTab() {
     const [moreSetting, setMoreSetting] = useState(false)
     const [sellTabs, setsellTabs] = useState("sell-now")
+    const { address, isConnected } = useAccount()
+    const { balances, isLoading } = useTokenBalances([])
+    
+    // Find native token balance (SOL/ETH/BNB etc.)
+    const nativeBalance = balances?.find(b => b.token.address === '0x0000000000000000000000000000000000');
+    const displayBalance = !isConnected ? 'Connect Wallet' : 
+                         isLoading ? 'Loading...' : 
+                         nativeBalance ? `Bal: ${parseFloat(nativeBalance.balance).toFixed(4)} ${nativeBalance.token.symbol}` : '0.0';
 
     return (
         <div className="flex flex-col gap-[8px] space-y-2 mt-2">
@@ -422,7 +432,7 @@ export function SellTab() {
                     <div onClick={() => setsellTabs("sell-now")} className={`flex font-[500] ${sellTabs == "sell-now" ? 'dark:text-[#ffff]' : 'dark:text-accent-aux-1'} cursor-pointer capitalize`}>sell Now</div>
                     <div onClick={() => setsellTabs("sell-auto")} className={`flex font-[500] ${sellTabs == "sell-auto" ? 'dark:text-[#ffff]' : 'dark:text-accent-aux-1'} cursor-pointer capitalize`}>sell auto</div>
                 </div>
-                <div className='flex whitespace-nowrap text-accent-aux-1'>Bal:--SOL</div>
+                <div className='flex whitespace-nowrap text-accent-aux-1'>{displayBalance}</div>
             </div>
 
             {/* tabs for buy now and buy dip */}
@@ -868,7 +878,7 @@ export function PoolInfo({ chain, address, tokenData: propTokenData }: PoolInfoP
                 <div className="flex w-full justify-between item-center ">
                     <p className=''>Total supply</p>
                     <p className='flex items-center'>
-                        {tokenData?.total_supply ? formatNumber(tokenData.total_supply) : formatNumber(10000000)}
+                        {tokenData?.total_supply ? formatNumber(parseFloat(tokenData.total_supply)) : formatNumber(10000000)}
                     </p>
                 </div>
                 <div className="flex w-full justify-between item-center ">

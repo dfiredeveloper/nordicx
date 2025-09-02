@@ -1,105 +1,304 @@
 "use client";
-import { use, useEffect, useState } from "react";
+
+import { useState } from "react";
+import { useParams } from "next/navigation";
+import { useQuery } from '@tanstack/react-query';
+import { TokenData } from "@/types/token";
+import { TokenProvider, useTokens } from "@/contexts/TokenContext";
+import { transformTokenData } from "@/lib/utils/token";
 import Drawer from '@/components/common/drawer';
 import Trade from '@/components/trading/mainSection/trade';
 import MobileTradingHeader from '@/components/trading/mobileTrading';
-import RightBar, { BuyTab, DegenAudit, PoolInfo, SellTab } from '@/components/trading/rightBar';
+import RightBar from '@/components/trading/rightBar';
 import TradingHeader from '@/components/trading/trading';
-// import { notFound } from 'next/navigation';
+import { Skeleton } from "@/components/ui/skeleton";
+import BuyTab from '@/components/trading/BuyTab';
+import SellTab from '@/components/trading/SellTab';
+import PoolInfo from '@/components/trading/PoolInfo';
+import DegenAudit from '@/components/trading/DegenAudit';
 
-export default function Page({ params }) {
-  const { chain, address } = use(params) as { chain: string; address: string };
-  const [isOpen, setIsOpen] = useState({ buy: false, sell: false, info: false });
-  // TODO: Replace 'any' with a proper TokenData type if available
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [tokenData, setTokenData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+export interface TokenDrawerState {
+  buy: boolean;
+  sell: boolean;
+  info: boolean;
+}
 
-  useEffect(() => {
-    async function fetchToken() {
-      setLoading(true);
-      setError(null);
-      try {
-        const res = await fetch(`/api/trending-tokens?chain=${chain}&address=${address}`);
-        const json = await res.json();
-        setTokenData(json.data?.[0] || null);
-      } catch {
-        setError("Failed to fetch token data");
-        setTokenData(null);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchToken();
-  }, [chain, address]);
+// transformTokenData has been moved to @/lib/utils/token
 
-  if (loading) return <div className="flex justify-center items-center h-40">Loading...</div>;
-  if (error || !tokenData) return <div className="flex justify-center items-center h-40 text-red-500">Token not found or failed to load.</div>;
-
-  const showWarning = tokenData && tokenData.liquidity_usd !== undefined && tokenData.liquidity_usd < 15000;
-
+// Helper component for the warning banner
+function WarningBanner() {
   return (
-    <div className="">
-      {/* warning issue */}
-      {showWarning && (
-      <div className="">
-        <div className="text-risk flex justify-center items-center h-[40px] gap-1 bg-riskWarn">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14px" height="14px" fill="#FFD039" viewBox="0 0 14 14"><path fillRule="evenodd" clipRule="evenodd" d="M8.212 2.093a1.4 1.4 0 00-2.423 0L.517 11.198A1.4 1.4 0 001.73 13.3h10.544a1.4 1.4 0 001.211-2.101L8.212 2.093zM7.001 9.255a.7.7 0 01-.7-.7V5.6a.7.7 0 111.4 0v2.955a.7.7 0 01-.7.7zm.7 1.167a.7.7 0 11-1.4 0 .7.7 0 011.4 0z"></path></svg>
-          <p className='text-[12px] font-[500]'>This token has low liquidity. Trade carefully!</p>
-        </div>
+    <div className="w-full">
+      <div className="text-risk flex justify-center items-center h-[40px] gap-1 bg-riskWarn">
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          width="14px" 
+          height="14px" 
+          fill="#FFD039" 
+          viewBox="0 0 14 14"
+          aria-hidden="true"
+        >
+          <path 
+            fillRule="evenodd" 
+            clipRule="evenodd" 
+            d="M8.212 2.093a1.4 1.4 0 00-2.423 0L.517 11.198A1.4 1.4 0 001.73 13.3h10.544a1.4 1.4 0 001.211-2.101L8.212 2.093zM7.001 9.255a.7.7 0 01-.7-.7V5.6a.7.7 0 111.4 0v2.955a.7.7 0 01-.7.7zm.7 1.167a.7.7 0 11-1.4 0 .7.7 0 011.4 0z"
+          />
+        </svg>
+        <p className='text-[12px] font-[500]'>This token has low liquidity. Trade carefully!</p>
       </div>
-      )}
+    </div>
+  );
+}
 
+// Inner component that consumes the TokenContext
+function TokenPageContent({ 
+  tokenData,
+  isOpen,
+  setIsOpen,
+  showWarning,
+  chain,
+  address
+}: { 
+  tokenData: TokenData;
+  isOpen: TokenDrawerState;
+  setIsOpen: (state: TokenDrawerState) => void;
+  showWarning: boolean;
+  chain: string;
+  address: string;
+}) {
+  const { getTokenPrice, getTokenBalance } = useTokens();
+  
+  return (
+    <div className="min-h-screen bg-background">
+      {showWarning && <WarningBanner />}
+
+      {/* Desktop View */}
       <div className="md:block hidden">
         <TradingHeader tokenData={tokenData} />
         <div className="flex items-start">
-          <Trade chain={chain} address={address} />
+          <Trade chain={chain} address={address} tokenData={tokenData} />
           <RightBar chain={chain} address={address} tokenData={tokenData} />
         </div>
       </div>
 
-      <div className="md:hidden block">
+      {/* Mobile View */}
+      <div className="md:hidden">
         <MobileTradingHeader tokenData={tokenData} />
-        <Trade chain={chain} address={address} />
-      </div>
-
-      <div className="flex w-full fixed bottom-[0px] z-[40] dark:bg-[#17181b] md:hidden">
-        <div className="flex w-full justify-around dark:bg-[#17181b] h-[56px]">
-          <div
-            onClick={() => setIsOpen((prev) => ({ ...prev, buy: true }))}
-            className="flex flex-col justify-center items-center gap-[4px]">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#9AA0AA" viewBox="0 0 16 16"><path d="M8.353 15.677l5.528-8.483a.736.736 0 00-.197-1.006.696.696 0 00-.393-.122H8.945V.726C8.945.324 8.628 0 8.236 0a.705.705 0 00-.59.323L2.12 8.806a.736.736 0 00.197 1.006c.116.08.253.122.393.122h4.346v5.34c0 .401.317.726.709.726a.704.704 0 00.59-.323z"></path>
-            </svg>
-            <p className="text-[rgb(154,160,170)] text-[10px]">Buy</p>
+        <Trade chain={chain} address={address} tokenData={tokenData} />
+        
+        {/* Mobile Trading Bottom Sheet */}
+        <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-gray-800 z-50">
+          <div className="flex justify-around p-2">
+            <button 
+              onClick={() => setIsOpen({ ...isOpen, buy: true })}
+              className="flex-1 bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-l-lg transition-colors"
+            >
+              Buy
+            </button>
+            <button 
+              onClick={() => setIsOpen({ ...isOpen, sell: true })}
+              className="flex-1 bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-r-lg transition-colors"
+            >
+              Sell
+            </button>
           </div>
-
-          <Drawer isOpen={isOpen.buy} onClose={() =>setIsOpen((prev) => ({ ...prev, buy: false }))}>
-            <BuyTab />
-          </Drawer>
-
-          <div onClick={() => setIsOpen((prev) => ({ ...prev, sell: true }))} className="flex flex-col justify-center items-center gap-[4px]">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#9AA0AA" viewBox="0 0 16 16"><g clip-path="url(#clip0_8080_562)"><path fillRule="evenodd" clipRule="evenodd" d="M1.131 7.134a1.6 1.6 0 000 2.263l5.657 5.657a1.6 1.6 0 002.263 0l6.058-6.058c.3-.3.468-.707.468-1.131V2.208a1.6 1.6 0 00-1.6-1.6H8.32a1.6 1.6 0 00-1.131.469L1.131 7.134zm10.069-.73a1.6 1.6 0 100-3.2 1.6 1.6 0 000 3.2z"></path></g><defs><clipPath id="clip0_8080_562"><rect width="16" height="16"></rect></clipPath></defs></svg>
-            <p className="text-[rgb(154,160,170)] text-[10px]">Sell</p>
-          </div>
-          <Drawer isOpen={isOpen.sell} onClose={() => setIsOpen((prev) => ({ ...prev, sell: false }))}>
-            <SellTab />
-          </Drawer>
-
-          {/* info */}
-          <div onClick={() => setIsOpen((prev) => ({ ...prev, info: true }))}  className="flex flex-col justify-center items-center gap-[4px]">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#9AA0AA" viewBox="0 0 16 16"><g clip-path="url(#clip0_8080_565)"><path d="M8 0C3.577 0 0 3.577 0 8s3.577 8 8 8 8-3.577 8-8-3.577-8-8-8zm0 12.571a1.146 1.146 0 01-1.143-1.142c0-.629.514-1.143 1.143-1.143s1.143.514 1.143 1.143c0 .628-.514 1.142-1.143 1.142zM9.143 8c0 .629-.514 1.143-1.143 1.143A1.146 1.146 0 016.857 8V4.571c0-.628.514-1.142 1.143-1.142s1.143.514 1.143 1.142V8z"></path></g><defs><clipPath id="clip0_8080_565"><rect width="16" height="16"></rect></clipPath></defs></svg>
-            <p className="text-[rgb(154,160,170)] text-[10px]">Info</p>
-          </div>
-    
-          <Drawer isOpen={isOpen.info} onClose={() => setIsOpen((prev) => ({ ...prev, info: false }))}>
-            <>
-              <PoolInfo chain={chain} address={address} />
-              <DegenAudit chain={chain} address={address} />
-            </>
-          </Drawer>
         </div>
       </div>
+
+      {/* Drawers */}
+      <Drawer isOpen={isOpen.buy} onClose={() => setIsOpen({ ...isOpen, buy: false })}>
+        <div className="p-4">
+          <h3 className="text-lg font-semibold mb-4">Buy {tokenData.symbol}</h3>
+          {/* Replace with your BuyForm component */}
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Amount</label>
+              <input 
+                type="number" 
+                placeholder="0.0" 
+                className="w-full bg-gray-800 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+              Buy {tokenData.symbol}
+            </button>
+          </div>
+        </div>
+      </Drawer>
+
+      <Drawer isOpen={isOpen.sell} onClose={() => setIsOpen({ ...isOpen, sell: false })}>
+        <div className="p-4">
+          <h3 className="text-lg font-semibold mb-4">Sell {tokenData.symbol}</h3>
+          {/* Replace with your SellForm component */}
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Amount</label>
+              <input 
+                type="number" 
+                placeholder="0.0" 
+                className="w-full bg-gray-800 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <button className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+              Sell {tokenData.symbol}
+            </button>
+          </div>
+        </div>
+      </Drawer>
+
+      <Drawer isOpen={isOpen.info} onClose={() => setIsOpen({ ...isOpen, info: false })}>
+        <div className="p-4">
+          <h3 className="text-lg font-semibold mb-4">Token Information</h3>
+          <div className="space-y-2 text-sm">
+            <div className="flex justify-between">
+              <span className="text-gray-400">Contract:</span>
+              <span className="font-mono text-sm">{tokenData.address?.slice(0, 6)}...{tokenData.address?.slice(-4)}</span>
+            </div>
+            {tokenData.website && (
+              <div className="flex justify-between">
+                <span className="text-gray-400">Website:</span>
+                <a href={tokenData.website} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">
+                  Visit
+                </a>
+              </div>
+            )}
+            {tokenData.twitter && (
+              <div className="flex justify-between">
+                <span className="text-gray-400">Twitter:</span>
+                <a 
+                  href={`https://twitter.com/${tokenData.twitter}`} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="text-blue-400 hover:underline"
+                >
+                  @{tokenData.twitter}
+                </a>
+              </div>
+            )}
+            {tokenData.telegram && (
+              <div className="flex justify-between">
+                <span className="text-gray-400">Telegram:</span>
+                <a 
+                  href={tokenData.telegram.startsWith('http') ? tokenData.telegram : `https://t.me/${tokenData.telegram}`}
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-400 hover:underline"
+                >
+                  Join
+                </a>
+              </div>
+            )}
+          </div>
+        </div>
+      </Drawer>
+    </div>
+  );
+}
+
+// Main page component
+export default function TokenPage() {
+  const params = useParams();
+  const { chain, address } = params as { chain: string; address: string };
+  const [isOpen, setIsOpen] = useState<TokenDrawerState>({ 
+    buy: false, 
+    sell: false, 
+    info: false 
+  });
+
+  // Fetch token data
+  const { data: tokenData, isLoading, error } = useQuery({
+    queryKey: ['token', chain, address],
+    queryFn: async () => {
+      const res = await fetch(`/api/trending-tokens?chain=${chain}&address=${address}`);
+      const json = await res.json();
+      return transformTokenData(json.data?.[0]);
+    },
+    enabled: !!chain && !!address,
+  });
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="container mx-auto p-4">
+        <Skeleton className="h-8 w-64 mb-4" />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div className="lg:col-span-2 space-y-4">
+            <Skeleton className="h-64 w-full" />
+            <Skeleton className="h-32 w-full" />
+          </div>
+          <div className="space-y-4">
+            <Skeleton className="h-96 w-full" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error || !tokenData) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64 text-center p-4">
+        <div className="text-red-500 text-lg font-medium mb-2">
+          Failed to load token data
+        </div>
+        <p className="text-gray-400">
+          {error instanceof Error ? error.message : 'The token could not be found or is not available for trading.'}
+        </p>
+      </div>
+    );
+  }
+
+  const showWarning = tokenData.liquidity !== undefined && tokenData.liquidity < 15000;
+
+  // Wrap the page with TokenProvider to make token data available to all child components
+  return (
+    <div>
+      <TokenProvider initialTokens={[tokenData]}>
+        <TokenPageContent 
+          tokenData={tokenData} 
+          isOpen={isOpen} 
+          setIsOpen={setIsOpen} 
+          showWarning={showWarning}
+          chain={chain}
+          address={address}
+        />
+
+        {/* Mobile Bottom Navigation */}
+        <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border md:hidden z-50">
+          <div className="flex justify-around py-3 px-4">
+            <button 
+              onClick={() => setIsOpen({ ...isOpen, buy: true })}
+              className="bg-primary text-white rounded-lg py-2 px-6 text-sm font-medium flex-1 mx-1"
+            >
+              Buy
+            </button>
+            <button 
+              onClick={() => setIsOpen({ ...isOpen, sell: true })}
+              className="bg-transparent border border-primary text-primary rounded-lg py-2 px-6 text-sm font-medium flex-1 mx-1"
+            >
+              Sell
+            </button>
+            <button 
+              onClick={() => setIsOpen({ ...isOpen, info: true })}
+              className="flex flex-col items-center justify-center text-gray-500"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M8 0C3.577 0 0 3.577 0 8s3.577 8 8 8 8-3.577 8-8-3.577-8-8-8zm0 12.571a1.146 1.146 0 01-1.143-1.142c0-.629.514-1.143 1.143-1.143s1.143.514 1.143 1.143c0 .628-.514 1.142-1.143 1.142zM9.143 8c0 .629-.514 1.143-1.143 1.143A1.146 1.146 0 016.857 8V4.571c0-.628.514-1.142 1.143-1.142s1.143.514 1.143 1.142V8z"/>
+              </svg>
+              <span className="text-xs">Info</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Info Drawer */}
+        <Drawer isOpen={isOpen.info} onClose={() => setIsOpen({ ...isOpen, info: false })}>
+          <div className="p-4">
+            <h2 className="text-xl font-bold mb-4">Token Information</h2>
+            <PoolInfo chain={chain} address={address} />
+            <DegenAudit chain={chain} address={address} />
+          </div>
+        </Drawer>
+      </TokenProvider>
     </div>
   );
 }

@@ -10,7 +10,15 @@ import Image from "next/image";
 import { useEffect, useState } from "react"
 import ChartContainer from '../ChartContainer';
 
-export default function Trade({ chain, address }: { chain: string; address: string }) {
+import { TokenData } from "@/types/token";
+
+interface TradeProps {
+  chain: string;
+  address: string;
+  tokenData?: TokenData | null;
+}
+
+export default function Trade({ chain, address, tokenData }: TradeProps) {
     const [resize, setResize] = useState<"vertical" | "horizontal">("vertical")
     const [toggleLeftPane, setLeftPaneToggle] = useState(false)
     return (

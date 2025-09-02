@@ -240,9 +240,9 @@ export default function Header() {
       }
       
       try {
-        // @ts-expect-error
+        // @ts-expect-error - Accessing RainbowKit's internal modal API for programmatic close
         if (window.__RAINBOW_KIT__ && window.__RAINBOW_KIT__.modal) {
-          // @ts-expect-error
+          // @ts-expect-error - Calling internal modal close method
           window.__RAINBOW_KIT__.modal.close();
         }
       } catch {
